@@ -15,15 +15,8 @@ import { CustomersModule } from './customers/customers.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { DocumentsModule } from './documents/documents.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './users/authorization/roles.guard';
 import { NextFunction } from 'express';
-import { JwtModule } from '@nestjs/jwt';
-import { UsersService } from './users/users.service';
 import { PassportModule } from '@nestjs/passport';
-import { GoogleStrategy } from "./users/strategies/google.strategy";
-import { LocalStrategy } from "./users/strategies/local.strategy";
-import { JwtStrategy } from "./users/strategies/jwt.strategy";
 
 @Module({
   imports: [
@@ -38,7 +31,6 @@ import { JwtStrategy } from "./users/strategies/jwt.strategy";
   ],
   controllers: [AppController],
   providers: [AppService],
-  // providers: [GoogleStrategy, LocalStrategy, JwtStrategy],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

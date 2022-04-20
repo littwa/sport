@@ -20,16 +20,12 @@ import { GoogleStrategy } from './strategies/google.strategy';
       { name: User.name, schema: UserSchema },
       { name: Session.name, schema: SessionSchema },
     ]),
-    // JwtModule.registerAsync({
-    //   useFactory: () => ({
-    //     secret: process.env.TOKEN_SECRET,
-    //     // signOptions: { expiresIn: '5d' }, // use if not to point in jwtService.sign({ expiresIn: '...'})
-    //   }),
-    // }),
-    // JwtModule.register({
-    //   secret: process.env.TOKEN_SECRET,
-    //   signOptions: { expiresIn: '60s' },
-    // }),
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.TOKEN_SECRET,
+        // signOptions: { expiresIn: '5d' }, // use if not to point in jwtService.sign({ expiresIn: '...'})
+      }),
+    }),
     SharedModule,
     PassportModule,
     // OrdersModule,

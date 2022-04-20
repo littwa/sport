@@ -40,13 +40,13 @@ export class UsersController {
   @Get('google-auth')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {
-    console.log(7877878);
+    console.log(10000000000009);
   } // here will be redirect
 
   @Get('google-auth/redirect')
   @UseGuards(AuthGuard('google'))
   //@Redirect('http://localhost:4200/choicse-customer') // 'http://localhost:4200/choicse-customer'  // google-auth/return
-  async googleAuthRedirect(@Req() req, @Res() res, @Body() body) {
+  async googleAuthRedirect(@Req() req, @Res() res, @Body() body, @Headers()headers) {
     console.log(1000001, req.user);
 
     const dto = await this.userService.googleLogin(req);
@@ -65,8 +65,8 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   postSignUpUser(@Body() body): any {
     switch (body.role) {
-      case ERole.Admin:
-        return this.userService.createUserAdmin(body);
+      // case ERole.Admin:
+      //   return this.userService.createUserAdmin(body);
       case ERole.Customer:
         return this.userService.createUserCustomer(body);
       default:
@@ -80,23 +80,23 @@ export class UsersController {
     return this.userService.updateUserCustomer(param.idCustomer, body);
   }
 
-  @Get('admin/verify/:verificationCode')
-  @HttpCode(HttpStatus.OK)
-  getVerifycationUser(@Param() param): any {
-    return this.userService.verifycationAdmin(param);
-  }
+  // @Get('admin/verify/:verificationCode')
+  // @HttpCode(HttpStatus.OK)
+  // getVerifycationUser(@Param() param): any {
+  //   return this.userService.verifycationAdmin(param);
+  // }
+  //
+  // @Get('customer/verify/:verificationCode')
+  // @HttpCode(HttpStatus.OK)
+  // verifycationCustomer(@Param() param): any {
+  //   return this.userService.verifycationCustomer(param.verificationCode);
+  // }
 
   @Get('get')
   @UseGuards(AuthGuard('jwt'))
   getCurrentUser(@Request() req) {
     console.log('req.user-', req.user);
     return req.user;
-  }
-
-  @Get('customer/verify/:verificationCode')
-  @HttpCode(HttpStatus.OK)
-  verifycationCustomer(@Param() param): any {
-    return this.userService.verifycationCustomer(param.verificationCode);
   }
 
   @Post('sign-in')
@@ -139,10 +139,11 @@ export class UsersController {
     @Body() body,
     // @Res() res,
   ) {
-    console.log('Headers: ', headers);
+    // console.log(this.userService.configService.get('jwtExpires30days'));
+    // console.log('Headers: ', headers);
+    // console.log('req: ', req.rawHeaders);
     // console.log('request: ', request);
     // console.log(10000333, Object.getOwnPropertySymbols(request)[1]);
-    console.log('req: ', req.rawHeaders);
     // console.log('param: ', param);
     // console.log('body: ', body);
     // console.log('res: ', res);

@@ -18,15 +18,22 @@ import { createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
 // import { Order, OrderDocument } from 'src/orders/orders.schema';
 import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
-console.log(11111111111, JwtService);
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class UsersService {
+  // private exp30days = this.configService.get('jwtExpires30days').exp;
+  private str60s = this.configService.get('jwtExpires60Seconds').exp;
+  private str30d = this.configService.get('jwtExpires30days').exp;
+  private exp30d = Date.now() + this.configService.get('jwtExpires30days').expIncrement;
+
   constructor(
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
     // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
-    @InjectModel(Session.name) private sessionModel: Model<SessionDocument>,
+    @InjectModel(Session.name) public sessionModel: Model<SessionDocument>,
+    @InjectModel(User.name) public userModel: Model<UserDocument>,
     private emailService: EmailService,
     private jwtService: JwtService,
+    public configService: ConfigService,
   ) {}
 
   async createUserAdmin(createUserDto: createUserDto): Promise<object> {
@@ -62,44 +69,6 @@ export class UsersService {
     return userAdminDtoReverse;
   }
 
-  async verifycationAdmin(param) {
-    try {
-      const { verificationCode } = param;
-      const mangerForVerification = await this.userModel.findOneAndUpdate(
-        { verificationCode },
-        {
-          verificationCode: '',
-          status: EStatus.Verified,
-        },
-        { new: true, useFindAndModify: false },
-      );
-
-      if (!mangerForVerification) {
-        throw new BadRequestException('No mangerForVerification');
-      }
-
-      const accessToken = this.jwtService.sign(
-        {
-          uid: mangerForVerification._id,
-          secret: process.env.TOKEN_SECRET,
-          email: mangerForVerification.email,
-          role: mangerForVerification.role,
-        },
-        // { expiresIn: "30d" },
-      );
-
-      return {
-        email: mangerForVerification.email,
-        token: accessToken,
-        role: mangerForVerification.role,
-      };
-    } catch (err) {
-      throw new BadRequestException('Error');
-    }
-  }
-
-  //===================================================
-
   async createUserCustomer(
     createUserCustomerDto: createUserCustomerDto,
   ): Promise<object> {
@@ -126,7 +95,7 @@ export class UsersService {
       password: hashPassword,
       // verificationCode: code,
       status: EStatus.Verified, // EStatus.NotVerified,
-      customer: createUserCustomerDto.customer,
+      // customer: createUserCustomerDto.customer,
     });
 
     // this.emailService.sendUserConfirmation(user.email, user.verificationCode);
@@ -149,22 +118,14 @@ export class UsersService {
     return userDtoReverse;
   }
 
-  async verifycationCustomer(verificationCode) {
-    const customerForVerification = await this.userModel.findOneAndUpdate(
-      { verificationCode },
-      { verificationCode: '', status: EStatus.Verified },
-      { new: true, useFindAndModify: false },
-    );
-
-    if (!customerForVerification)
-      throw new BadRequestException('No customer For Verification');
-
-    return {
-      email: customerForVerification.email,
-      status: customerForVerification.status,
-      username: customerForVerification.username,
-      role: customerForVerification.role,
-    }; // Redirect on sign-in
+  async getInfoUserCustomer({ _id }) {
+    const infoCusomer = await this.userModel
+      .findOne({ _id, role: ERole.Customer })
+      .populate('customer');
+    if (!infoCusomer) throw new BadRequestException('Customer was not found');
+    const { password, verificationCode, __v, ...userDtoInfo } =
+      infoCusomer.toObject();
+    return userDtoInfo;
   }
 
   async signIn(signInDto) {
@@ -196,16 +157,6 @@ export class UsersService {
     };
   }
 
-  async getInfoUserCustomer({ _id }) {
-    const infoCusomer = await this.userModel
-      .findOne({ _id, role: ERole.Customer })
-      .populate('customer');
-    if (!infoCusomer) throw new BadRequestException('Customer was not found');
-    const { password, verificationCode, __v, ...userDtoInfo } =
-      infoCusomer.toObject();
-    return userDtoInfo;
-  }
-
   async getRefreshToken(req) {
     const token = req.get('Authorization' || '').slice(7);
 
@@ -221,13 +172,20 @@ export class UsersService {
     if (!session || !user || user._id.toString() !== session.uid.toString())
       throw new UnauthorizedException('Not authorized');
 
+    //=============
+    // const exp60s = Date.now() + this.jwtExpires60Seconds.expIncrement;
+    // const exp = Date.now() + 2592000000;
+    //=============
+
     const delSession = await this.sessionModel.findByIdAndDelete(
       parsedToken.sid,
     );
 
-    const newSession = await this.sessionModel.create({ uid: parsedToken.uid });
+    const createSession = await this.sessionModel.create({
+      uid: parsedToken.uid,
+    });
 
-    const newPairTokens = this.getPairTokensUtilit(newSession, user);
+    const newPairTokens = this.getPairTokensUtilit(createSession, user);
 
     return newPairTokens;
   }
@@ -304,4 +262,60 @@ export class UsersService {
       userId: userObjectId,
     };
   }
+
+  //=========================verifycation======================================
+
+  // async verifycationAdmin(param) {
+  //   try {
+  //     const { verificationCode } = param;
+  //     const mangerForVerification = await this.userModel.findOneAndUpdate(
+  //       { verificationCode },
+  //       {
+  //         verificationCode: '',
+  //         status: EStatus.Verified,
+  //       },
+  //       { new: true, useFindAndModify: false },
+  //     );
+  //
+  //     if (!mangerForVerification) {
+  //       throw new BadRequestException('No mangerForVerification');
+  //     }
+  //
+  //     const accessToken = this.jwtService.sign(
+  //       {
+  //         uid: mangerForVerification._id,
+  //         secret: process.env.TOKEN_SECRET,
+  //         email: mangerForVerification.email,
+  //         role: mangerForVerification.role,
+  //       },
+  //       // { expiresIn: "30d" },
+  //     );
+  //
+  //     return {
+  //       email: mangerForVerification.email,
+  //       token: accessToken,
+  //       role: mangerForVerification.role,
+  //     };
+  //   } catch (err) {
+  //     throw new BadRequestException('Error');
+  //   }
+  // }
+
+  // async verifycationCustomer(verificationCode) {
+  //   const customerForVerification = await this.userModel.findOneAndUpdate(
+  //     { verificationCode },
+  //     { verificationCode: '', status: EStatus.Verified },
+  //     { new: true, useFindAndModify: false },
+  //   );
+  //
+  //   if (!customerForVerification)
+  //     throw new BadRequestException('No customer For Verification');
+  //
+  //   return {
+  //     email: customerForVerification.email,
+  //     status: customerForVerification.status,
+  //     username: customerForVerification.username,
+  //     role: customerForVerification.role,
+  //   }; // Redirect on sign-in
+  // }
 }
