@@ -1,3 +1,4 @@
+import configuration from 'src/shared/configs/base.config';
 import {
   Injectable,
   MiddlewareConsumer,
@@ -9,14 +10,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import configuration from 'src/shared/configs/base.config';
 import { UsersModule } from 'src/users/users.module';
 import { CustomersModule } from './customers/customers.module';
 import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
-import { DocumentsModule } from './documents/documents.module';
+import { DocsModule } from './docs/docs.module';
 import { NextFunction } from 'express';
 import { PassportModule } from '@nestjs/passport';
+import { FavoritesModule } from './favorites/favorites.module';
+import { ProductsService } from './products/products.service';
 
 @Module({
   imports: [
@@ -27,7 +29,8 @@ import { PassportModule } from '@nestjs/passport';
     CustomersModule,
     OrdersModule,
     ProductsModule,
-    DocumentsModule,
+    DocsModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

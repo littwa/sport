@@ -12,7 +12,7 @@ export class Product extends Document {
   @Prop({ type: String, required: true })
   product: string;
 
-  @Prop({ type: String, default: 'kg', enum: ['kg', 'box', 'pcs'] })
+  @Prop({ type: String, default: 'pcs', enum: ['kg', 'box', 'pcs'] })
   unit: string;
 
   @Prop({ type: Object, required: true })
