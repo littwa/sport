@@ -12,8 +12,15 @@ import { FavoritesModule } from '../favorites/favorites.module';
   imports: [
     MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
   ],
-  providers: [ProductsService],
+  providers: [
+    // ProductsService
+    { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
+  ],
   controllers: [ProductsController],
-  exports: [ProductsService, MongooseModule],
+  exports: [
+    // ProductsService,
+    { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
+    MongooseModule,
+  ],
 })
 export class ProductsModule {}

@@ -4,17 +4,18 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpStatus,
+  HttpStatus, Inject,
   Param,
   Patch,
-  Post, UseGuards
-} from "@nestjs/common";
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { AuthGuard } from "@nestjs/passport";
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(@Inject('ProductsServiceToken') private productsService: ProductsService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)

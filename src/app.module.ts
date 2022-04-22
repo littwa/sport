@@ -1,5 +1,6 @@
 import configuration from 'src/shared/configs/base.config';
 import {
+  Global,
   Injectable,
   MiddlewareConsumer,
   Module,
@@ -20,10 +21,15 @@ import { PassportModule } from '@nestjs/passport';
 import { FavoritesModule } from './favorites/favorites.module';
 import { ProductsService } from './products/products.service';
 
+// @Global()
 @Module({
   imports: [
     PassportModule,
-    ConfigModule.forRoot({ isGlobal: true, load: [configuration] }),
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+      // envFilePath: '.env',
+    }),
     MongooseModule.forRoot(process.env.MONGO_URL),
     UsersModule,
     CustomersModule,
@@ -34,6 +40,7 @@ import { ProductsService } from './products/products.service';
   ],
   controllers: [AppController],
   providers: [AppService],
+  // exports: [ConfigModule, ProductsModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -49,8 +56,3 @@ export class LoggerMiddleware implements NestMiddleware {
     next();
   }
 }
-
-// {
-//   provide: APP_GUARD,
-//   useClass: RolesGuard,
-// },
