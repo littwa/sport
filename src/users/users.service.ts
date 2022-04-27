@@ -34,6 +34,8 @@ export class UsersService {
     private emailService: EmailService,
     private jwtService: JwtService,
     public configService: ConfigService,
+    @Inject('UseFactoryTest') public configFactory: any,
+    @Inject('UseClassTest') public useClassTest: any,
   ) {}
 
   async createUserAdmin(createUserDto: createUserDto): Promise<object> {

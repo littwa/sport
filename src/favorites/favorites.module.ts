@@ -17,6 +17,6 @@ import { ProductsModule } from '../products/products.module';
   ],
   providers: [FavoritesService],
   controllers: [FavoritesController],
-  exports: [FavoritesService, MongooseModule],
+  exports: [FavoritesService],
 })
 export class FavoritesModule {}

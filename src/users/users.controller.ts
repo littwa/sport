@@ -19,7 +19,7 @@ import {
   Request,
   Query,
   UnauthorizedException,
-  Headers,
+  Headers, Inject,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { NextFunction, Response } from 'express';
@@ -31,10 +31,18 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from './authorization/roles.decorator';
 import { RolesGuard } from './authorization/roles.guard';
 import * as passport from 'passport';
+import { ProductsModule } from '../products/products.module';
+import { ProductsService } from '../products/products.service';
+// import { ConfigServiceTest } from '../app.module';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(
+    private readonly userService: UsersService,
+    @Inject('ProductsServiceToken') private productsService: ProductsService,
+    // private readonly uf:
+    // private tc: ConfigServiceTest,
+  ) {}
 
   // Google-auth
   @Get('google-auth')
@@ -139,6 +147,10 @@ export class UsersController {
     @Body() body,
     // @Res() res,
   ) {
+    // console.log(this.tc.v);
+    console.log(10007, this.userService.configFactory.v);
+    console.log(10008, this.userService.useClassTest.v);
+    // console.log(888, process.env.NODE_ENV);
     // console.log(this.userService.configService.get('jwtExpires30days'));
     // console.log('Headers: ', headers);
     // console.log('req: ', req.rawHeaders);

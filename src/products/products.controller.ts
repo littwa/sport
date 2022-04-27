@@ -15,7 +15,9 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('products')
 export class ProductsController {
-  constructor(@Inject('ProductsServiceToken') private productsService: ProductsService) {}
+  constructor(
+    @Inject('ProductsServiceToken') private productsService: ProductsService,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -39,5 +41,11 @@ export class ProductsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   delProduct(@Param() param) {
     return this.productsService.deleteProduct(param.productId);
+  }
+
+  @Get('test')
+  @HttpCode(HttpStatus.OK)
+  testProducts() {
+    return { testProducts: true };
   }
 }
