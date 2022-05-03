@@ -95,6 +95,7 @@ export class UsersService {
     user = await this.userModel.create({
       ...createUserCustomerDto,
       password: hashPassword,
+      username: createUserCustomerDto.email.split('@')[0],
       // verificationCode: code,
       status: EStatus.Verified, // EStatus.NotVerified,
       // customer: createUserCustomerDto.customer,
@@ -151,11 +152,13 @@ export class UsersService {
     const tokens = await this.getPairTokensUtilit(createSession, user);
 
     return {
-      name: user.username,
+      username: user.username,
       email: user.email,
       status: user.status,
       role: user.role,
-      tokens,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      // tokens,
     };
   }
 

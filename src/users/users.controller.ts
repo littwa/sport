@@ -19,7 +19,8 @@ import {
   Request,
   Query,
   UnauthorizedException,
-  Headers, Inject,
+  Headers,
+  Inject,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { NextFunction, Response } from 'express';
@@ -39,9 +40,7 @@ import { ProductsService } from '../products/products.service';
 export class UsersController {
   constructor(
     private readonly userService: UsersService,
-    @Inject('ProductsServiceToken') private productsService: ProductsService,
-    // private readonly uf:
-    // private tc: ConfigServiceTest,
+    @Inject('ProductsServiceToken') private productsService: ProductsService, // private readonly uf: // private tc: ConfigServiceTest,
   ) {}
 
   // Google-auth
@@ -54,7 +53,12 @@ export class UsersController {
   @Get('google-auth/redirect')
   @UseGuards(AuthGuard('google'))
   //@Redirect('http://localhost:4200/choicse-customer') // 'http://localhost:4200/choicse-customer'  // google-auth/return
-  async googleAuthRedirect(@Req() req, @Res() res, @Body() body, @Headers()headers) {
+  async googleAuthRedirect(
+    @Req() req,
+    @Res() res,
+    @Body() body,
+    @Headers() headers,
+  ) {
     console.log(1000001, req.user);
 
     const dto = await this.userService.googleLogin(req);
@@ -69,9 +73,10 @@ export class UsersController {
     );
   }
 
-  @Post('register')
+  @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
   postSignUpUser(@Body() body): any {
+    console.log(100001, body);
     switch (body.role) {
       // case ERole.Admin:
       //   return this.userService.createUserAdmin(body);
