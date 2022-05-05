@@ -25,7 +25,8 @@ export class UsersService {
   // private exp30days = this.configService.get('jwtExpires30days').exp;
   private str60s = this.configService.get('jwtExpires60Seconds').exp;
   private str30d = this.configService.get('jwtExpires30days').exp;
-  private exp30d = Date.now() + this.configService.get('jwtExpires30days').expIncrement;
+  private exp30d =
+    Date.now() + this.configService.get('jwtExpires30days').expIncrement;
 
   constructor(
     // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
@@ -128,6 +129,17 @@ export class UsersService {
     if (!infoCusomer) throw new BadRequestException('Customer was not found');
     const { password, verificationCode, __v, ...userDtoInfo } =
       infoCusomer.toObject();
+    return userDtoInfo;
+  }
+
+  async getCurrentUser({ _id }) {
+    const infoUser = await this.userModel.findOne({
+      _id,
+      role: ERole.Customer,
+    }); // .populate('customer');
+    if (!infoUser) throw new BadRequestException('User was not found');
+    const { password, verificationCode, __v, ...userDtoInfo } =
+      infoUser.toObject();
     return userDtoInfo;
   }
 

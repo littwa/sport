@@ -109,7 +109,7 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   getCurrentUser(@Request() req) {
     console.log('req.user-', req.user);
-    return req.user;
+    return this.userService.getCurrentUser(req.user);
   }
 
   @Post('sign-in')
