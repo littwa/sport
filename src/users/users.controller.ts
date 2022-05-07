@@ -87,6 +87,12 @@ export class UsersController {
     }
   }
 
+  @Get('sign-out')
+  @UseGuards(AuthGuard('jwt'))
+  signOut(@Request() req) {
+    return this.userService.signOutUser(req.user);
+  }
+
   @Post('up-date/:idCustomer')
   @HttpCode(HttpStatus.OK)
   updateCustomer(@Body() body, @Param() param): any {
@@ -138,6 +144,7 @@ export class UsersController {
   }
 
   @Get('refresh')
+  @UseGuards(AuthGuard('jwt'))
   getRefreshToken(@Req() req) {
     return this.userService.getRefreshToken(req);
   }

@@ -122,6 +122,19 @@ export class UsersService {
     return userDtoReverse;
   }
 
+  async signOutUser(parsedToken) {
+    console.log(10000088, parsedToken);
+    const deletedSession = await this.sessionModel.findByIdAndDelete(
+      parsedToken.sid,
+    );
+
+    if (!deletedSession) {
+      throw new BadRequestException('No current session');
+    }
+
+    return { req: 'logOutUser Success' };
+  }
+
   async getInfoUserCustomer({ _id }) {
     const infoCusomer = await this.userModel
       .findOne({ _id, role: ERole.Customer })
@@ -175,6 +188,12 @@ export class UsersService {
   }
 
   async getRefreshToken(req) {
+    console.log(req.get('Authorization'), 888888881);
+
+    if (!req.get('Authorization')) {
+      throw new UnauthorizedException('Not authorized Token');
+    }
+
     const token = req.get('Authorization' || '').slice(7);
 
     const parsedToken = await this.jwtService.verify(token, {
@@ -186,6 +205,13 @@ export class UsersService {
     const session = await this.sessionModel.findById(parsedToken.sid);
     const user = await this.userModel.findById(parsedToken.uid);
 
+    console.log(parsedToken, session, user, 99999911);
+    // console.log(
+    //   !session,
+    //   !user,
+    //   user._id.toString() !== session.uid.toString(),
+    //   777777771,
+    // );
     if (!session || !user || user._id.toString() !== session.uid.toString())
       throw new UnauthorizedException('Not authorized');
 
@@ -216,7 +242,7 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '120s' },
+      { expiresIn: '30s' },
     );
     const refreshToken = await this.jwtService.sign(
       {
@@ -226,7 +252,7 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '30d' },
+      { expiresIn: '50s' },
     );
 
     return { accessToken, refreshToken };

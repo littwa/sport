@@ -16,16 +16,16 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   validate(request, jwt_payload, done_callback) {
-    console.log('--------------------');
-    console.log('request', request.rawHeaders);
+    // console.log('--------------------');
+    // console.log('request', request.rawHeaders);
     console.log('jwt_payload', jwt_payload);
     // console.log('done_callback', done_callback);
-    console.log('--------------------');
-    const { uid: _id, email, role } = jwt_payload;
+    console.log('---------------------');
+    const { uid: _id, email, role, sid } = jwt_payload;
 
     // done_callback(null, { _id, email, role }); // analog return
     // return { _id, email, role };
     // return {};
-    return { _id, email, role };
+    return { _id, email, role, sid };
   }
 }
