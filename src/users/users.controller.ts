@@ -45,6 +45,7 @@ import * as multer from 'multer';
 import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
+import { CommonService } from '../shared/services/common.service';
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -62,13 +63,20 @@ import * as sharp from 'sharp';
 @Controller('users')
 export class UsersController {
   constructor(
+    private commonService: CommonService,
     private readonly userService: UsersService,
     @Inject('ProductsServiceToken') private productsService: ProductsService, // private readonly uf: // private tc: ConfigServiceTest,
   ) {}
 
   @Get('get-test')
-  getTest(@Request() req) {
-    return 'get-test work';
+  @UseInterceptors(AnyFilesInterceptor())
+  getTest(@Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+    return {
+      files: this.commonService.multerFactory(files),
+      BASE_URL_API: process.env.BASE_URL_API,
+      processCwd: process.cwd(),
+      dirname__: __dirname,
+    };
   }
 
   // Google-auth
