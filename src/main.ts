@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as path from 'path';
 
 async function bootstrap() {
   console.log(2222, process.env.NODE_ENV);

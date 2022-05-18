@@ -19,6 +19,9 @@ import { createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
 import { ConfigService } from '@nestjs/config';
+import * as path from 'path';
+import * as sharp from 'sharp';
+import { CommonService } from '../shared/services/common.service';
 
 @Injectable()
 export class UsersService {
@@ -37,40 +40,41 @@ export class UsersService {
     public configService: ConfigService,
     @Inject('UseFactoryTest') public configFactory: any,
     @Inject('UseClassTest') public useClassTest: any,
+    private commonService: CommonService,
   ) {}
 
-  async createUserAdmin(createUserDto: createUserDto): Promise<object> {
-    let userAdmin = await this.userModel.findOne({
-      email: createUserDto.email,
-      role: ERole.Admin,
-    });
-
-    if (!userAdmin) {
-      userAdmin = await this.userModel.create({
-        ...createUserDto,
-      });
-    }
-
-    const code = (
-      Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
-    ).toString();
-
-    const updatedUserAdmin = await this.userModel.findByIdAndUpdate(
-      userAdmin._id,
-      { verificationCode: code, status: EStatus.NotVerified },
-      { new: true, useFindAndModify: false },
-    );
-
-    this.emailService.sendUserConfirmation(
-      updatedUserAdmin.email,
-      updatedUserAdmin.verificationCode,
-    );
-
-    const { password, verificationCode, __v, ...userAdminDtoReverse } =
-      updatedUserAdmin.toObject();
-
-    return userAdminDtoReverse;
-  }
+  // async createUserAdmin(createUserDto: createUserDto): Promise<object> {
+  //   let userAdmin = await this.userModel.findOne({
+  //     email: createUserDto.email,
+  //     role: ERole.Admin,
+  //   });
+  //
+  //   if (!userAdmin) {
+  //     userAdmin = await this.userModel.create({
+  //       ...createUserDto,
+  //     });
+  //   }
+  //
+  //   const code = (
+  //     Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
+  //   ).toString();
+  //
+  //   const updatedUserAdmin = await this.userModel.findByIdAndUpdate(
+  //     userAdmin._id,
+  //     { verificationCode: code, status: EStatus.NotVerified },
+  //     { new: true, useFindAndModify: false },
+  //   );
+  //
+  //   this.emailService.sendUserConfirmation(
+  //     updatedUserAdmin.email,
+  //     updatedUserAdmin.verificationCode,
+  //   );
+  //
+  //   const { password, verificationCode, __v, ...userAdminDtoReverse } =
+  //     updatedUserAdmin.toObject();
+  //
+  //   return userAdminDtoReverse;
+  // }
 
   async createUserCustomer(
     createUserCustomerDto: createUserCustomerDto,
@@ -110,16 +114,21 @@ export class UsersService {
     return userDtoReverse;
   }
 
-  async updateUserCustomer(id, dto) {
+  async updateUser(param, body, files: Array<Express.Multer.File>) {
+    // this.commonService.multerFactory(files);
+    //
+    const avatarURL = this.commonService.multerFactory(files)[0];
+    console.log(10066, param, body, files);
     const updatedUserCustomer = await this.userModel.findByIdAndUpdate(
-      id,
-      { ...dto }, /// $set: dto
-      { new: true, useFindAndModify: false },
+      param.id,
+      { ...body, ...(avatarURL && { avatarURL }) }, /// $set: dto
+      { new: true },
     );
-
+    console.log(10077, updatedUserCustomer);
     const { password, verificationCode, __v, ...userDtoReverse } =
-      updatedUserCustomer.toObject();
+      updatedUserCustomer?.toObject();
     return userDtoReverse;
+    // return 15;
   }
 
   async signOutUser(parsedToken) {
@@ -177,6 +186,7 @@ export class UsersService {
     const tokens = await this.getPairTokensUtilit(createSession, user);
 
     return {
+      _id: user._id,
       username: user.username,
       email: user.email,
       status: user.status,
@@ -205,7 +215,9 @@ export class UsersService {
     const session = await this.sessionModel.findById(parsedToken.sid);
     const user = await this.userModel.findById(parsedToken.uid);
 
-    console.log(parsedToken, session, user, 99999911);
+    // console.log(parsedToken, 11999119911);
+    // console.log(user, 21999119911);
+    // console.log(session, 31999119911);
     // console.log(
     //   !session,
     //   !user,
@@ -242,7 +254,7 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '30s' },
+      { expiresIn: '30d' },
     );
     const refreshToken = await this.jwtService.sign(
       {
@@ -252,11 +264,26 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '50s' },
+      { expiresIn: '60d' },
     );
 
     return { accessToken, refreshToken };
   };
+
+  // updateUser(files: Array<Express.Multer.File>) {
+  //   this.commonService.multerFactory(files);
+  //   // files.forEach((file) => {
+  //   //   const uniqueSuffix = Date.now();
+  //   //   const ext = path.parse(file.originalname).ext;
+  //   //   console.log(process.cwd() + '/uploads/' + uniqueSuffix + ext);
+  //   //   sharp(file.buffer)
+  //   //     .resize(320, 240)
+  //   //     .jpeg({ mozjpeg: true })
+  //   //     .toFile(process.cwd() + '/uploads/' + uniqueSuffix + ext, (err, info) =>
+  //   //       console.log(100000666, err, info),
+  //   //     );
+  //   // });
+  // }
 
   async googleLogin(req) {
     if (!req.user) throw new UnauthorizedException('Not authorized');
@@ -277,7 +304,7 @@ export class UsersService {
         username: req.user.email.split('@')[0],
         avatarURL: req.user.picture,
         status: EStatus.NotRequiredVerification,
-        customer: '60e416946e3053133891ad81', // dummy
+        // customer: '60e416946e3053133891ad81', // dummy
       });
 
       isNew = true;
@@ -294,15 +321,17 @@ export class UsersService {
     const tokens = await this.getPairTokensUtilit(createSession, user);
 
     return {
-      name: user.username,
+      _id: user._id,
+      username: user.username,
       email: user.email,
       status: user.status,
       role: user.role,
+      socialAuth: user.socialAuth,
+      avatarURL: user.avatarURL,
       accessToken: tokens.accessToken,
       refreshToken: tokens.refreshToken,
+      // isNew,
       // tokens,
-      isNew,
-      userId: userObjectId,
     };
   }
 

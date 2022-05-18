@@ -21,6 +21,23 @@ import { PassportModule } from '@nestjs/passport';
 import { FavoritesModule } from './favorites/favorites.module';
 import { ProductsService } from './products/products.service';
 import { TesterModule } from './tester/tester.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
+import { serveStaticOptions, storage } from 'src/config/config-entity';
+import * as multer from 'multer';
+
+const storage2 = multer.diskStorage({
+  destination: 'uploads',
+  // destination: function (req, file, cb) {
+  //   cb(null, 'uploads');
+  // },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now();
+    const ext = path.parse(file.originalname).ext;
+    cb(null, uniqueSuffix + ext);
+  },
+});
 
 // @Global()
 @Module({
@@ -32,6 +49,12 @@ import { TesterModule } from './tester/tester.module';
       // envFilePath: '.env',
     }),
     MongooseModule.forRoot(process.env.MONGO_URL),
+    // MulterModule.registerAsync({ useFactory: () => ({ storage: storage2 }) }),
+    // MulterModule.register({ storage }),
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     UsersModule,
     CustomersModule,
     OrdersModule,

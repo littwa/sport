@@ -21,6 +21,9 @@ import {
   UnauthorizedException,
   Headers,
   Inject,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { NextFunction, Response } from 'express';
@@ -34,7 +37,27 @@ import { RolesGuard } from './authorization/roles.guard';
 import * as passport from 'passport';
 import { ProductsModule } from '../products/products.module';
 import { ProductsService } from '../products/products.service';
+import {
+  AnyFilesInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
+import * as multer from 'multer';
+import * as path from 'path';
+import { storage } from 'src/config/config-entity';
+import * as sharp from 'sharp';
 // import { ConfigServiceTest } from '../app.module';
+
+// const storage = multer.diskStorage({
+//   destination: 'uploads',
+//   // destination: function (req, file, cb) {
+//   //   cb(null, 'uploads');
+//   // },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now();
+//     const ext = path.parse(file.originalname).ext;
+//     cb(null, uniqueSuffix + ext);
+//   },
+// });
 
 @Controller('users')
 export class UsersController {
@@ -43,24 +66,28 @@ export class UsersController {
     @Inject('ProductsServiceToken') private productsService: ProductsService, // private readonly uf: // private tc: ConfigServiceTest,
   ) {}
 
+  @Get('get-test')
+  getTest(@Request() req) {
+    return 'get-test work';
+  }
+
   // Google-auth
-  @Get('google-auth')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-    console.log(10000000000009);
-  } // here will be redirect
+  // @Get('google-auth')
+  // @UseGuards(AuthGuard('google'))
+  // async googleAuth() {
+  //   console.log(1999999999);
+  // } // here will be redirect
 
   @Get('google-auth/redirect')
   @UseGuards(AuthGuard('google'))
-  //@Redirect('http://localhost:4200/choicse-customer') // 'http://localhost:4200/choicse-customer'  // google-auth/return
+  @Redirect() // 'http://localhost:4200/choicse-customer'  // google-auth/return
   async googleAuthRedirect(
     @Req() req,
     @Res() res,
     @Body() body,
     @Headers() headers,
+    @Query() q,
   ) {
-    console.log(1000001, req.user);
-
     const dto = await this.userService.googleLogin(req);
     const qString = Object.entries(dto).reduce((acc, el, i, arr) => {
       acc = acc + el[0].toString() + '=' + el[1].toString();
@@ -68,9 +95,12 @@ export class UsersController {
       return acc;
     }, '');
 
-    return res.redirect(
-      `${process.env.BASE_URL_FRONT_END}/choice-customer?${qString}`,
-    );
+    console.log(10000014);
+    return {
+      url: `${process.env.BASE_URL_FRONT_END}/?${qString}`,
+    };
+
+    // return res.redirect(`${process.env.BASE_URL_FRONT_END}/?${qString}`);
   }
 
   @Post('sign-up')
@@ -93,10 +123,48 @@ export class UsersController {
     return this.userService.signOutUser(req.user);
   }
 
-  @Post('up-date/:idCustomer')
+  @Post('up-date/:id')
+  @UseInterceptors(AnyFilesInterceptor()) // { storage }
   @HttpCode(HttpStatus.OK)
-  updateCustomer(@Body() body, @Param() param): any {
-    return this.userService.updateUserCustomer(param.idCustomer, body);
+  async updateUser(
+    @Body() body,
+    @Param() param,
+    @Query() query,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    // console.log(30005, param);
+    // console.log(30006, body);
+    // console.log(30007, query);
+    console.log(30004, param, body, files);
+
+    return await this.userService.updateUser(param, body, files);
+    // console.log(30005, ret);
+
+    // files.forEach((file) => {
+    //   const uniqueSuffix = Date.now();
+    //   const ext = path.parse(file.originalname).ext;
+    //   console.log(process.cwd() + '/uploads/' + uniqueSuffix + ext);
+    //   sharp(file.buffer)
+    //     .resize(320, 240)
+    //     .jpeg({ mozjpeg: true })
+    //     .toFile(process.cwd() + '/uploads/' + uniqueSuffix + ext, (err, info) =>
+    //       console.log(100000666, err, info),
+    //     );
+    // });
+    // .resize(200)
+    // sharp(process.cwd() + '/' + data[1].path)
+    //   .rotate()
+    //   .jpeg({ mozjpeg: true })
+    //   .toFile(process.cwd() + '/u' + data[1].path)
+    //   .then((dataSharp) => {
+    //     console.log(30008, dataSharp);
+    //   })
+    //   .catch((err) => {
+    //     console.log(30009, err);
+    //   });
+    // multer({ storage })(req, res, next);
+    // return 'ok+';
+    // return this.userService.updateUser(param.id, body);
   }
 
   // @Get('admin/verify/:verificationCode')
@@ -162,7 +230,6 @@ export class UsersController {
     // console.log(this.tc.v);
     console.log(10007, this.userService.configFactory.v);
     console.log(10008, this.userService.useClassTest.v);
-    // console.log(888, process.env.NODE_ENV);
     // console.log(this.userService.configService.get('jwtExpires30days'));
     // console.log('Headers: ', headers);
     // console.log('req: ', req.rawHeaders);
