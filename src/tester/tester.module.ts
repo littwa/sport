@@ -6,7 +6,7 @@ import { Favorite, TesterSchema } from './tester.schema';
 import { ProductsService } from '../products/products.service';
 import { ProductsModule } from '../products/products.module';
 import { AppService } from '../app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TesterAService } from './tester.a.service';
 import { TesterBService } from './tester.b.service';
 // import { OrdersService } from 'src/orders/orders.service';
@@ -40,13 +40,18 @@ export const useClassTest = {
 //=============================================================
 const useFactoryTest = {
   provide: 'UseFactoryTest',
-  useFactory: (configServiceTest: ConfigServiceTest) => {
-    console.log(10009, process.env.NODE_ENV, configServiceTest.v);
+  useFactory: (
+    configServiceTest: ConfigServiceTest,
+    configService: ConfigService,
+  ) => {
+    console.log(10007, process.env.NODE_ENV);
+    console.log(10008, configService.get('NODE_ENV'));
+    console.log(10009, configServiceTest.v);
     return process.env.NODE_ENV === 'development'
       ? new DevelopmentConfigService()
       : new ProductionConfigService();
   },
-  inject: [ConfigServiceTest],
+  inject: [ConfigServiceTest, ConfigService],
 };
 //=============================================================
 

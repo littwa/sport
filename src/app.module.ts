@@ -46,7 +46,7 @@ const storage2 = multer.diskStorage({
     ConfigModule.forRoot({
       load: [configuration],
       isGlobal: true,
-      // envFilePath: '.env',
+      envFilePath: ['.env'], // not necessary
     }),
     MongooseModule.forRoot(process.env.MONGO_URL),
     // MulterModule.registerAsync({ useFactory: () => ({ storage: storage2 }) }),

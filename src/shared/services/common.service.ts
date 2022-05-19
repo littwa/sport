@@ -41,7 +41,7 @@ export class CommonService {
   multerFactory(files: Array<Express.Multer.File>): string[] {
     return files.map((file) => {
       const uniqueSuffix = Date.now();
-      const ext = '.webp'; // path.parse(file.originalname).ext;
+      const ext = '.webp'; //  path.parse(file.originalname).ext;
       // console.log(
       //   `${process.env.BASE_URL_API}/${UPLOADS}/${uniqueSuffix}${ext}`,
       // );
