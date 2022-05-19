@@ -13,16 +13,18 @@ export default () => ({
       from: '"No Reply" <noreply@example.com>',
     },
   },
-  jwtExpires30days: {
-    exp: '30d',
-    expIncrement: 2592000000,
-  },
-  jwtExpires60Seconds: {
-    exp: '60s',
-    expIncrement: 60000,
-  },
-  jwtExpires300Seconds: {
-    exp: '300s',
-    expIncrement: 300000,
+  jwtExpires: {
+    _30days: {
+      exp: '30d',
+      expIncrement: 2592000000,
+    },
+    _60Seconds: {
+      exp: '60s',
+      expIncrement: 60000,
+    },
+    _300Seconds: {
+      exp: '300s',
+      expIncrement: 300000,
+    },
   },
 });

@@ -25,11 +25,14 @@ import { CommonService } from '../shared/services/common.service';
 
 @Injectable()
 export class UsersService {
-  // private exp30days = this.configService.get('jwtExpires30days').exp;
-  private str60s = this.configService.get('jwtExpires60Seconds').exp;
-  private str30d = this.configService.get('jwtExpires30days').exp;
+  // private exp30days = this.configService.get('jwtExpires._30days').exp;
+  private str60s = this.configService.get('jwtExpires._60Seconds').exp;
+  private str30d = this.configService.get('jwtExpires._30days').exp;
   private exp30d =
-    Date.now() + this.configService.get('jwtExpires30days').expIncrement;
+    Date.now() + this.configService.get('jwtExpires._30days').expIncrement;
+
+  private refreshTokenPath = 'jwtExpires._30days';
+  private accessTokenPath = 'jwtExpires._60Seconds';
 
   constructor(
     // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
@@ -115,8 +118,6 @@ export class UsersService {
   }
 
   async updateUser(param, body, files: Array<Express.Multer.File>) {
-    // this.commonService.multerFactory(files);
-    //
     const avatarURL = this.commonService.multerFactory(files)[0];
     console.log(10066, param, body, files);
     const updatedUserCustomer = await this.userModel.findByIdAndUpdate(
@@ -124,11 +125,9 @@ export class UsersService {
       { ...body, ...(avatarURL && { avatarURL }) }, /// $set: dto
       { new: true },
     );
-    console.log(10077, updatedUserCustomer);
     const { password, verificationCode, __v, ...userDtoReverse } =
       updatedUserCustomer?.toObject();
     return userDtoReverse;
-    // return 15;
   }
 
   async signOutUser(parsedToken) {
@@ -179,11 +178,8 @@ export class UsersService {
 
     const userObjectId = user._id;
 
-    const createSession = await this.sessionModel.create({
-      uid: userObjectId,
-    });
-
-    const tokens = await this.getPairTokensUtilit(createSession, user);
+    const createSession = await this.createSessionUtility(userObjectId);
+    const tokens = this.getPairTokensUtility(createSession, user);
 
     return {
       _id: user._id,
@@ -215,38 +211,21 @@ export class UsersService {
     const session = await this.sessionModel.findById(parsedToken.sid);
     const user = await this.userModel.findById(parsedToken.uid);
 
-    // console.log(parsedToken, 11999119911);
-    // console.log(user, 21999119911);
-    // console.log(session, 31999119911);
-    // console.log(
-    //   !session,
-    //   !user,
-    //   user._id.toString() !== session.uid.toString(),
-    //   777777771,
-    // );
     if (!session || !user || user._id.toString() !== session.uid.toString())
       throw new UnauthorizedException('Not authorized');
-
-    //=============
-    // const exp60s = Date.now() + this.jwtExpires60Seconds.expIncrement;
-    // const exp = Date.now() + 2592000000;
-    //=============
 
     const delSession = await this.sessionModel.findByIdAndDelete(
       parsedToken.sid,
     );
 
-    const createSession = await this.sessionModel.create({
-      uid: parsedToken.uid,
-    });
-
-    const newPairTokens = this.getPairTokensUtilit(createSession, user);
+    const createSession = await this.createSessionUtility(parsedToken.uid);
+    const newPairTokens = this.getPairTokensUtility(createSession, user);
 
     return newPairTokens;
   }
 
-  getPairTokensUtilit = async (session, user) => {
-    const accessToken = await this.jwtService.sign(
+  getPairTokensUtility = (session, user) => {
+    const accessToken = this.jwtService.sign(
       {
         sid: session._id,
         uid: session.uid,
@@ -254,9 +233,9 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '30d' },
+      { expiresIn: this.configService.get(this.accessTokenPath).exp },
     );
-    const refreshToken = await this.jwtService.sign(
+    const refreshToken = this.jwtService.sign(
       {
         sid: session._id,
         uid: session.uid,
@@ -264,26 +243,21 @@ export class UsersService {
         email: user.email,
         role: user.role,
       },
-      { expiresIn: '60d' },
+      { expiresIn: this.configService.get(this.refreshTokenPath).exp },
     );
 
     return { accessToken, refreshToken };
   };
 
-  // updateUser(files: Array<Express.Multer.File>) {
-  //   this.commonService.multerFactory(files);
-  //   // files.forEach((file) => {
-  //   //   const uniqueSuffix = Date.now();
-  //   //   const ext = path.parse(file.originalname).ext;
-  //   //   console.log(process.cwd() + '/uploads/' + uniqueSuffix + ext);
-  //   //   sharp(file.buffer)
-  //   //     .resize(320, 240)
-  //   //     .jpeg({ mozjpeg: true })
-  //   //     .toFile(process.cwd() + '/uploads/' + uniqueSuffix + ext, (err, info) =>
-  //   //       console.log(100000666, err, info),
-  //   //     );
-  //   // });
-  // }
+  async createSessionUtility(uid) {
+    const expRefreshToken =
+      Date.now() + this.configService.get(this.refreshTokenPath).expIncrement;
+
+    return await this.sessionModel.create({
+      uid,
+      expRefreshToken,
+    });
+  }
 
   async googleLogin(req) {
     if (!req.user) throw new UnauthorizedException('Not authorized');
@@ -314,11 +288,8 @@ export class UsersService {
 
     const userObjectId = user._id;
 
-    const createSession = await this.sessionModel.create({
-      uid: userObjectId,
-    });
-
-    const tokens = await this.getPairTokensUtilit(createSession, user);
+    const createSession = await this.createSessionUtility(userObjectId);
+    const tokens = this.getPairTokensUtility(createSession, user);
 
     return {
       _id: user._id,

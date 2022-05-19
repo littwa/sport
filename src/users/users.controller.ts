@@ -140,39 +140,7 @@ export class UsersController {
     @Query() query,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    // console.log(30005, param);
-    // console.log(30006, body);
-    // console.log(30007, query);
-    console.log(30004, param, body, files);
-
     return await this.userService.updateUser(param, body, files);
-    // console.log(30005, ret);
-
-    // files.forEach((file) => {
-    //   const uniqueSuffix = Date.now();
-    //   const ext = path.parse(file.originalname).ext;
-    //   console.log(process.cwd() + '/uploads/' + uniqueSuffix + ext);
-    //   sharp(file.buffer)
-    //     .resize(320, 240)
-    //     .jpeg({ mozjpeg: true })
-    //     .toFile(process.cwd() + '/uploads/' + uniqueSuffix + ext, (err, info) =>
-    //       console.log(100000666, err, info),
-    //     );
-    // });
-    // .resize(200)
-    // sharp(process.cwd() + '/' + data[1].path)
-    //   .rotate()
-    //   .jpeg({ mozjpeg: true })
-    //   .toFile(process.cwd() + '/u' + data[1].path)
-    //   .then((dataSharp) => {
-    //     console.log(30008, dataSharp);
-    //   })
-    //   .catch((err) => {
-    //     console.log(30009, err);
-    //   });
-    // multer({ storage })(req, res, next);
-    // return 'ok+';
-    // return this.userService.updateUser(param.id, body);
   }
 
   // @Get('admin/verify/:verificationCode')
