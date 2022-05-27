@@ -26,5 +26,9 @@ export default () => ({
       exp: '300s',
       expIncrement: 300000,
     },
+    _1hour: {
+      exp: '1h',
+      expIncrement: 3600000,
+    },
   },
 });

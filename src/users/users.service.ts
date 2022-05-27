@@ -26,13 +26,13 @@ import { CommonService } from '../shared/services/common.service';
 @Injectable()
 export class UsersService {
   // private exp30days = this.configService.get('jwtExpires._30days').exp;
-  private str60s = this.configService.get('jwtExpires._60Seconds').exp;
-  private str30d = this.configService.get('jwtExpires._30days').exp;
-  private exp30d =
-    Date.now() + this.configService.get('jwtExpires._30days').expIncrement;
+  // private str60s = this.configService.get('jwtExpires._60Seconds').exp;
+  // private str30d = this.configService.get('jwtExpires._30days').exp;
+  // private exp30d =
+  //   Date.now() + this.configService.get('jwtExpires._30days').expIncrement;
 
   private refreshTokenPath = 'jwtExpires._30days';
-  private accessTokenPath = 'jwtExpires._60Seconds';
+  private accessTokenPath = 'jwtExpires._1hour'; // 'jwtExpires._60Seconds'; // 'jwtExpires._1hour'
 
   constructor(
     // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
@@ -154,10 +154,13 @@ export class UsersService {
   }
 
   async getCurrentUser({ _id }) {
-    const infoUser = await this.userModel.findOne({
-      _id,
-      role: ERole.Customer,
-    }); // .populate('customer');
+    const infoUser = await this.userModel
+      .findOne({
+        _id,
+        role: ERole.Customer,
+      })
+      .populate('followers')
+      .populate('following'); // .populate('customer');
     if (!infoUser) throw new BadRequestException('User was not found');
     const { password, verificationCode, __v, ...userDtoInfo } =
       infoUser.toObject();
@@ -167,7 +170,10 @@ export class UsersService {
   async signIn(signInDto) {
     const { email, password } = signInDto;
 
-    const user = await this.userModel.findOne({ email, role: ERole.Customer });
+    const user = await this.userModel
+      .findOne({ email, role: ERole.Customer })
+      .populate('followers')
+      .populate('following');
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -191,6 +197,23 @@ export class UsersService {
       refreshToken: tokens.refreshToken,
       // tokens,
     };
+  }
+
+  async follow(req, body) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $push: { followers: body.followId } },
+      { new: true },
+    );
+
+    const follower = await this.userModel.findByIdAndUpdate(
+      body.followId,
+      { $push: { following: req.user._id } },
+      { new: true },
+    );
+    // console.log(101, req.user, body);
+
+    return user;
   }
 
   async getRefreshToken(req) {
@@ -262,11 +285,14 @@ export class UsersService {
   async googleLogin(req) {
     if (!req.user) throw new UnauthorizedException('Not authorized');
 
-    let user = await this.userModel.findOne({
-      email: req.user.email,
-      role: ERole.Customer,
-      socialAuth: req.user.profile.provider,
-    });
+    let user = await this.userModel
+      .findOne({
+        email: req.user.email,
+        role: ERole.Customer,
+        socialAuth: req.user.profile.provider,
+      })
+      .populate('followers')
+      .populate('following');
     let isNew = false;
     if (!user) {
       user = await this.userModel.create({

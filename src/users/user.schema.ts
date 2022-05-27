@@ -17,8 +17,14 @@ export class User extends Document {
   @Prop({ type: String, required: false, default: '' })
   lastName: string;
 
+  @Prop({ type: Number, required: false, default: '' })
+  yearOfBirth: number;
+
   @Prop({ type: String, required: false, default: '' })
-  age: string;
+  country: string;
+
+  @Prop({ type: String, required: false, default: '' })
+  city: string;
 
   @Prop({
     type: String,
@@ -43,8 +49,14 @@ export class User extends Document {
   @Prop({ type: String, default: '', required: false })
   avatarURL: string;
 
-  @Prop({ type: String, default: 'No', required: false })
+  @Prop({ type: String, default: '', required: false })
   socialAuth: string;
+
+  @Prop({ type: String, default: '', required: false })
+  occupation: string;
+
+  @Prop({ type: String, default: '', required: false })
+  hobby: string;
 
   @Prop({
     type: String,
@@ -53,6 +65,12 @@ export class User extends Document {
     default: 'Not Required Verification',
   })
   status: string;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  followers: UserDocument[];
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  following: UserDocument[];
 
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
   // ordersList: Order[];

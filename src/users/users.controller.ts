@@ -70,9 +70,11 @@ export class UsersController {
 
   @Get('get-test')
   @UseInterceptors(AnyFilesInterceptor())
-  getTest(@Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+  getTest(@Request() request, @Headers() headers, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+    console.log(1000001, request);
     return {
-      files: this.commonService.multerFactory(files),
+      // files: this.commonService.multerFactory(files),
+      // req: req,
       BASE_URL_API: process.env.BASE_URL_API,
       processCwd: process.cwd(),
       dirname__: __dirname,
@@ -167,11 +169,11 @@ export class UsersController {
     return this.userService.signIn(body);
   }
 
-  @Get()
+  @Post('follow')
   @UseGuards(AuthGuard('jwt'))
-  @Roles(ERole.Admin)
-  getCurrentMeneger(@Request() req) {
-    return req.user;
+  // @Roles(ERole.Admin)
+  follow(@Request() req, @Body() body) {
+    return this.userService.follow(req, body);
   }
 
   @Get('local')
