@@ -17,8 +17,8 @@ export class User extends Document {
   @Prop({ type: String, required: false, default: '' })
   lastName: string;
 
-  @Prop({ type: Number, required: false, default: '' })
-  yearOfBirth: number;
+  @Prop({ type: String, required: false, default: '' })
+  yearOfBirth: string;
 
   @Prop({ type: String, required: false, default: '' })
   country: string;

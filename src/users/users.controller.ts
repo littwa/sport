@@ -142,6 +142,7 @@ export class UsersController {
     @Query() query,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
+    console.log(1000005, body, param, query);
     return await this.userService.updateUser(param, body, files);
   }
 

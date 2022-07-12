@@ -118,8 +118,8 @@ export class UsersService {
   }
 
   async updateUser(param, body, files: Array<Express.Multer.File>) {
-    const avatarURL = this.commonService.multerFactory(files)[0];
     console.log(10066, param, body, files);
+    const avatarURL = files && this.commonService.multerFactory(files)[0];
     const updatedUserCustomer = await this.userModel.findByIdAndUpdate(
       param.id,
       { ...body, ...(avatarURL && { avatarURL }) }, /// $set: dto
