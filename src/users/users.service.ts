@@ -79,18 +79,13 @@ export class UsersService {
   //   return userAdminDtoReverse;
   // }
 
-  async createUserCustomer(
-    createUserCustomerDto: createUserCustomerDto,
-  ): Promise<object> {
+  async createUserCustomer(createUserCustomerDto: createUserCustomerDto): Promise<object> {
     let user = await this.userModel.findOne({
       email: createUserCustomerDto.email,
       role: ERole.Customer,
     });
 
-    if (user)
-      throw new BadRequestException(
-        'User customer with current email is registered',
-      );
+    if (user) throw new BadRequestException('User customer with current email is registered');
 
     const hashPassword = await bcrypt.hash(createUserCustomerDto.password, 5);
 
@@ -111,8 +106,7 @@ export class UsersService {
 
     // this.emailService.sendUserConfirmation(user.email, user.verificationCode);
 
-    const { password, verificationCode, __v, ...userDtoReverse } =
-      user.toObject();
+    const { password, verificationCode, __v, ...userDtoReverse } = user.toObject();
 
     return userDtoReverse;
   }
@@ -125,16 +119,13 @@ export class UsersService {
       { ...body, ...(avatarURL && { avatarURL }) }, /// $set: dto
       { new: true },
     );
-    const { password, verificationCode, __v, ...userDtoReverse } =
-      updatedUserCustomer?.toObject();
+    const { password, verificationCode, __v, ...userDtoReverse } = updatedUserCustomer?.toObject();
     return userDtoReverse;
   }
 
   async signOutUser(parsedToken) {
     console.log(10000088, parsedToken);
-    const deletedSession = await this.sessionModel.findByIdAndDelete(
-      parsedToken.sid,
-    );
+    const deletedSession = await this.sessionModel.findByIdAndDelete(parsedToken.sid);
 
     if (!deletedSession) {
       throw new BadRequestException('No current session');
@@ -144,12 +135,9 @@ export class UsersService {
   }
 
   async getInfoUserCustomer({ _id }) {
-    const infoCusomer = await this.userModel
-      .findOne({ _id, role: ERole.Customer })
-      .populate('customer');
+    const infoCusomer = await this.userModel.findOne({ _id, role: ERole.Customer }).populate('customer');
     if (!infoCusomer) throw new BadRequestException('Customer was not found');
-    const { password, verificationCode, __v, ...userDtoInfo } =
-      infoCusomer.toObject();
+    const { password, verificationCode, __v, ...userDtoInfo } = infoCusomer.toObject();
     return userDtoInfo;
   }
 
@@ -162,8 +150,7 @@ export class UsersService {
       .populate('followers')
       .populate('following'); // .populate('customer');
     if (!infoUser) throw new BadRequestException('User was not found');
-    const { password, verificationCode, __v, ...userDtoInfo } =
-      infoUser.toObject();
+    const { password, verificationCode, __v, ...userDtoInfo } = infoUser.toObject();
     return userDtoInfo;
   }
 
@@ -179,8 +166,7 @@ export class UsersService {
 
     if (!user) throw new BadRequestException('User was not found');
     if (!isPasswordValid) throw new BadRequestException('Password wrong');
-    if (user.status !== 'Verified')
-      throw new BadRequestException('User not verified');
+    if (user.status !== 'Verified') throw new BadRequestException('User not verified');
 
     const userObjectId = user._id;
 
@@ -237,9 +223,7 @@ export class UsersService {
     if (!session || !user || user._id.toString() !== session.uid.toString())
       throw new UnauthorizedException('Not authorized');
 
-    const delSession = await this.sessionModel.findByIdAndDelete(
-      parsedToken.sid,
-    );
+    const delSession = await this.sessionModel.findByIdAndDelete(parsedToken.sid);
 
     const createSession = await this.createSessionUtility(parsedToken.uid);
     const newPairTokens = this.getPairTokensUtility(createSession, user);
@@ -273,8 +257,7 @@ export class UsersService {
   };
 
   async createSessionUtility(uid) {
-    const expRefreshToken =
-      Date.now() + this.configService.get(this.refreshTokenPath).expIncrement;
+    const expRefreshToken = Date.now() + this.configService.get(this.refreshTokenPath).expIncrement;
 
     return await this.sessionModel.create({
       uid,
