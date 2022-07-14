@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
+import { ProductDocument } from 'src/products/products.schema';
 // import { Order } from 'src/orders/orders.schema';
 // import { Customer } from 'src/customers/customers.schema';
 
@@ -72,13 +73,17 @@ export class User extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
   following: UserDocument[];
 
+  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Favorite' }] })
+  // favorites: ProductDocument[];
+
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
-  // ordersList: Order[];
+  // ordersList: OrderDocument[];
 
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer', required: false })
-  // customer: Customer;
+  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
+  // customer: CustomerDocument[];
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Favorite' }] }) favoriteList: Order[];
+  // @Prop({ type: Array, default: [] })
+  // cart: { product: ProductDocument; amount: number }[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

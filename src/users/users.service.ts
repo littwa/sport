@@ -162,11 +162,12 @@ export class UsersService {
       .populate('followers')
       .populate('following');
 
+    if (!user) throw new BadRequestException('User was not found');
+    if (user.status !== 'Verified') throw new BadRequestException('User not verified');
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!user) throw new BadRequestException('User was not found');
     if (!isPasswordValid) throw new BadRequestException('Password wrong');
-    if (user.status !== 'Verified') throw new BadRequestException('User not verified');
 
     const userObjectId = user._id;
 
@@ -195,6 +196,23 @@ export class UsersService {
     const follower = await this.userModel.findByIdAndUpdate(
       body.followId,
       { $push: { following: req.user._id } },
+      { new: true },
+    );
+    // console.log(101, req.user, body);
+
+    return user;
+  }
+
+  async unfollow(req, body) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { followers: body.followId } },
+      { new: true },
+    );
+
+    const follower = await this.userModel.findByIdAndUpdate(
+      body.followId,
+      { $pull: { following: req.user._id } },
       { new: true },
     );
     // console.log(101, req.user, body);

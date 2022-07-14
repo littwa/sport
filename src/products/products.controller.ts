@@ -4,7 +4,8 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpStatus, Inject,
+  HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
@@ -15,9 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('products')
 export class ProductsController {
-  constructor(
-    @Inject('ProductsServiceToken') private productsService: ProductsService,
-  ) {}
+  constructor(@Inject('ProductsServiceToken') private productsService: ProductsService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)

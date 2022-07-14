@@ -5,9 +5,7 @@ import { Product, ProductDocument } from './products.schema';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @InjectModel(Product.name) private productModel: Model<ProductDocument>,
-  ) {}
+  constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
 
   async addProduct(createProductDto) {
     const newProduct = await this.productModel.create({ ...createProductDto });
@@ -34,9 +32,7 @@ export class ProductsService {
       },
     );
 
-    return !updatedProduct
-      ? new NotFoundException(`Can't update Product id: ${productId}`)
-      : updatedProduct;
+    return !updatedProduct ? new NotFoundException(`Can't update Product id: ${productId}`) : updatedProduct;
   };
 
   deleteProduct = async (productId) => {

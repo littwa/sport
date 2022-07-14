@@ -177,6 +177,13 @@ export class UsersController {
     return this.userService.follow(req, body);
   }
 
+  @Post('unfollow')
+  @UseGuards(AuthGuard('jwt'))
+  // @Roles(ERole.Admin)
+  unfollow(@Request() req, @Body() body) {
+    return this.userService.unfollow(req, body);
+  }
+
   @Get('local')
   @UseGuards(AuthGuard('local'))
   testAuthGuardLocal(@Request() req) {
