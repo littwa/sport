@@ -70,8 +70,9 @@ export class UsersController {
 
   @Get('get-test')
   @UseInterceptors(AnyFilesInterceptor())
-  getTest(@Request() request, @Headers() headers, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
-    console.log(1000001, request);
+  async getTest(@Request() request, @Headers() headers, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+    // console.log(1000001, this.userService.test());
+    await this.userService.test();
     return {
       // files: this.commonService.multerFactory(files),
       // req: req,

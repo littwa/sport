@@ -46,6 +46,24 @@ export class UsersService {
     private commonService: CommonService,
   ) {}
 
+  async test(): Promise<any> {
+    // console.log(1100033, this.userModel.estimatedDocumentCount());
+    //console.log(1100044, this.userModel.count({ role: 'customer' }));
+    // const f = await this.userModel.count();
+    // const f = await this.userModel.countDocuments();
+    // const f = await this.userModel.estimatedDocumentCount();
+    const f = await this.userModel.find().sort({ _id: -1 }).limit(1);
+    // const f = await this.userModel.find().sort({ $natural: -1 }).limit(1);
+    console.log(1100055, f);
+
+    // let coll = db.collection('collection_name');
+    // coll.count().then((count) => {
+    //   console.log(count);
+    // });
+
+    return this.userModel.find().count();
+  }
+
   // async createUserAdmin(createUserDto: createUserDto): Promise<object> {
   //   let userAdmin = await this.userModel.findOne({
   //     email: createUserDto.email,
