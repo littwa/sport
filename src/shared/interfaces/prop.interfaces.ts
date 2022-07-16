@@ -30,3 +30,7 @@ export interface IPrice {
   pcs?: string;
   box?: string;
 }
+
+export interface ICharacteristic {
+  [k: string]: any;
+}

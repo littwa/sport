@@ -26,6 +26,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import * as path from 'path';
 import { serveStaticOptions, storage } from 'src/config/config-entity';
 import * as multer from 'multer';
+import {ReviewsModule} from "./reviews/reviews.module";
 
 const storage2 = multer.diskStorage({
   destination: 'uploads',
@@ -60,6 +61,7 @@ const storage2 = multer.diskStorage({
     OrdersModule,
     ProductsModule,
     DocsModule,
+    ReviewsModule,
     FavoritesModule,
     TesterModule,
   ],
