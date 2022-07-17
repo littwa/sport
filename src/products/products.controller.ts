@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -24,7 +25,7 @@ export class ProductsController {
     return this.productsService.getProducts();
   }
 
-  @Post('/add')
+  @Post('add')
   @HttpCode(HttpStatus.CREATED)
   addProduct(@Body() body) {
     return this.productsService.addProduct(body);
@@ -47,4 +48,10 @@ export class ProductsController {
   testProducts() {
     return { testProducts: true };
   }
+
+  // @Put('update/:productId')
+  // @HttpCode(HttpStatus.OK)
+  // updateProductPut(@Body() body, @Param() param) {
+  //   return this.productsService.updateProduct(body, param.productId);
+  // }
 }

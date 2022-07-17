@@ -15,6 +15,9 @@ export class Product extends Document {
   @Prop({ type: String, required: true })
   name: string;
 
+  @Prop({ type: String, default: 'other' })
+  category: string;
+
   @Prop({ type: String, default: 'pcs', enum: ['kg', 'box', 'pcs'] })
   unit: string;
 
@@ -45,8 +48,8 @@ export class Product extends Document {
   @Prop({ type: Object, default: {} })
   characteristic: ICharacteristic;
 
-  @Prop({ type: Array, default: [] })
-  stars: 1 | 2 | 3 | 4 | 5[];
+  @Prop({ type: Object, default: {} })
+  stars: { [k: string]: 1 | 2 | 3 | 4 | 5 };
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }] })
   reviews: ReviewDocument[];
