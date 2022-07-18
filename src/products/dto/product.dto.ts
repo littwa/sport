@@ -1,4 +1,4 @@
-export class updateProductDto {
+export class UpdateProductDto {
   readonly name?: string;
   readonly category?: string;
   readonly unit: string;
@@ -12,6 +12,10 @@ export class updateProductDto {
   readonly characteristic?: string;
 }
 
-export class createProductDto extends updateProductDto {
+export class CreateProductDto extends UpdateProductDto {
   readonly name: string;
+}
+
+export class RateDto {
+  readonly [userID: string]: 1 | 2 | 3 | 4 | 5;
 }

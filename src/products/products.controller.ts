@@ -43,6 +43,12 @@ export class ProductsController {
     return this.productsService.deleteProduct(param.productId);
   }
 
+  @Patch('rate/:productId')
+  @HttpCode(HttpStatus.OK)
+  rateProduct(@Body() body, @Param() param) {
+    return this.productsService.giveRatingProduct(body, param.productId);
+  }
+
   @Get('test')
   @HttpCode(HttpStatus.OK)
   testProducts() {
