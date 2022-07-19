@@ -19,8 +19,8 @@ export class Review extends Document {
   @Prop({ type: Array, default: [] })
   tags: string[];
 
-  @Prop({ type: Array, default: [] })
-  likes: string[]; //!!!!!!!!!!!!!!! obj
+  @Prop({ type: Object, default: {} })
+  likes: { [userId: string]: boolean };
 
   @Prop({ type: String, required: false })
   userAvatarURL: string;

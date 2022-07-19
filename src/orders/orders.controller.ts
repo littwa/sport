@@ -6,18 +6,20 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
+  Post, Req, UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Post('add')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
-  createOrders(@Body() body) {
-    return this.ordersService.createOrder(body);
+  createOrders(@Body() body, @Req() req) {
+    return this.ordersService.createOrder(body, req);
   }
 
   @Get()

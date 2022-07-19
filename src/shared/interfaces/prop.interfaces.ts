@@ -34,3 +34,17 @@ export interface IPrice {
 export interface ICharacteristic {
   [k: string]: any;
 }
+
+export interface IAddress {
+  country?: string;
+  region?: string;
+  city?: string;
+  street?: string;
+}
+
+export interface IOrderData {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  tel?: string;
+}

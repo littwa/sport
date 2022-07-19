@@ -4,7 +4,7 @@ import { Model, Types, ObjectId } from 'mongoose';
 import { Product, ProductDocument } from 'src/products/products.schema';
 import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
-import { createOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -13,10 +13,10 @@ export class OrdersService {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
   ) {}
 
-  async createOrder(createOrderDto: createOrderDto) {
+  async createOrder(createOrderDto: CreateOrderDto, req) {
     const newOrder = await this.orderModel.create({
       ...createOrderDto,
-      // customerId: Types.ObjectId(createOrderDto.customerId),
+      userId: req.user._id,
       // productsList: createOrderDto.productsList.map((id: string) => Types.ObjectId(id))
     });
 

@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Review, ReviewDocument, ReviewSchema } from 'src/reviews/reviews.schema';
 import { Product, ProductDocument } from 'src/products/products.schema';
+import { EditDto, LikeDto } from './dto/reviews.dto';
+import { RateDto } from '../products/dto/product.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -41,5 +43,35 @@ export class ReviewsService {
     );
     console.log(204, deletedReview, updatedProduct);
     // return { deletedReview, updatedProduct };
+  }
+
+  async editReview(body: EditDto, reviewId: string) {
+    const editedReview = await this.reviewsModel.findByIdAndUpdate(
+      reviewId,
+      {
+        $set: { review: body.review, tags: body.tags },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
+    return editedReview;
+  }
+
+  async setLike(like: LikeDto, reviewId) {
+    const [keyUserId, valueLike] = Object.entries(like)[0];
+    const likedReview = this.reviewsModel.findByIdAndUpdate(
+      reviewId,
+      {
+        $set: { [`likes.${keyUserId}`]: valueLike },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
+
+    return likedReview;
   }
 }

@@ -73,17 +73,20 @@ export class User extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
   following: UserDocument[];
 
+  // @Prop({ type: Object, default: {} })
+  // cart: { [productId: string]: number };
+
+  // @Prop({ type: Array, default: [] })
+  // cart: { product: ProductDocument; amount: number }[];
+
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
   // favorites: ProductDocument[];
 
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
-  // ordersList: OrderDocument[];
+  // orders: OrderDocument[];
 
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
   // customer: CustomerDocument[];
-
-  // @Prop({ type: Array, default: [] })
-  // cart: { product: ProductDocument; amount: number }[];
 
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
   // watchedProducts: ProductDocument[];

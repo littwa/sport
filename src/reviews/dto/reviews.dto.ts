@@ -11,3 +11,12 @@ export class reviewsDto {
   // readonly status: string;
   // readonly ordered: string;
 }
+
+export class EditDto {
+  readonly review: string;
+  readonly tags: string[];
+}
+
+export class LikeDto {
+  readonly [userID: string]: boolean;
+}

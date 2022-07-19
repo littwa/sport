@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, HttpCode, HttpStatus, Param, Post, Req, UseGuards} from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -18,5 +18,19 @@ export class ReviewsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   delReview(@Param() param) {
     return this.reviewsService.deleteReview(param.reviewId);
+  }
+
+  @Patch(':reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  editReview(@Param() param, @Body() body) {
+    return this.reviewsService.editReview(body, param.reviewId);
+  }
+
+  @Patch('like/:reviewId')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  rateProduct(@Body() body, @Param() param) {
+    return this.reviewsService.setLike(body, param.reviewId);
   }
 }
