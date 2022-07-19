@@ -1,6 +1,6 @@
-import { HttpCode, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { Product, ProductDocument } from './products.schema';
 import { addLeadingZeros, filterObject } from 'src/utility/utilities';
 import { CreateProductDto, RateDto, UpdateProductDto } from './dto/product.dto';
@@ -16,14 +16,16 @@ export class ProductsService {
     return allProducts;
   }
 
+  async getProductById(productId){
+    const product = await this.productModel.findById(productId).populate('reviews');
+    return product;
+  }
+
   async addProduct(createProductDto: CreateProductDto) {
     const lastProduct = await this.productModel.find().sort({ _id: -1 }).limit(1);
-
     const code = this.generateCodeUtility(lastProduct[0]);
-
     const newProduct = await this.productModel.create({ ...createProductDto, code });
     if (!newProduct) throw new NotFoundException(`Can't create Product`);
-
     return newProduct;
   }
 
@@ -46,26 +48,24 @@ export class ProductsService {
   async deleteProduct(productId) {
     const deletedProduct = await this.productModel.findByIdAndDelete(productId);
     if (!deletedProduct) throw new NotFoundException(`Can't del Product`);
-    console.log('deletedProduct', deletedProduct, productId);
-
     // Because @HttpCode(HttpStatus.NO_CONTENT) no return
     // return `Product ById: ${productId} has been deleted!`;
   }
 
   async giveRatingProduct(rate: RateDto, productId) {
-    const ratedProduct = await this.productModel.aggregate([{ $match: { _id: productId } }]);
-    console.log(1000011, ratedProduct);
+    const [keyUserId, valueRate] = Object.entries(rate)[0];
+    const ratedProduct = this.productModel.findByIdAndUpdate(
+      productId,
+      {
+        $set: { [`rating.${keyUserId}`]: valueRate },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
 
-    // const ratedProduct = this.productModel.findByIdAndUpdate(
-    //   productId,
-    //   {
-    //     $addFields: { stars: { rate } },
-    //   },
-    //   {
-    //     new: true,
-    //     useFindAndModify: false,
-    //   },
-    // );
+    // const ratedProduct = await this.productModel.aggregate([{ $match: { _id: productId } }]);
 
     // let p;
     // const ratedProduct = await this.productModel.findById(productId, function (err, product) {

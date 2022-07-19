@@ -49,7 +49,7 @@ export class Product extends Document {
   characteristic: ICharacteristic;
 
   @Prop({ type: Object, default: {} })
-  stars: { [k: string]: 1 | 2 | 3 | 4 | 5 };
+  rating: { [userId: string]: 1 | 2 | 3 | 4 | 5 };
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }] })
   reviews: ReviewDocument[];

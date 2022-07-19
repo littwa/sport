@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Customer, CustomerSchema } from 'src/customers/customers.schema'; // check how it works
 import { ICustomer, IDate } from 'src/shared/interfaces/prop.interfaces';
 import { Product } from 'src/products/products.schema';
+import { User } from 'src/users/user.schema';
 
 export type ReviewDocument = Review & Document;
 
@@ -19,19 +20,19 @@ export class Review extends Document {
   tags: string[];
 
   @Prop({ type: Array, default: [] })
-  likes: string[];
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
-  userId: string;
+  likes: string[]; //!!!!!!!!!!!!!!! obj
 
   @Prop({ type: String, required: false })
   userAvatarURL: string;
 
-  // @Prop({ type: Object, required: true })
-  // created: IDate;
+  @Prop({ type: String, default: new Date().toISOString() })
+  created: string;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  // productsList: Product[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+  product: Product;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user: User;
 
   //@Prop({ type: [CustomerSchema] })
   // productsList: ICustomer[]; //  Сheck how it works  ?????????

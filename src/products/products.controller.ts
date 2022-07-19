@@ -25,25 +25,35 @@ export class ProductsController {
     return this.productsService.getProducts();
   }
 
+  @Get(':productId')
+  @HttpCode(HttpStatus.OK)
+  getProductById(@Param() param) {
+    return this.productsService.getProductById(param.productId);
+  }
+
   @Post('add')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.CREATED)
   addProduct(@Body() body) {
     return this.productsService.addProduct(body);
   }
 
   @Patch('update/:productId')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   updateProduct(@Body() body, @Param() param) {
     return this.productsService.updateProduct(body, param.productId);
   }
 
   @Delete('del/:productId')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
   delProduct(@Param() param) {
     return this.productsService.deleteProduct(param.productId);
   }
 
   @Patch('rate/:productId')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   rateProduct(@Body() body, @Param() param) {
     return this.productsService.giveRatingProduct(body, param.productId);
