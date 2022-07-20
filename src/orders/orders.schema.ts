@@ -10,7 +10,7 @@ export type OrderDocument = Order & Document;
 
 @Schema()
 export class Order extends Document {
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, default: Date.now() })
   orderNo: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })

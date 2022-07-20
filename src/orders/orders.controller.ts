@@ -1,12 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Patch,
-  Post, Req, UseGuards,
+  Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -23,15 +26,10 @@ export class OrdersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  getOrders() {
-    return this.ordersService.getOrders();
-  }
-
-  @Get('aggregate')
-  @HttpCode(HttpStatus.OK)
-  getOrdersAggregate() {
-    return this.ordersService.getOrdersWithProducts();
+  getOrdersAggregate(@Body() body) {
+    return this.ordersService.getOrdersWithProducts(body);
   }
 
   @Patch('confirmed/:orderId')
@@ -57,10 +55,4 @@ export class OrdersController {
   delProductsFromOrderProdList(@Body() body, @Param() param) {
     return this.ordersService.removeProductsFromOrder(body, param.orderId);
   }
-
-  // @Patch("confirmed/:orderId")
-  // @HttpCode(HttpStatus.OK)
-  // changeOrderStatus(@Param() param) {
-  //     return this.ordersService.changeStatusToConfirmed(param.orderId);
-  // }
 }

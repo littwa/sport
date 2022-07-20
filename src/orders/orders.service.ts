@@ -5,6 +5,7 @@ import { Product, ProductDocument } from 'src/products/products.schema';
 import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class OrdersService {
@@ -17,27 +18,27 @@ export class OrdersService {
     const newOrder = await this.orderModel.create({
       ...createOrderDto,
       userId: req.user._id,
-      // productsList: createOrderDto.productsList.map((id: string) => Types.ObjectId(id))
     });
 
     if (!newOrder) throw new NotFoundException(`Can't create order`);
     return newOrder;
   }
 
-  async getOrdersWithProducts() {
+  async getOrdersWithProducts(body) {
+    console.log(100000222, body.userId);
     const aggregate = await this.orderModel
-      .find()
-      .populate('customerId')
+      .find(body.userId ? { userId: body.userId } : {})
+      .populate('userId')
       .populate('productsList');
     if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
     return aggregate;
   }
 
-  async getOrders() {
-    const allOrders = await this.orderModel.find();
-    if (!allOrders) throw new NotFoundException(`Can't allOrders`);
-    return allOrders;
-  }
+  // async getOrders() {
+  //   const allOrders = await this.orderModel.find();
+  //   if (!allOrders) throw new NotFoundException(`Can't allOrders`);
+  //   return allOrders;
+  // }
 
   async changeOrderStatus(orderId, status: EOrderStatus) {
     const updatedOrder: any = await this.orderModel.findByIdAndUpdate(
@@ -51,8 +52,7 @@ export class OrdersService {
       },
     );
 
-    if (!updatedOrder)
-      throw new NotFoundException(`Can't change status order id:${orderId}`);
+    if (!updatedOrder) throw new NotFoundException(`Can't change status order id:${orderId}`);
     return updatedOrder;
   }
 
@@ -95,8 +95,7 @@ export class OrdersService {
 
     console.log(product);
 
-    if (!updatedUser)
-      throw new NotFoundException(`Can't add products in this order`);
+    if (!updatedUser) throw new NotFoundException(`Can't add products in this order`);
 
     return updatedUser;
   }
@@ -104,8 +103,7 @@ export class OrdersService {
   async removeProductsFromOrder(body, orderId) {
     const product = await this.productModel.findById(body.productId);
     console.log(product);
-    if (!product)
-      throw new NotFoundException(`Can't find products for for in this order`);
+    if (!product) throw new NotFoundException(`Can't find products for for in this order`);
 
     const updatedUser = await this.orderModel.findByIdAndUpdate(
       orderId,
