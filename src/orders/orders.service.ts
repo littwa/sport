@@ -4,7 +4,7 @@ import { Model, Types, ObjectId } from 'mongoose';
 import { Product, ProductDocument } from 'src/products/products.schema';
 import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
-import { CreateOrderDto } from './dto/create-order.dto';
+import {CreateOrderDto, UpdateOrderDTO} from './dto/create-order.dto';
 import * as mongoose from 'mongoose';
 
 @Injectable()
@@ -56,7 +56,8 @@ export class OrdersService {
     return updatedOrder;
   }
 
-  async updateOrder(orderId, updatedOrderDto) {
+  async updateOrder(orderId, updatedOrderDto: UpdateOrderDTO) {
+    console.log(10000444, updatedOrderDto);
     const updatedOrder = await this.orderModel.findByIdAndUpdate(
       orderId,
       {
@@ -82,8 +83,7 @@ export class OrdersService {
   async addProductsToOrder(body, orderId) {
     const product = await this.productModel.findById(body.productId);
     console.log(product);
-    if (!product)
-      throw new NotFoundException(`Can't find products for for in this order`);
+    if (!product) throw new NotFoundException(`Can't find products for in this order`);
 
     const updatedUser = await this.orderModel.findByIdAndUpdate(
       orderId,

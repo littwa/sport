@@ -10,6 +10,8 @@ import {
   Post,
   Req,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -40,7 +42,9 @@ export class OrdersController {
 
   @Patch('update/:orderId')
   @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   updateOrder(@Param() param, @Body() body) {
+    console.log(100003333, param, body);
     return this.ordersService.updateOrder(param.orderId, body);
   }
 
