@@ -2,22 +2,19 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Customer, CustomerDocument } from './customers.schema';
-import { createCustomerDto } from './dto/create.customer.dto';
+import { CreateCustomerDto } from './dto/create-customer.dto';
 
 @Injectable()
 export class CustomersService {
-  constructor(
-    @InjectModel(Customer.name) private customerModel: Model<CustomerDocument>,
-  ) {}
+  constructor(@InjectModel(Customer.name) private customerModel: Model<CustomerDocument>) {}
 
   async getCustomers() {
     const allCustomers = await this.customerModel.find();
-    if (allCustomers.length === 0)
-      throw new NotFoundException(`Can't get all customers`);
+    if (allCustomers.length === 0) throw new NotFoundException(`Can't get all customers`);
     return allCustomers;
   }
 
-  async createCustomer(createCustomerDto: createCustomerDto) {
+  async createCustomer(createCustomerDto: CreateCustomerDto) {
     const newCustomer = await this.customerModel.create({
       ...createCustomerDto,
     });
@@ -38,9 +35,7 @@ export class CustomersService {
   }
 
   async deleteCustomer(customerId) {
-    const deletedCustomer = await this.customerModel.findByIdAndDelete(
-      customerId,
-    );
+    const deletedCustomer = await this.customerModel.findByIdAndDelete(customerId);
     if (!deletedCustomer) throw new NotFoundException(`Can't del customer`);
     return `Customer ById: ${customerId} has been successfully deleted!`;
   }

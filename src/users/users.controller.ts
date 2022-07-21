@@ -37,10 +37,7 @@ import { RolesGuard } from './authorization/roles.guard';
 import * as passport from 'passport';
 import { ProductsModule } from '../products/products.module';
 import { ProductsService } from '../products/products.service';
-import {
-  AnyFilesInterceptor,
-  FileFieldsInterceptor,
-} from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as multer from 'multer';
 import * as path from 'path';
 import { storage } from 'src/config/config-entity';

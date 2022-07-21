@@ -15,6 +15,14 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { AuthGuard } from '@nestjs/passport';
+import {
+  ChangeOrderStatusDto,
+  CreateOrderDto,
+  ExecuteProductInOrderDto,
+  GetOrderDto,
+  OrderIdDto,
+  UpdateOrderDto,
+} from './dto/create-order.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -22,41 +30,56 @@ export class OrdersController {
 
   @Post('add')
   @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  createOrders(@Body() body, @Req() req) {
+  createOrders(@Body() body: CreateOrderDto, @Req() req) {
     return this.ordersService.createOrder(body, req);
   }
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  getOrdersAggregate(@Body() body) {
+  getOrdersAggregate(@Body() body: GetOrderDto) {
     return this.ordersService.getOrdersWithProducts(body);
   }
 
-  @Patch('confirmed/:orderId')
-  @HttpCode(HttpStatus.OK)
-  changeOrderStatus(@Param() param, @Body() body) {
-    return this.ordersService.changeOrderStatus(param.orderId, body.status);
-  }
-
   @Patch('update/:orderId')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true }))
-  updateOrder(@Param() param, @Body() body) {
-    console.log(100003333, param, body);
+  updateOrder(@Param() param, @Body() body: UpdateOrderDto) {
     return this.ordersService.updateOrder(param.orderId, body);
   }
 
-  @Patch('add-product/:orderId')
+  @Delete('delete/:orderId')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deleteOrder(@Param() param: OrderIdDto) {
+    return this.ordersService.deleteOrder(param.orderId);
+  }
+
+  @Patch('change-status/:orderId')
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  addProductsToOrderProdList(@Body() body, @Param() param) {
+  changeOrderStatus(@Param() param: OrderIdDto, @Body() body: ChangeOrderStatusDto) {
+    return this.ordersService.changeOrderStatus(param.orderId, body.status);
+  }
+
+  @Patch('add-product/:orderId')
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  addProductsToOrderProdList(@Body() body: ExecuteProductInOrderDto, @Param() param: OrderIdDto) {
     return this.ordersService.addProductsToOrder(body, param.orderId);
   }
 
   @Patch('del-product/:orderId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  delProductsFromOrderProdList(@Body() body, @Param() param) {
+  @UseGuards(AuthGuard('jwt'))
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  delProductsFromOrderProdList(@Body() body: ExecuteProductInOrderDto, @Param() param: OrderIdDto) {
     return this.ordersService.removeProductsFromOrder(body, param.orderId);
   }
 }

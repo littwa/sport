@@ -5,7 +5,7 @@ import { Customer, CustomerSchema } from 'src/customers/customers.schema'; // ch
 import { ICustomer, IDate } from 'src/shared/interfaces/prop.interfaces';
 import { Product } from 'src/products/products.schema';
 
-// export type OrderDocument = Doc & Document;
+export type DocDocument = Doc & Document;
 
 @Schema()
 export class Doc extends Document {
@@ -31,7 +31,7 @@ export class Doc extends Document {
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
   // productsList: Product[];
 
-  //@Prop({ type: [CustomerSchema] })
+  // @Prop({ type: [CustomerSchema] })
   // productsList: ICustomer[]; //  Сheck how it works  ?????????
 }
 

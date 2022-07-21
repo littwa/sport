@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ERole } from 'src/shared/enums/role.enum';
 import { ROLES_KEY } from './roles.decorator';
@@ -13,10 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(
-    private reflector: Reflector,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private reflector: Reflector, private readonly jwtService: JwtService) {}
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<ERole[]>(ROLES_KEY, [
@@ -29,9 +21,7 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const fn = ExtractJwt.fromAuthHeaderAsBearerToken();
-    const userCrutch = this.jwtService.verify(
-      fn(context.switchToHttp().getRequest()),
-    );
+    const userCrutch = this.jwtService.verify(fn(context.switchToHttp().getRequest()));
 
     console.log('request.user: ', request.user); // undefined,  @UseGuards(AuthGuard('jwt')
     console.log('userCrutch: ', userCrutch);

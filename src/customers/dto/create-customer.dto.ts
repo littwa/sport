@@ -1,4 +1,4 @@
-export class createCustomerDto {
+export class CreateCustomerDto {
   readonly deliveryDays: object;
   readonly notifyCustomerMessage: boolean;
   readonly shortlistedProducts: string;
