@@ -19,19 +19,19 @@ import { PostsDto } from './dto/posts.dto';
 import { Roles } from 'src/users/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 
-@Controller('orders')
+@Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
-  // @Post('add')
-  // @UseGuards(AuthGuard('jwt'))
-  // @Roles([ERole.Admin, ERole.Customer])
-  // @UsePipes(new ValidationPipe({ whitelist: true }))
-  // @HttpCode(HttpStatus.CREATED)
-  // createOrders(@Body() body: PostsDto, @Req() req) {
-  //   return this.ordersService.createOrder(body, req);
-  // }
-  //
+  @Post('add')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.CREATED)
+  createOrders(@Body() body: PostsDto, @Req() req) {
+    // return this.postsService.createOrder(body, req);
+  }
+
   // @Get()
   // @UseGuards(AuthGuard('jwt'))
   // @Roles([ERole.Admin, ERole.Customer])

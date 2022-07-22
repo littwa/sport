@@ -1,12 +1,5 @@
 import configuration from 'src/shared/configs/base.config';
-import {
-  Global,
-  Injectable,
-  MiddlewareConsumer,
-  Module,
-  NestMiddleware,
-  NestModule,
-} from '@nestjs/common';
+import { Global, Injectable, MiddlewareConsumer, Module, NestMiddleware, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -27,6 +20,7 @@ import * as path from 'path';
 import { serveStaticOptions, storage } from 'src/config/config-entity';
 import * as multer from 'multer';
 import { ReviewsModule } from './reviews/reviews.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 const storage2 = multer.diskStorage({
   destination: 'uploads',
@@ -64,6 +58,7 @@ const storage2 = multer.diskStorage({
     ReviewsModule,
     FavoritesModule,
     TesterModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

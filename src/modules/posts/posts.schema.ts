@@ -5,6 +5,7 @@ import { Customer, CustomerSchema } from 'src/customers/customers.schema'; // ch
 import { IAddress, ICustomer, IDate, IOrderData } from 'src/shared/interfaces/prop.interfaces';
 import { Product, ProductDocument } from 'src/products/products.schema';
 import { User, UserDocument } from 'src/users/user.schema';
+import {CommentDocument} from "../comments/comments.schema";
 
 export type PostDocument = Post & Document;
 
@@ -13,10 +14,10 @@ export class Post extends Document {
   @Prop({ type: String, required: true })
   content: string;
 
-  @Prop({ type: String, default: 'other', enum: ['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'] })
+  @Prop({ type: String, default: '' })
   title: string;
 
-  @Prop({ type: String, default: '' })
+  @Prop({ type: String, default: 'other', enum: ['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'] })
   theme: string;
 
   @Prop({ type: String, default: new Date().toISOString() })
@@ -31,17 +32,8 @@ export class Post extends Document {
   @Prop({ type: Object, default: {} })
   likes: { [userId: string]: boolean };
 
-  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' })
-  // comments: CommentDocument;
-
-  @Prop({ type: String, default: '' })
-  deliveryDate: string;
-
-  // @Prop({ type: Object, required: true })
-  // ordered: IDate;
-
-  //@Prop({ type: [CustomerSchema] })
-  // productsList: ICustomer[]; //  Сheck how it works  ?????????
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' })
+  comments: CommentDocument;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
