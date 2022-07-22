@@ -23,6 +23,8 @@ import {
   OrderIdDto,
   UpdateOrderDto,
 } from './dto/create-order.dto';
+import { Roles } from 'src/users/authorization/roles.decorator';
+import { ERole } from 'src/shared/enums/role.enum';
 
 @Controller('orders')
 export class OrdersController {
@@ -30,6 +32,7 @@ export class OrdersController {
 
   @Post('add')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
   createOrders(@Body() body: CreateOrderDto, @Req() req) {
@@ -38,6 +41,7 @@ export class OrdersController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   getOrdersAggregate(@Body() body: GetOrderDto) {
@@ -46,6 +50,7 @@ export class OrdersController {
 
   @Patch('update/:orderId')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true }))
   updateOrder(@Param() param, @Body() body: UpdateOrderDto) {
@@ -54,6 +59,7 @@ export class OrdersController {
 
   @Delete('delete/:orderId')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @HttpCode(HttpStatus.NO_CONTENT)
   deleteOrder(@Param() param: OrderIdDto) {
     return this.ordersService.deleteOrder(param.orderId);
@@ -61,6 +67,7 @@ export class OrdersController {
 
   @Patch('change-status/:orderId')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   changeOrderStatus(@Param() param: OrderIdDto, @Body() body: ChangeOrderStatusDto) {
@@ -69,6 +76,7 @@ export class OrdersController {
 
   @Patch('add-product/:orderId')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   addProductsToOrderProdList(@Body() body: ExecuteProductInOrderDto, @Param() param: OrderIdDto) {
@@ -77,6 +85,7 @@ export class OrdersController {
 
   @Patch('del-product/:orderId')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   delProductsFromOrderProdList(@Body() body: ExecuteProductInOrderDto, @Param() param: OrderIdDto) {
