@@ -1,47 +1,64 @@
-import { Product } from 'src/products/products.schema';
-import { EStatus } from 'src/shared/enums/role.enum';
-import { IAddress, IDate, IOrderData } from 'src/shared/interfaces/prop.interfaces';
-import { IsArray, IsIn, IsInt, IsObject, IsOptional, IsString, Length } from 'class-validator';
-import {Prop} from "@nestjs/mongoose";
-import mongoose from "mongoose";
-import { UserDocument } from "../../../users/user.schema";
+import {IsArray, IsIn, IsObject, IsOptional, IsString, Length} from 'class-validator';
 
-export class PostsDto {
+export class CreatePostsDto {
   @IsString()
   readonly content: string;
 
   @IsString()
+  @IsIn(['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'])
+  readonly theme: string;
+
+  @IsString()
   @IsOptional()
   readonly title: string;
-
-  @IsString()
-  @IsOptional()
-  readonly theme: string; // ['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other']
-
-  @IsString()
-  readonly userId: string;
 
   @IsArray()
   @IsOptional()
   readonly photoURLs: string[];
 }
 
-// export class UpdateOrderDto {
-//   @IsString()
-//   readonly orderNo: string;
-// }
+export class UpdatePostDto extends CreatePostsDto {
+  @IsString()
+  @IsOptional()
+  readonly content: string;
+
+  @IsString()
+  @IsOptional()
+  @IsIn(['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'])
+  readonly theme: string;
+
+  // @IsString()
+  // @IsOptional()
+  // readonly title: string;
+  //
+  // @IsArray()
+  // @IsOptional()
+  // readonly photoURLs: string[];
+}
+
+export class PostIdDto {
+  @IsString()
+  @Length(24, 24)
+  readonly postId: string;
+}
+
+export class PostGetParamDto {
+  @IsString()
+  @IsIn(['me', 'followers', 'following', 'all', 'followers&following'])
+  readonly postsBy: string;
+}
+
+export class LikePostDto {
+  readonly [userID: string]: boolean;
+}
+
 //
 // export class GetOrderDto {
 //   @IsString()
 //   @Length(24, 24)
 //   readonly userId: string;
 // }
-//
-// export class OrderIdDto {
-//   @IsString()
-//   @Length(24, 24)
-//   readonly orderId: string;
-// }
+
 //
 // export class ChangeOrderStatusDto {
 //   @IsString()

@@ -21,6 +21,7 @@ import { serveStaticOptions, storage } from 'src/config/config-entity';
 import * as multer from 'multer';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { PostsModule } from './modules/posts/posts.module';
 
 const storage2 = multer.diskStorage({
   destination: 'uploads',
@@ -59,6 +60,7 @@ const storage2 = multer.diskStorage({
     FavoritesModule,
     TesterModule,
     CommentsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

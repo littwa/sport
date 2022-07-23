@@ -5,12 +5,13 @@ export class CreateCommentDto {
   text: string;
 
   @IsString()
+  @IsOptional()
   @Length(24, 24)
   answerTo: string;
 
-  @IsString()
-  @Length(24, 24)
-  userId: string;
+  // @IsString()
+  // @Length(24, 24)
+  // userId: string;
 }
 
 export class UpdateCommentDto {
@@ -19,8 +20,7 @@ export class UpdateCommentDto {
 }
 
 export class LikeCommentDto {
-  @IsObject()
-  likes: { [userId: string]: boolean };
+  readonly [userID: string]: boolean;
 }
 
 export class CommentIdDto {

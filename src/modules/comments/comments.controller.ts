@@ -54,7 +54,7 @@ export class CommentsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  setLikeComment(@Param() param: CommentIdDto, @Body() body: LikeCommentDto) {
+  setLikeComment(@Param() param: CommentIdDto, @Body() body) {
     return this.commentsService.setLikeComment(param.commentId, body);
   }
 

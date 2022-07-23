@@ -5,7 +5,7 @@ import { Customer, CustomerSchema } from 'src/customers/customers.schema'; // ch
 import { IAddress, ICustomer, IDate, IOrderData } from 'src/shared/interfaces/prop.interfaces';
 import { Product, ProductDocument } from 'src/products/products.schema';
 import { User, UserDocument } from 'src/users/user.schema';
-import {CommentDocument} from "../comments/comments.schema";
+import { CommentDocument } from '../comments/comments.schema';
 
 export type PostDocument = Post & Document;
 
@@ -32,8 +32,8 @@ export class Post extends Document {
   @Prop({ type: Object, default: {} })
   likes: { [userId: string]: boolean };
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' })
-  comments: CommentDocument;
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+  comments: CommentDocument[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

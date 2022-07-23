@@ -43,7 +43,9 @@ export class CommentsService {
   }
 
   async setLikeComment(commentId: string, like: LikeCommentDto) {
+    console.log(1111, commentId, like);
     const [keyUserId, valueLike] = Object.entries(like)[0];
+
     const likedComment = this.commentModel.findByIdAndUpdate(
       commentId,
       {

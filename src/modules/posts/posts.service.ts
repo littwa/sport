@@ -1,26 +1,110 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ObjectId } from 'mongoose';
-import { Product, ProductDocument } from 'src/products/products.schema';
-import { EOrderStatus } from 'src/shared/enums/props.enum';
-// import { Posts, PostsDocument } from './posts.schema';
-import { PostsDto } from './dto/posts.dto';
+import { CreatePostsDto, LikePostDto, PostIdDto, UpdatePostDto } from './dto/posts.dto';
 import * as mongoose from 'mongoose';
+import { Post, PostDocument } from './posts.schema';
+import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
+import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 
 @Injectable()
 export class PostsService {
-  constructor() {} // @InjectModel(Product.name) private productModel: Model<ProductDocument>, // @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+  constructor(
+    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+  ) {}
 
-  // async createOrder(createOrderDto: PostsDto, req) {
-  //   const newOrder = await this.orderModel.create({
-  //     ...createOrderDto,
-  //     userId: req.user._id,
-  //   });
-  //
-  //   if (!newOrder) throw new NotFoundException(`Can't create order`);
-  //   return newOrder;
-  // }
-  //
+  async createPosts(createPostsDto: CreatePostsDto, req) {
+    const post = await this.postModel.create({
+      ...createPostsDto,
+      userId: req.user._id,
+    });
+
+    if (!post) throw new NotFoundException(`Can't create post`);
+    return post;
+  }
+
+  async updatePost(postId, updatePostDto: UpdatePostDto) {
+    console.log(10000444, updatePostDto);
+    const updatedPost = await this.postModel.findByIdAndUpdate(
+      postId,
+      {
+        $set: {
+          ...updatePostDto,
+        },
+      },
+      { new: true, useFindAndModify: false },
+    );
+
+    if (!updatedPost) throw new NotFoundException(`Can't updated post`);
+    return updatedPost;
+  }
+
+  async deletePost(postId: string) {
+    const deletedPost = await this.postModel.findByIdAndDelete(postId);
+    if (!deletedPost) throw new NotFoundException(`Can't del post`);
+    console.log(100005, deletedPost);
+    // return `Post ById: ${postId} has been successfully deleted!`;
+  }
+
+  async setLikePost(postId: string, like: LikePostDto) {
+    const [keyUserId, valueLike] = Object.entries(like)[0];
+    const likedPost = this.commentModel.findByIdAndUpdate(
+      postId,
+      {
+        $set: { [`likes.${keyUserId}`]: valueLike },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
+
+    return likedPost;
+  }
+
+  async addCommentToPost(postId: string, createCommentDto: CreateCommentDto) {
+    const comment = await this.commentModel.create(createCommentDto);
+    if (!comment) throw new NotFoundException(`Can't create comment`);
+    const commentedPost = await this.postModel.findByIdAndUpdate(
+      postId,
+      {
+        $push: { comments: comment._id },
+      },
+      {
+        new: true,
+      },
+    );
+
+    console.log(commentedPost);
+
+    if (!commentedPost) throw new NotFoundException(`Can't commented Post`);
+
+    return commentedPost;
+  }
+
+  async deleteCommentFromPost(postId: string, commentIdDto: CommentIdDto) {
+    const deletedComment = await this.commentModel.findByIdAndDelete(commentIdDto.commentId);
+
+    if (!deletedComment) throw new NotFoundException(`Can't remove comment from this post`);
+
+    const updatedPost = await this.postModel.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { comments: commentIdDto.commentId },
+      },
+      { new: true },
+    );
+
+    return updatedPost;
+  }
+
+  async getPostsAggregate(postsBy: string) {
+    const allOrders = await this.postModel.find();
+    if (!allOrders) throw new NotFoundException(`Can't allOrders`);
+    return allOrders;
+  }
+
   // async getOrdersWithProducts(body: GetOrderDto) {
   //   console.log(100000222, body.userId);
   //   const aggregate = await this.orderModel
@@ -30,12 +114,7 @@ export class PostsService {
   //   if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
   //   return aggregate;
   // }
-  //
-  // // async getOrders() {
-  // //   const allOrders = await this.orderModel.find();
-  // //   if (!allOrders) throw new NotFoundException(`Can't allOrders`);
-  // //   return allOrders;
-  // // }
+
   //
   // async changeOrderStatus(orderId, status) {
   //   const updatedOrder: any = await this.orderModel.findByIdAndUpdate(
@@ -51,66 +130,5 @@ export class PostsService {
   //
   //   if (!updatedOrder) throw new NotFoundException(`Can't change status order id:${orderId}`);
   //   return updatedOrder;
-  // }
-  //
-  // async updateOrder(orderId, updatedOrderDto: UpdateOrderDto) {
-  //   console.log(10000444, updatedOrderDto);
-  //   const updatedOrder = await this.orderModel.findByIdAndUpdate(
-  //     orderId,
-  //     {
-  //       $set: {
-  //         ...updatedOrderDto,
-  //         // customerId: Types.ObjectId(updatedOrderDto.customerId),
-  //         // productsList: updatedOrderDto.productsList.map((id: string) => Types.ObjectId(id))
-  //       },
-  //     },
-  //     { new: true, useFindAndModify: false },
-  //   );
-  //
-  //   if (!updatedOrder) throw new NotFoundException(`Can't updated order`);
-  //   return updatedOrder;
-  // }
-  //
-  // async deleteOrder(orderId: string) {
-  //   const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
-  //   if (!deletedOrder) throw new NotFoundException(`Can't del customer`);
-  //   console.log(100005, deletedOrder);
-  //   // return `Customer ById: ${orderId} has been successfully deleted!`;
-  // }
-  //
-  // async addProductsToOrder(body, orderId) {
-  //   const product = await this.productModel.findById(body.productId);
-  //   console.log(product);
-  //   if (!product) throw new NotFoundException(`Can't find products for in this order`);
-  //
-  //   const updatedUser = await this.orderModel.findByIdAndUpdate(
-  //     orderId,
-  //     {
-  //       $push: { productsList: body.productId },
-  //     },
-  //     { new: true },
-  //   );
-  //
-  //   console.log(product);
-  //
-  //   if (!updatedUser) throw new NotFoundException(`Can't add products in this order`);
-  //
-  //   return updatedUser;
-  // }
-  //
-  // async removeProductsFromOrder(body, orderId) {
-  //   const product = await this.productModel.findById(body.productId);
-  //   console.log(product);
-  //   if (!product) throw new NotFoundException(`Can't find products for for in this order`);
-  //
-  //   const updatedUser = await this.orderModel.findByIdAndUpdate(
-  //     orderId,
-  //     {
-  //       $pull: { productsList: body.productId },
-  //     },
-  //     { new: true },
-  //   );
-  //
-  //   return updatedUser;
   // }
 }

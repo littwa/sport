@@ -5,14 +5,12 @@ import { ProductsModule } from 'src/products/products.module';
 import { PostsController } from './posts.controller';
 import { Post, PostSchema } from './posts.schema';
 import { PostsService } from './posts.service';
+import { CommentsModule } from '../comments/comments.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    // ProductsModule,
-  ],
+  imports: [MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]), CommentsModule],
   controllers: [PostsController],
   providers: [PostsService],
-  exports: [PostsService, MongooseModule],
+  exports: [PostsService],
 })
 export class PostsModule {}
