@@ -100,9 +100,9 @@ export class PostsService {
   }
 
   async getPostsAggregate(postsBy: string) {
-    const allOrders = await this.postModel.find();
-    if (!allOrders) throw new NotFoundException(`Can't allOrders`);
-    return allOrders;
+    const allPosts = await this.postModel.find(); ////////////////////////////////////////!!!!!!
+    if (!allPosts) throw new NotFoundException(`Can't allPosts`);
+    return allPosts;
   }
 
   // async getOrdersWithProducts(body: GetOrderDto) {

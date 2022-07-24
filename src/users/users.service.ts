@@ -4,17 +4,16 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotAcceptableException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
+import * as mongoose from 'mongoose';
 import { Model, Types, ObjectId, Schema } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { ERole, EStatus } from 'src/shared/enums/role.enum';
 import { EmailService } from 'src/email/email.service';
 import { JwtService } from '@nestjs/jwt';
-import { createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
+import { CartProductUserParamDto, createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
 // import { Order, OrderDocument } from 'src/orders/orders.schema';
 import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
@@ -204,6 +203,46 @@ export class UsersService {
     };
   }
 
+  async addFavoriteProduct(productId: string, req) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $push: { favorites: productId } },
+      { new: true },
+    );
+
+    return user;
+  }
+
+  async delFavoriteProduct(productId: string, req) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { favorites: productId } },
+      { new: true },
+    );
+
+    return user;
+  }
+
+  async addCartProduct(param: CartProductUserParamDto, req) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $push: { cart: { productId: new mongoose.Types.ObjectId(param.productId), amount: param.amount } } },
+      { new: true },
+    );
+
+    return user;
+  }
+
+  async delCartProduct(param: CartProductUserParamDto, req) {
+    const user = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { cart: { productId: new mongoose.Types.ObjectId(param.productId), amount: param.amount } } },
+      { new: true },
+    );
+
+    return user;
+  }
+
   async follow(req, body) {
     const user = await this.userModel.findByIdAndUpdate(
       req.user._id,
@@ -216,7 +255,6 @@ export class UsersService {
       { $push: { following: req.user._id } },
       { new: true },
     );
-    // console.log(101, req.user, body);
 
     return user;
   }
@@ -233,7 +271,6 @@ export class UsersService {
       { $pull: { following: req.user._id } },
       { new: true },
     );
-    // console.log(101, req.user, body);
 
     return user;
   }

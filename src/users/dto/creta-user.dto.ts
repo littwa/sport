@@ -1,3 +1,5 @@
+import {IsString} from "class-validator";
+
 export class createUserDto {
   readonly role: string;
   readonly email: string;
@@ -19,6 +21,14 @@ export class createUserCustomerDto extends createUserDto {
   readonly password: string;
   readonly username: string;
   readonly customer?: string;
+}
+
+export class CartProductUserParamDto {
+  @IsString()
+  readonly productId: string;
+
+  @IsString()
+  readonly amount: string;
 }
 
 // export class createUserCustomerDto extends createUserDto {

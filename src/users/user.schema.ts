@@ -73,14 +73,17 @@ export class User extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
   following: UserDocument[];
 
-  // @Prop({ type: Object, default: {} })
-  // cart: { [productId: string]: number };
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+  favorites: ProductDocument[];
 
-  // @Prop({ type: Array, default: [] })
-  // cart: { product: ProductDocument; amount: number }[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+  watchedProducts: ProductDocument[];
+
+  @Prop({ type: Array, default: [] })
+  cart: { productId: { type: mongoose.Schema.Types.ObjectId; ref: 'Product' }; amount: string }[];
 
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  // favorites: ProductDocument[];
+  // cart: ProductDocument[];
 
   // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
   // orders: OrderDocument[];
@@ -88,8 +91,7 @@ export class User extends Document {
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
   // customer: CustomerDocument[];
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  // watchedProducts: ProductDocument[];
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

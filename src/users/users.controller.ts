@@ -43,6 +43,7 @@ import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../shared/services/common.service';
+import { CartProductUserParamDto } from './dto/creta-user.dto';
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -134,12 +135,7 @@ export class UsersController {
   @Post('up-date/:id')
   @UseInterceptors(AnyFilesInterceptor()) // { storage }
   @HttpCode(HttpStatus.OK)
-  async updateUser(
-    @Body() body,
-    @Param() param,
-    @Query() query,
-    @UploadedFiles() files: Array<Express.Multer.File>,
-  ) {
+  async updateUser(@Body() body, @Param() param, @Query() query, @UploadedFiles() files: Array<Express.Multer.File>) {
     console.log(1000005, body, param, query);
     return await this.userService.updateUser(param, body, files);
   }
@@ -180,6 +176,34 @@ export class UsersController {
   // @Roles(ERole.Admin)
   unfollow(@Request() req, @Body() body) {
     return this.userService.unfollow(req, body);
+  }
+
+  @Patch('add-favorite-product/:productId')
+  @UseGuards(AuthGuard('jwt'))
+  // @Roles(ERole.Admin)
+  addFavoriteProduct(@Request() req, @Param() param) {
+    return this.userService.addFavoriteProduct(param.productId, req);
+  }
+
+  @Patch('del-favorite-product/:productId')
+  @UseGuards(AuthGuard('jwt'))
+  // @Roles(ERole.Admin)
+  delFavoriteProduct(@Request() req, @Param() param) {
+    return this.userService.delFavoriteProduct(param.productId, req);
+  }
+
+  @Patch('add-cart-product/:productId/:amount')
+  @UseGuards(AuthGuard('jwt'))
+  // @Roles(ERole.Admin)
+  addCartProduct(@Request() req, @Param() param: CartProductUserParamDto) {
+    return this.userService.addCartProduct(param, req);
+  }
+
+  @Patch('del-cart-product/:productId/:amount')
+  @UseGuards(AuthGuard('jwt'))
+  // @Roles(ERole.Admin)
+  delCartProduct(@Request() req, @Param() param: CartProductUserParamDto) {
+    return this.userService.delCartProduct(param, req);
   }
 
   @Get('local')
