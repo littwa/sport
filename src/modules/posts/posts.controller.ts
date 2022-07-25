@@ -77,13 +77,13 @@ export class PostsController {
     return this.postsService.deleteCommentFromPost(param.postId, body);
   }
 
-  @Get()
+  @Get(':whose')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   getPostsAggregate(@Param() param: PostGetParamDto) {
-    return this.postsService.getPostsAggregate(param.postsBy);
+    return this.postsService.getPostsAggregate(param.whose);
   }
 
   //

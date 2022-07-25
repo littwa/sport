@@ -6,12 +6,14 @@ import * as mongoose from 'mongoose';
 import { Post, PostDocument } from './posts.schema';
 import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
+import { User, UserDocument } from '../../users/user.schema';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private postModel: Model<PostDocument>,
     @InjectModel(Comment.name) private commentModel: Model<CommentDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   async createPosts(createPostsDto: CreatePostsDto, req) {
@@ -99,10 +101,26 @@ export class PostsService {
     return updatedPost;
   }
 
-  async getPostsAggregate(postsBy: string) {
-    const allPosts = await this.postModel.find(); ////////////////////////////////////////!!!!!!
-    if (!allPosts) throw new NotFoundException(`Can't allPosts`);
-    return allPosts;
+  async getPostsAggregate(whose: string) {
+    const findFollowers = await this.userModel.aggregate([
+      {
+        $project: { followers: 1 },
+      },
+      {
+        $unwind: {
+          path: '$followers',
+        },
+      },
+    ]);
+    console.log(100002, findFollowers);
+    // const allPosts = await this.postModel.find({
+    //   $expr: {
+    //     $and: [{ $in: [memberCreator._id, '$participants'] }, { $in: [memberWith._id, '$participants'] }],
+    //   },
+    // }); ////////////////////////////////////////!!!!!!
+    // if (!allPosts) throw new NotFoundException(`Can't allPosts`);
+    // return allPosts;
+    return findFollowers;
   }
 
   // async getOrdersWithProducts(body: GetOrderDto) {

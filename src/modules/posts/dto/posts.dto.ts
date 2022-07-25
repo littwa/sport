@@ -45,7 +45,7 @@ export class PostIdDto {
 export class PostGetParamDto {
   @IsString()
   @IsIn(['me', 'followers', 'following', 'all', 'followers&following'])
-  readonly postsBy: string;
+  readonly whose: string;
 }
 
 export class LikePostDto {
