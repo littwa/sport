@@ -10,9 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 
 @Global()
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
-  ],
+  imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])],
   providers: [
     // ProductsService
     { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { ProductDocument } from 'src/products/products.schema';
+import {OrderDocument} from "../orders/orders.schema";
 // import { Order } from 'src/orders/orders.schema';
 // import { Customer } from 'src/customers/customers.schema';
 
@@ -76,21 +77,17 @@ export class User extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
   favorites: ProductDocument[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  watchedProducts: ProductDocument[];
-
   @Prop({ type: Array, default: [] })
   cart: { productId: { type: mongoose.Schema.Types.ObjectId; ref: 'Product' }; amount: string }[];
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  // cart: ProductDocument[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+  watchedProducts: ProductDocument[];
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
-  // orders: OrderDocument[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }] })
+  orders: OrderDocument[];
 
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
   // customer: CustomerDocument[];
-
 
 }
 

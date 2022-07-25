@@ -181,28 +181,102 @@ export class UsersService {
 
     const agg = await this.userModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(_id) } },
+      // ---------------------start aggregate cart-----------------------------------
+      {
+        $unwind: {
+          path: '$cart',
+        },
+      },
       {
         $lookup: {
-          from: 'product',
-          let: { cart: '$cart' },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $in: ['$$cart.productId', '$productId'], ////
-                },
-              },
-            },
-          ],
-          as: 'details',
+          from: 'products',
+          localField: 'cart.productId',
+          foreignField: '_id',
+          as: 'cart.product',
         },
-        //     {
-        //   from: 'product',
-        //   localField: 'cart------.productId',
-        //   foreignField: '_id',
-        //   as: 'cart',
-        // },
       },
+      {
+        $unwind: {
+          path: '$cart.product',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          products: {
+            $push: '$cart',
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'usersDetails',
+        },
+      },
+      {
+        $unwind: {
+          path: '$usersDetails',
+        },
+      },
+      {
+        $addFields: {
+          'usersDetails.cart': '$products',
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: '$usersDetails',
+        },
+      }, // ------------end aggregate cart-----------------------------
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'followers',
+          foreignField: '_id',
+          as: 'followers',
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'following',
+          foreignField: '_id',
+          as: 'following',
+        },
+      },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'favorites',
+          foreignField: '_id',
+          as: 'favorites',
+        },
+      },
+      // {
+      //   $lookup: {
+      //     from: 'products',
+      //     let: { cart: '$cart' },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: {
+      //             $in: ['$productId', '$$cart.productId'], ////
+      //           },
+      //         },
+      //       },
+      //     ],
+      //     as: 'details',
+      //   },
+      //     {
+      //   from: 'product',
+      //   localField: 'cart------.productId',
+      //   foreignField: '_id',
+      //   as: 'cart',
+      // },
+      // },
     ]);
     console.log(10001, agg);
     if (!agg) throw new BadRequestException('User was not found');

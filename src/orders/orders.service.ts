@@ -6,12 +6,14 @@ import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
 import { CreateOrderDto, GetOrderDto, OrderIdDto, UpdateOrderDto } from './dto/create-order.dto';
 import * as mongoose from 'mongoose';
+import { User, UserDocument } from '../users/user.schema';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto, req) {
@@ -21,6 +23,17 @@ export class OrdersService {
     });
 
     if (!newOrder) throw new NotFoundException(`Can't create order`);
+
+    const addOrderIdToUser = await this.userModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        $push: { orders: newOrder._id },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
     return newOrder;
   }
 
@@ -76,8 +89,19 @@ export class OrdersService {
 
   async deleteOrder(orderId: string) {
     const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
+
     if (!deletedOrder) throw new NotFoundException(`Can't del customer`);
-    console.log(100005, deletedOrder);
+
+    const delOrderIdToUser = await this.userModel.findByIdAndUpdate(
+      deletedOrder.userId,
+      {
+        $pull: { orders: orderId },
+      },
+      {
+        new: true,
+        useFindAndModify: false,
+      },
+    );
     // return `Customer ById: ${orderId} has been successfully deleted!`;
   }
 

@@ -1,4 +1,4 @@
-import { HttpModule, Module } from '@nestjs/common';
+import { Global, HttpModule, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -14,6 +14,7 @@ import { RolesGuard } from './authorization/roles.guard';
 import { Session, SessionSchema } from './session.schema';
 import { GoogleStrategy } from './strategies/google.strategy';
 
+@Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -42,6 +43,6 @@ import { GoogleStrategy } from './strategies/google.strategy';
     },
   ],
   controllers: [UsersController],
-  exports: [UsersService],
+  exports: [UsersService, MongooseModule],
 })
 export class UsersModule {}
