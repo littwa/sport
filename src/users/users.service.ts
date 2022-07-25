@@ -8,13 +8,12 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import { Model, Types, ObjectId, Schema } from 'mongoose';
+import { Model, Types, ObjectId, Schema, Document } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { ERole, EStatus } from 'src/shared/enums/role.enum';
 import { EmailService } from 'src/email/email.service';
 import { JwtService } from '@nestjs/jwt';
 import { CartProductUserParamDto, createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
-// import { Order, OrderDocument } from 'src/orders/orders.schema';
 import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
 import { ConfigService } from '@nestjs/config';
@@ -169,6 +168,46 @@ export class UsersService {
     if (!infoUser) throw new BadRequestException('User was not found');
     const { password, verificationCode, __v, ...userDtoInfo } = infoUser.toObject();
     return userDtoInfo;
+  }
+
+  async getCurrentUserAggregate({ _id }) {
+    // const infoUser = await this.userModel
+    //     .findOne({
+    //       _id,
+    //       role: ERole.Customer,
+    //     })
+    //     .populate('followers')
+    //     .populate('following'); // .populate('customer');
+
+    const agg = await this.userModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(_id) } },
+      {
+        $lookup: {
+          from: 'product',
+          let: { cart: '$cart' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ['$$cart.productId', '$productId'], ////
+                },
+              },
+            },
+          ],
+          as: 'details',
+        },
+        //     {
+        //   from: 'product',
+        //   localField: 'cart------.productId',
+        //   foreignField: '_id',
+        //   as: 'cart',
+        // },
+      },
+    ]);
+    console.log(10001, agg);
+    if (!agg) throw new BadRequestException('User was not found');
+    // const { password, verificationCode, __v, ...userDtoInfo } = agg.toObject();
+    return agg;
   }
 
   async signIn(signInDto) {

@@ -159,6 +159,13 @@ export class UsersController {
     return this.userService.getCurrentUser(req.user);
   }
 
+  @Get('get-aggregate')
+  @UseGuards(AuthGuard('jwt'))
+  getCurrentUserAggregate(@Request() req) {
+    console.log('req.user-', req.user);
+    return this.userService.getCurrentUserAggregate(req.user);
+  }
+
   @Post('sign-in')
   signInCustomer(@Body() body) {
     return this.userService.signIn(body);
