@@ -82,8 +82,8 @@ export class PostsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  getPostsAggregate(@Param() param: PostGetParamDto) {
-    return this.postsService.getPostsAggregate(param.whose);
+  getPostsAggregate(@Param() param: PostGetParamDto, @Req() req) {
+    return this.postsService.getPostsAggregate(param.whose, req);
   }
 
   //

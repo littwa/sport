@@ -101,18 +101,37 @@ export class PostsService {
     return updatedPost;
   }
 
-  async getPostsAggregate(whose: string) {
+  async getPostsAggregate(whose: string, req) {
     const findFollowers = await this.userModel.aggregate([
       {
-        $project: { followers: 1 },
+        $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
+      },
+      {
+        $project: { following: 1 },
       },
       {
         $unwind: {
-          path: '$followers',
+          path: '$following',
+          preserveNullAndEmptyArrays: false, // default
         },
       },
+      // {
+      //   $group: {
+      //     _id: '$_id',
+      //     followers: {
+      //       $push: '$followers',
+      //     },
+      //   },
+      // },
     ]);
-    console.log(100002, findFollowers);
+    const f: string[] = findFollowers.map((v) => v.following);
+    console.log(100002, f, req.user._id);
+
+    const findPosts = await this.postModel.find({ userId: { $in: f } });
+
+    // const findPosts = await this.postModel.aggregate([
+    //   { $match: { $expr: { $in: ['followers', findFollowers] } } },
+    // ]);
     // const allPosts = await this.postModel.find({
     //   $expr: {
     //     $and: [{ $in: [memberCreator._id, '$participants'] }, { $in: [memberWith._id, '$participants'] }],
@@ -120,7 +139,7 @@ export class PostsService {
     // }); ////////////////////////////////////////!!!!!!
     // if (!allPosts) throw new NotFoundException(`Can't allPosts`);
     // return allPosts;
-    return findFollowers;
+    return findPosts;
   }
 
   // async getOrdersWithProducts(body: GetOrderDto) {
