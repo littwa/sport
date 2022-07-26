@@ -107,11 +107,11 @@ export class PostsService {
         $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
       },
       {
-        $project: { following: 1 },
+        $project: { followers: 1 },
       },
       {
         $unwind: {
-          path: '$following',
+          path: '$followers',
           preserveNullAndEmptyArrays: false, // default
         },
       },
@@ -124,10 +124,20 @@ export class PostsService {
       //   },
       // },
     ]);
-    const f: string[] = findFollowers.map((v) => v.following);
-    console.log(100002, f, req.user._id);
+    // const idsFollowers: string[] = findFollowers.map((v) => v.followers);
+    // console.log(100002, idsFollowers, req.user._id);
 
-    const findPosts = await this.postModel.find({ userId: { $in: f } });
+    const [{ followers, following }] = await this.userModel.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
+      },
+    ]);
+
+    console.log('followers=', followers);
+    console.log('following=', following);
+    console.log('req.user._id=', req.user._id);
+    const findPosts = await this.postModel.find({ userId: { $in: followers } });
+    // const findPosts = await this.postModel.find({ userId: { $in: folowers } });
 
     // const findPosts = await this.postModel.aggregate([
     //   { $match: { $expr: { $in: ['followers', findFollowers] } } },

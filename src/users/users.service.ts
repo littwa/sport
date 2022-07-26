@@ -359,13 +359,13 @@ export class UsersService {
   async follow(req, body) {
     const user = await this.userModel.findByIdAndUpdate(
       req.user._id,
-      { $push: { followers: body.followId } },
+      { $push: { following: body.followId } },
       { new: true },
     );
 
     const follower = await this.userModel.findByIdAndUpdate(
       body.followId,
-      { $push: { following: req.user._id } },
+      { $push: { followers: req.user._id } },
       { new: true },
     );
 
@@ -375,13 +375,13 @@ export class UsersService {
   async unfollow(req, body) {
     const user = await this.userModel.findByIdAndUpdate(
       req.user._id,
-      { $pull: { followers: body.followId } },
+      { $pull: { following: body.followId } },
       { new: true },
     );
 
     const follower = await this.userModel.findByIdAndUpdate(
       body.followId,
-      { $pull: { following: req.user._id } },
+      { $pull: { followers: req.user._id } },
       { new: true },
     );
 
