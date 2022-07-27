@@ -1,4 +1,5 @@
-import {IsArray, IsIn, IsObject, IsOptional, IsString, Length} from 'class-validator';
+import { IsArray, IsIn, IsOptional, IsString, Length } from 'class-validator';
+import { EPostsGet } from '../../../shared/enums/posts.enum';
 
 export class CreatePostsDto {
   @IsString()
@@ -44,31 +45,10 @@ export class PostIdDto {
 
 export class PostGetParamDto {
   @IsString()
-  @IsIn(['me', 'followers', 'following', 'all', 'followers&following'])
-  readonly whose: string;
+  @IsIn([EPostsGet.Me, EPostsGet.Followers, EPostsGet.Following, EPostsGet.All])
+  readonly whose: EPostsGet;
 }
 
 export class LikePostDto {
   readonly [userID: string]: boolean;
 }
-
-//
-// export class GetOrderDto {
-//   @IsString()
-//   @Length(24, 24)
-//   readonly userId: string;
-// }
-
-//
-// export class ChangeOrderStatusDto {
-//   @IsString()
-//   @IsIn(['new', 'canceled', 'in progress', 'delivered', 'completed'])
-//   readonly status: string;
-// }
-//
-// export class ExecuteProductInOrderDto {
-//   @IsString()
-//   @Length(24, 24)
-//   readonly productId: string;
-// }
-

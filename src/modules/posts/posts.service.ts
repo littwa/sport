@@ -7,6 +7,7 @@ import { Post, PostDocument } from './posts.schema';
 import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 import { User, UserDocument } from '../../users/user.schema';
+import { EPostsGet } from '../../shared/enums/posts.enum';
 
 @Injectable()
 export class PostsService {
@@ -101,7 +102,32 @@ export class PostsService {
     return updatedPost;
   }
 
-  async getPostsAggregate(whose: string, req) {
+  async getPostsAggregate(whose = EPostsGet.All, req) {
+    const [{ followers, following }] =
+      whose === 'following' || whose === 'followers'
+        ? await this.userModel.aggregate([
+            {
+              $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
+            },
+          ])
+        : [{ followers: null, following: null }];
+
+    const cases = {
+      following: { userId: { $in: following } },
+      followers: { userId: { $in: followers } },
+      me: { userId: { $in: [req.user._id] } },
+      all: {},
+    };
+    const query = (whoseCase => cases[whoseCase] || {})(whose);
+
+    const posts = await this.postModel.find(query);
+
+    if (!posts) throw new NotFoundException(`Can't posts`);
+
+    return posts;
+  }
+
+  async getPostsAggTest(whose = EPostsGet.All, req) {
     const findFollowers = await this.userModel.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
@@ -124,58 +150,20 @@ export class PostsService {
       //   },
       // },
     ]);
-    // const idsFollowers: string[] = findFollowers.map((v) => v.followers);
-    // console.log(100002, idsFollowers, req.user._id);
 
-    const [{ followers, following }] = await this.userModel.aggregate([
-      {
-        $match: { _id: new mongoose.Types.ObjectId(req.user._id) },
-      },
-    ]);
+    // const findPosts = await this.postModel.find({ userId: { $in: [1,2,3] } });
 
-    console.log('followers=', followers);
-    console.log('following=', following);
-    console.log('req.user._id=', req.user._id);
-    const findPosts = await this.postModel.find({ userId: { $in: followers } });
-    // const findPosts = await this.postModel.find({ userId: { $in: folowers } });
+    const findPosts = await this.postModel.aggregate([{ $match: { $expr: { $in: ['followers', findFollowers] } } }]);
+    const allPosts = await this.postModel.find({
+      // $expr: {
+      //   $and: [{ $in: [memberCreator._id, '$participants'] }, { $in: [memberWith._id, '$participants'] }],
+      // },
+    });
 
-    // const findPosts = await this.postModel.aggregate([
-    //   { $match: { $expr: { $in: ['followers', findFollowers] } } },
-    // ]);
-    // const allPosts = await this.postModel.find({
-    //   $expr: {
-    //     $and: [{ $in: [memberCreator._id, '$participants'] }, { $in: [memberWith._id, '$participants'] }],
-    //   },
-    // }); ////////////////////////////////////////!!!!!!
-    // if (!allPosts) throw new NotFoundException(`Can't allPosts`);
-    // return allPosts;
-    return findPosts;
+    if (!findPosts) throw new NotFoundException(`Can't allPosts`);
+
+    // return findPosts;
+
+    return 1212;
   }
-
-  // async getOrdersWithProducts(body: GetOrderDto) {
-  //   console.log(100000222, body.userId);
-  //   const aggregate = await this.orderModel
-  //     .find(body.userId ? { userId: body.userId } : {})
-  //     .populate('userId')
-  //     .populate('productsList');
-  //   if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
-  //   return aggregate;
-  // }
-
-  //
-  // async changeOrderStatus(orderId, status) {
-  //   const updatedOrder: any = await this.orderModel.findByIdAndUpdate(
-  //     orderId,
-  //     {
-  //       $set: { status },
-  //     },
-  //     {
-  //       new: true,
-  //       useFindAndModify: false,
-  //     },
-  //   );
-  //
-  //   if (!updatedOrder) throw new NotFoundException(`Can't change status order id:${orderId}`);
-  //   return updatedOrder;
-  // }
 }

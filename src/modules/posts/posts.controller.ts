@@ -86,13 +86,12 @@ export class PostsController {
     return this.postsService.getPostsAggregate(param.whose, req);
   }
 
-  //
-  // @Patch('change-status/:orderId')
-  // @UseGuards(AuthGuard('jwt'))
-  // @Roles([ERole.Admin, ERole.Customer])
-  // @UsePipes(new ValidationPipe({ whitelist: true }))
-  // @HttpCode(HttpStatus.OK)
-  // changeOrderStatus(@Param() param: OrderIdDto, @Body() body: ChangeOrderStatusDto) {
-  //   return this.ordersService.changeOrderStatus(param.orderId, body.status);
-  // }
+  @Get('test/:whose')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  getPostsAggTest(@Param() param: PostGetParamDto, @Req() req) {
+    return this.postsService.getPostsAggTest(param.whose, req);
+  }
 }
