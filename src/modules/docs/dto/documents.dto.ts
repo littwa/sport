@@ -1,4 +1,4 @@
-import { Product } from 'src/products/products.schema';
+import { Product } from 'src/modules/products/products.schema';
 import { EStatus } from 'src/shared/enums/role.enum';
 import { IDate } from 'src/shared/interfaces/prop.interfaces';
 

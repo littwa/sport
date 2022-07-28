@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ObjectId } from 'mongoose';
-import { Product, ProductDocument } from 'src/products/products.schema';
+import { Product, ProductDocument } from 'src/modules/products/products.schema';
 import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
 import { CreateOrderDto, GetOrderDto, OrderIdDto, UpdateOrderDto } from './dto/create-order.dto';

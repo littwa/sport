@@ -23,7 +23,7 @@ import {
   OrderIdDto,
   UpdateOrderDto,
 } from './dto/create-order.dto';
-import { Roles } from 'src/users/authorization/roles.decorator';
+import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 
 @Controller('orders')

@@ -1,4 +1,4 @@
-import { Global, HttpModule, Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -6,13 +6,14 @@ import { User, UserSchema } from './user.schema';
 import { SharedModule } from 'src/shared/shared.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './strategies/local.strategy';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from '../../strategies/local.strategy';
+import { JwtStrategy } from '../../strategies/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './authorization/roles.guard';
+import { RolesGuard } from '../../authorization/roles.guard';
 // import { OrdersModule } from 'src/orders/orders.module';
 import { Session, SessionSchema } from './session.schema';
-import { GoogleStrategy } from './strategies/google.strategy';
+import { GoogleStrategy } from '../../strategies/google.strategy';
+import { HttpModule } from '@nestjs/axios';
 
 @Global()
 @Module({

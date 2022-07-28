@@ -16,7 +16,7 @@ import {
 import { PostsService } from './posts.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreatePostsDto, LikePostDto, PostGetParamDto, PostIdDto, UpdatePostDto } from './dto/posts.dto';
-import { Roles } from 'src/users/authorization/roles.decorator';
+import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 

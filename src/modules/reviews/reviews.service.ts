@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Review, ReviewDocument, ReviewSchema } from 'src/reviews/reviews.schema';
-import { Product, ProductDocument } from 'src/products/products.schema';
+import { Review, ReviewDocument, ReviewSchema } from 'src/modules/reviews/reviews.schema';
+import { Product, ProductDocument } from 'src/modules/products/products.schema';
 import { EditDto, LikeDto } from './dto/reviews.dto';
-import { RateDto } from '../products/dto/product.dto';
 
 @Injectable()
 export class ReviewsService {

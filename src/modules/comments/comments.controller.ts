@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { AuthGuard } from '@nestjs/passport';
-import { Roles } from 'src/users/authorization/roles.decorator';
+import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto, UpdateCommentDto} from './dto/comments.dto';
 

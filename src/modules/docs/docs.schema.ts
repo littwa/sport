@@ -3,7 +3,7 @@ import { Document, ObjectId, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { Customer, CustomerSchema } from 'src/modules/customers/customers.schema'; // check how it works
 import { ICustomer, IDate } from 'src/shared/interfaces/prop.interfaces';
-import { Product } from 'src/products/products.schema';
+import { Product } from 'src/modules/products/products.schema';
 
 export type DocDocument = Doc & Document;
 

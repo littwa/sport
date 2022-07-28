@@ -2,9 +2,9 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Favorite, FavoriteDocument } from './favorites.schema';
-import { Product } from '../../products/products.schema';
-import { ProductsService } from '../../products/products.service';
-import { AppService } from '../../app.service';
+// import { Product } from '../products/products.schema';
+import { ProductsService } from '../products/products.service';
+// import { AppService } from '../../app.service';
 
 @Injectable()
 export class FavoritesService {

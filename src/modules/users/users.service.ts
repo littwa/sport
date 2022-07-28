@@ -19,7 +19,7 @@ import { Session, SessionDocument } from './session.schema';
 import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import * as sharp from 'sharp';
-import { CommonService } from '../shared/services/common.service';
+import { CommonService } from '../../shared/services/common.service';
 
 @Injectable()
 export class UsersService {

@@ -3,8 +3,8 @@ import { Document, ObjectId, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { Customer, CustomerSchema } from 'src/modules/customers/customers.schema'; // check how it works
 import { IAddress, ICustomer, IDate, IOrderData } from 'src/shared/interfaces/prop.interfaces';
-import { Product, ProductDocument } from 'src/products/products.schema';
-import { User, UserDocument } from 'src/users/user.schema';
+import { Product, ProductDocument } from 'src/modules/products/products.schema';
+import { User, UserDocument } from 'src/modules/users/user.schema';
 
 export type OrderDocument = Order & Document;
 

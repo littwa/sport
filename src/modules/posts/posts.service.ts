@@ -6,7 +6,7 @@ import * as mongoose from 'mongoose';
 import { Post, PostDocument } from './posts.schema';
 import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
-import { User, UserDocument } from '../../users/user.schema';
+import { User, UserDocument } from '../users/user.schema';
 import { EPostsGet } from '../../shared/enums/posts.enum';
 
 @Injectable()

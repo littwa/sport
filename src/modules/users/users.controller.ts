@@ -32,8 +32,8 @@ import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
 import { ERole } from 'src/shared/enums/role.enum';
 import { AuthGuard } from '@nestjs/passport';
-import { Roles } from './authorization/roles.decorator';
-import { RolesGuard } from './authorization/roles.guard';
+import { Roles } from '../../authorization/roles.decorator';
+import { RolesGuard } from '../../authorization/roles.guard';
 import * as passport from 'passport';
 import { ProductsModule } from '../products/products.module';
 import { ProductsService } from '../products/products.service';
@@ -42,7 +42,7 @@ import * as multer from 'multer';
 import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
-import { CommonService } from '../shared/services/common.service';
+import { CommonService } from '../../shared/services/common.service';
 import { CartProductUserParamDto } from './dto/creta-user.dto';
 // import { ConfigServiceTest } from '../app.module';
 
@@ -243,8 +243,8 @@ export class UsersController {
     // @Res() res,
   ) {
     // console.log(this.tc.v);
-    console.log(10007, this.userService.configFactory.v);
-    console.log(10008, this.userService.useClassTest.v);
+    console.log('this.userService.configFactory.v = ', this.userService.configFactory.v);
+    console.log('this.userService.useClassTest.v = ', this.userService.useClassTest.v);
     // console.log(this.userService.configService.get('jwtExpires30days'));
     // console.log('Headers: ', headers);
     // console.log('req: ', req.rawHeaders);

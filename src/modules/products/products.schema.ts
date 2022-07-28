@@ -2,8 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
 import { ICharacteristic, IPrice } from 'src/shared/interfaces/prop.interfaces';
 import * as mongoose from 'mongoose';
-import { UserDocument } from '../users/user.schema';
-import { ReviewDocument } from '../reviews/reviews.schema';
+import { ReviewDocument } from 'src/modules/reviews/reviews.schema';
 
 export type ProductDocument = Product & Document;
 
