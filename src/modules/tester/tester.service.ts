@@ -19,6 +19,13 @@ export class TesterService {
     private testerAService: TesterAService,
     private testerBService: TesterBService,
   ) {}
+
+  getTester = async () => {
+    // const allProducts = await this.productModel.find();
+    // if (!allProducts) throw new NotFoundException(`Can't get Products`);
+    return null;
+  };
+
   //
   // async addProduct(createProductDto) {
   //   const newProduct = await this.productModel.create({ ...createProductDto });
@@ -26,12 +33,7 @@ export class TesterService {
   //   console.log('newGoods=', newProduct);
   //   return newProduct;
   // }
-  //
-  // getProducts = async () => {
-  //   const allProducts = await this.productModel.find();
-  //   if (!allProducts) throw new NotFoundException(`Can't get Products`);
-  //   return allProducts;
-  // };
+
   //
   // updateProduct = async (createProductDto, productId) => {
   //   const updatedProduct = await this.productModel.findByIdAndUpdate(

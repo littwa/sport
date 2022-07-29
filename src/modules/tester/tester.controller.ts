@@ -12,16 +12,18 @@ import {
 } from '@nestjs/common';
 import { TesterService } from './tester.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('products')
+@ApiTags('tester')
+@Controller('tester')
 export class TesterController {
-  constructor(private favoriteService: TesterService) {}
-  //
-  // @Get()
-  // @HttpCode(HttpStatus.OK)
-  // getProducts() {
-  //   return this.productsService.getProducts();
-  // }
+  constructor(private testerService: TesterService) {}
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  getProducts() {
+    return this.testerService.getTester();
+  }
   //
   // @Post('/add')
   // @HttpCode(HttpStatus.CREATED)

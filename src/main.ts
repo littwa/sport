@@ -16,14 +16,16 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Sport')
     .setDescription('The Sport API description')
     .setVersion('0.0.1')
     .addTag('sport')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT || 3000);
 }
-bootstrap().then(v => console.log(' [ App was started... ]'));
+bootstrap().then(() => console.log(' App was started port:', process.env.PORT || 3000));

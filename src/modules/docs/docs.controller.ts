@@ -4,7 +4,9 @@ import { Roles } from '../../authorization/roles.decorator';
 import { ERole } from '../../shared/enums/role.enum';
 import { PostGetParamDto } from '../posts/dto/posts.dto';
 import { DocsService } from './docs.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('docs')
 @Controller('docs')
 export class DocsController {
   constructor(private docsService: DocsService) {}

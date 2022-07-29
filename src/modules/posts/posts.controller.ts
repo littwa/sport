@@ -19,7 +19,9 @@ import { CreatePostsDto, LikePostDto, PostGetParamDto, PostIdDto, UpdatePostDto 
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('posts')
 @Controller('posts')
 export class PostsController {
   constructor(private postsService: PostsService) {}

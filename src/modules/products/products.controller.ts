@@ -14,7 +14,9 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { AuthGuard } from '@nestjs/passport';
+import {ApiTags} from "@nestjs/swagger";
 
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(@Inject('ProductsServiceToken') private productsService: ProductsService) {}

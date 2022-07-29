@@ -37,10 +37,9 @@ export class OrdersService {
     return newOrder;
   }
 
-  async getOrdersWithProducts(body: GetOrderDto) {
-    console.log(100000222, body.userId);
+  async getOrdersWithProducts(param: GetOrderDto) {
     const aggregate = await this.orderModel
-      .find(body.userId ? { userId: body.userId } : {})
+      .find(param.userId ? { userId: param.userId } : {})
       .populate('userId')
       .populate('productsList');
     if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
@@ -110,7 +109,7 @@ export class OrdersService {
     console.log(product);
     if (!product) throw new NotFoundException(`Can't find products for in this order`);
 
-    const updatedUser = await this.orderModel.findByIdAndUpdate(
+    const updatedOder = await this.orderModel.findByIdAndUpdate(
       orderId,
       {
         $push: { productsList: body.productId },
@@ -120,9 +119,9 @@ export class OrdersService {
 
     console.log(product);
 
-    if (!updatedUser) throw new NotFoundException(`Can't add products in this order`);
+    if (!updatedOder) throw new NotFoundException(`Can't add products in this order`);
 
-    return updatedUser;
+    return updatedOder;
   }
 
   async removeProductsFromOrder(body, orderId) {
@@ -130,7 +129,7 @@ export class OrdersService {
     console.log(product);
     if (!product) throw new NotFoundException(`Can't find products for for in this order`);
 
-    const updatedUser = await this.orderModel.findByIdAndUpdate(
+    const updatedOder = await this.orderModel.findByIdAndUpdate(
       orderId,
       {
         $pull: { productsList: body.productId },
@@ -138,6 +137,6 @@ export class OrdersService {
       { new: true },
     );
 
-    return updatedUser;
+    return updatedOder;
   }
 }

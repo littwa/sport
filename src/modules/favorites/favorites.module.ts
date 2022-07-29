@@ -11,9 +11,7 @@ import { Favorite, FavoritesSchema } from './favorites.schema';
 @Module({
   imports: [
     // ProductsModule,
-    MongooseModule.forFeature([
-      { name: Favorite.name, schema: FavoritesSchema },
-    ]),
+    MongooseModule.forFeature([{ name: Favorite.name, schema: FavoritesSchema }]),
   ],
   providers: [FavoritesService],
   controllers: [FavoritesController],

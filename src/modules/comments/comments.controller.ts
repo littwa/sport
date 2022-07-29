@@ -18,7 +18,9 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto, UpdateCommentDto} from './dto/comments.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('comments')
 @Controller('comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
