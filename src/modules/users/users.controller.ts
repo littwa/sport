@@ -44,6 +44,7 @@ import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
 import { CartProductUserParamDto } from './dto/creta-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -58,6 +59,7 @@ import { CartProductUserParamDto } from './dto/creta-user.dto';
 //   },
 // });
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -68,7 +70,12 @@ export class UsersController {
 
   @Get('get-test')
   @UseInterceptors(AnyFilesInterceptor())
-  async getTest(@Request() request, @Headers() headers, @Request() req, @UploadedFiles() files: Array<Express.Multer.File>) {
+  async getTest(
+    @Request() request,
+    @Headers() headers,
+    @Request() req,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
     // console.log(1000001, this.userService.test());
     await this.userService.test();
     return {
@@ -90,13 +97,7 @@ export class UsersController {
   @Get('google-auth/redirect')
   @UseGuards(AuthGuard('google'))
   @Redirect() // 'http://localhost:4200/choicse-customer'  // google-auth/return
-  async googleAuthRedirect(
-    @Req() req,
-    @Res() res,
-    @Body() body,
-    @Headers() headers,
-    @Query() q,
-  ) {
+  async googleAuthRedirect(@Req() req, @Res() res, @Body() body, @Headers() headers, @Query() q) {
     const dto = await this.userService.googleLogin(req);
     const qString = Object.entries(dto).reduce((acc, el, i, arr) => {
       acc = acc + el[0].toString() + '=' + el[1].toString();
@@ -248,11 +249,7 @@ export class UsersController {
     // console.log(this.userService.configService.get('jwtExpires30days'));
     // console.log('Headers: ', headers);
     // console.log('req: ', req.rawHeaders);
-    // console.log('request: ', request);
     // console.log(10000333, Object.getOwnPropertySymbols(request)[1]);
-    // console.log('param: ', param);
-    // console.log('body: ', body);
-    // console.log('res: ', res);
     return { res: 'res' };
   }
 }

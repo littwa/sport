@@ -2,7 +2,7 @@ import { Global, Injectable, Module } from '@nestjs/common';
 import { TesterService } from './tester.service';
 import { TesterController } from './tester.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Favorite, TesterSchema } from './tester.schema';
+import { Tester, TesterSchema } from './tester.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { TesterAService } from './tester.a.service';
@@ -48,7 +48,7 @@ const useFactoryTest = {
 @Module({
   imports: [
     // ProductsModule,
-    MongooseModule.forFeature([{ name: Favorite.name, schema: TesterSchema }]),
+    MongooseModule.forFeature([{ name: Tester.name, schema: TesterSchema }]),
     HttpModule,
   ],
   controllers: [TesterController],

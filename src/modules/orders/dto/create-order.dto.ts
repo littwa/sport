@@ -1,7 +1,7 @@
 import { IAddress, IDate, IOrderData } from 'src/shared/interfaces/prop.interfaces';
 import { IsArray, IsIn, IsInt, IsObject, IsOptional, IsString, Length } from 'class-validator';
-import {ApiProperty, ApiPropertyOptional} from '@nestjs/swagger';
-import {EOrderStatus} from "../../../shared/enums/orders.enum";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { EOrderStatus } from '../../../shared/enums/orders.enum';
 
 export class CreateOrderDto {
   @ApiProperty()
@@ -62,7 +62,7 @@ export class OrderIdDto {
 
 export class ChangeOrderStatusDto {
   @ApiProperty({ enum: ['new', 'canceled', 'in progress', 'delivered', 'completed'] })
-  @IsString()
+  // @IsString()
   @IsIn(['new', 'canceled', 'in progress', 'delivered', 'completed'])
   readonly status: EOrderStatus;
 }

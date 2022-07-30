@@ -5,10 +5,10 @@ import { Customer, CustomerSchema } from 'src/modules/customers/customers.schema
 import { ICustomer, IDate } from 'src/shared/interfaces/prop.interfaces';
 import { Product } from 'src/modules/products/products.schema';
 
-export type FavoriteDocument = Favorite & Document;
+export type TesterDocument = Tester & Document;
 
 @Schema()
-export class Favorite extends Document {
+export class Tester extends Document {
   @Prop({ type: String, required: true })
   orderNo: string;
 
@@ -47,4 +47,4 @@ export class Favorite extends Document {
   // productsList: ICustomer[]; //  Сheck how it works  ?????????
 }
 
-export const TesterSchema = SchemaFactory.createForClass(Favorite);
+export const TesterSchema = SchemaFactory.createForClass(Tester);

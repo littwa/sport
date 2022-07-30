@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
+  Post, Query,
   Req,
   UseGuards,
   UsePipes,
@@ -25,7 +25,8 @@ import {
 } from './dto/create-order.dto';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {EOrderStatus} from "../../shared/enums/orders.enum";
 
 @ApiTags('orders')
 @Controller('orders')
@@ -93,8 +94,9 @@ export class OrdersController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  changeOrderStatus(@Param() param: OrderIdDto, @Body() body: ChangeOrderStatusDto) {
-    return this.ordersService.changeOrderStatus(param.orderId, body.status);
+  changeOrderStatus(@Param() param: OrderIdDto, @Query() query: ChangeOrderStatusDto) {
+    console.log(100004, query);
+    return this.ordersService.changeOrderStatus(param.orderId, query.status);
   }
 
   @ApiOperation({ summary: 'Add product to order' })
