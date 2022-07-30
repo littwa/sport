@@ -1,17 +1,11 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Tester, TesterDocument} from './tester.schema';
 import { ProductsService } from 'src/modules/products/products.service';
 import { TesterAService } from './tester.a.service';
 import { TesterBService } from './tester.b.service';
-
-
+import { IRequestExt } from '../../shared/interfaces/auth.interfaces';
 
 @Injectable()
 export class TesterService {
@@ -28,14 +22,14 @@ export class TesterService {
     return null;
   };
 
-  async createTester(param, query, body) {
-    const newTester = await this.testerModel.create({ ...body });
+  async createTester(param, query, body, req: IRequestExt) {
+    const newTester = await this.testerModel.create({ ...body, createByUser: req.user._id });
     if (!newTester) throw new NotFoundException(`Can't create Tester`);
     console.log('newTester=', newTester);
     return newTester;
   }
 
-  executeTester = async (param, query, body) => {
+  executeTester = async (param, query, body, req: IRequestExt) => {
     // const updatedProduct = await this.testerModel.findByIdAndUpdate(
     //   productId,
     //   {

@@ -2,7 +2,7 @@ import { Product } from 'src/modules/products/products.schema';
 import { EStatus } from 'src/shared/enums/role.enum';
 import { IDate } from 'src/shared/interfaces/prop.interfaces';
 
-export class reviewsDto {
+export class reviewDto {
   // readonly documentNo: string;
   // readonly documentId: string;
   // readonly document: string;

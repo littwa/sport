@@ -10,38 +10,36 @@ export type TesterDocument = Tester & Document;
 @Schema()
 export class Tester extends Document {
   @Prop({ type: String, required: true })
-  orderNo: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
-  customerId: Customer;
+  name: string;
 
   @Prop({ type: String, required: true })
-  customer: string;
-
-  @Prop({ type: String, required: true })
-  customerNo: string;
-
-  @Prop({ type: String, default: '' })
-  items: string;
-
-  @Prop({ type: String, required: true })
-  notes: string;
+  description: string;
 
   @Prop({
     type: String,
-    default: 'new',
-    enum: ['new', 'canceled', 'in progress', 'deliverred', 'completed'],
+    default: 'a',
+    enum: ['a', 'b', 'c'],
   })
   status: string;
 
-  @Prop({ type: Object, required: true })
-  ordered: IDate;
+  @Prop({
+    type: String,
+    default: 'xxx',
+    enum: ['xxx', 'yyy', 'zzz'],
+  })
+  distinct: string;
 
-  @Prop({ type: Object, required: true })
-  reqDelivery: IDate;
+  @Prop({ type: Object, default: Date.now() })
+  dateCreated: Date;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product', default: [] }] })
   productsList: Product[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  createByUser: Product[];
+
+  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
+  // customerId: Customer;
 
   //@Prop({ type: [CustomerSchema] })
   // productsList: ICustomer[]; //  Сheck how it works  ?????????
