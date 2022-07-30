@@ -23,7 +23,7 @@ import {
   Inject,
   UseInterceptors,
   UploadedFile,
-  UploadedFiles,
+  UploadedFiles, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { NextFunction, Response } from 'express';
@@ -43,8 +43,8 @@ import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
-import { CartProductUserParamDto } from './dto/creta-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {CartProductUserParamDto, UserCustomerCreateDto} from './dto/user.dto';
+import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -113,9 +113,13 @@ export class UsersController {
     // return res.redirect(`${process.env.BASE_URL_FRONT_END}/?${qString}`);
   }
 
+  @ApiOperation({ summary: 'Create User' })
+  @ApiResponse({ status: 200, description: 'Return ...' })
+  @ApiResponse({ status: 404, description: 'Can not ...' })
   @Post('sign-up')
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  postSignUpUser(@Body() body): any {
+  postSignUpUser(@Body() body: UserCustomerCreateDto) {
     console.log(100001, body);
     switch (body.role) {
       // case ERole.Admin:

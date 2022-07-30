@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId, Types } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { ProductDocument } from 'src/modules/products/products.schema';
-import {OrderDocument} from "../orders/orders.schema";
+import { OrderDocument } from 'src/modules/orders/orders.schema';
 // import { Order } from 'src/orders/orders.schema';
 // import { Customer } from 'src/customers/customers.schema';
 
@@ -21,6 +21,9 @@ export class User extends Document {
 
   @Prop({ type: String, required: false, default: '' })
   yearOfBirth: string;
+
+  @Prop({ type: String, required: false, default: '' })
+  dayOfBirth: string;
 
   @Prop({ type: String, required: false, default: '' })
   country: string;
@@ -45,7 +48,7 @@ export class User extends Document {
   @Prop({ type: String, default: '', required: false })
   password: string;
 
-  @Prop({ type: String, default: '', required: false })
+  @Prop({ type: String, default: '', required: true })
   username: string;
 
   @Prop({ type: String, default: '', required: false })

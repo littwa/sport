@@ -3,12 +3,12 @@ import { IsIn, IsOptional, IsString } from 'class-validator';
 import { ETesterDistinct, ETesterStatus } from 'src/shared/enums/tester.enum';
 
 export class TesterDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   readonly name: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   readonly description: string;

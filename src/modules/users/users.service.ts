@@ -13,7 +13,7 @@ import { User, UserDocument } from './user.schema';
 import { ERole, EStatus } from 'src/shared/enums/role.enum';
 import { EmailService } from 'src/email/email.service';
 import { JwtService } from '@nestjs/jwt';
-import { CartProductUserParamDto, createUserCustomerDto, createUserDto } from './dto/creta-user.dto';
+import { CartProductUserParamDto, UserCustomerCreateDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
 import { ConfigService } from '@nestjs/config';
@@ -95,7 +95,7 @@ export class UsersService {
   //   return userAdminDtoReverse;
   // }
 
-  async createUserCustomer(createUserCustomerDto: createUserCustomerDto): Promise<object> {
+  async createUserCustomer(createUserCustomerDto: UserCustomerCreateDto): Promise<object> {
     let user = await this.userModel.findOne({
       email: createUserCustomerDto.email,
       role: ERole.Customer,

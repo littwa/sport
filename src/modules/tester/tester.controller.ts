@@ -28,7 +28,14 @@ import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 export class TesterController {
   constructor(private testerService: TesterService) {}
 
+  @ApiOperation({ summary: 'Get Testers' })
+  @ApiResponse({ status: 200, description: 'Return Testers' })
+  @ApiResponse({ status: 404, description: 'Can not Testers' })
+  @ApiBearerAuth()
   @Get()
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   getProducts() {
     return this.testerService.getTester();
