@@ -11,9 +11,9 @@ export enum ETesterStatus {
 }
 
 export enum ETesterNum {
-  One = '1',
-  Two = '2',
-  Three = '3',
+  One = 1,
+  Two = 2,
+  Three = 3,
 }
 
 export enum ETesterSize {

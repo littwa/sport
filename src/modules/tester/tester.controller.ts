@@ -19,7 +19,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
-import {ExecuteTesterParamDto, ExecuteTesterQueryDto, TesterDto} from './dto/testers.dto';
+import { ExecuteTesterBodyDto, ExecuteTesterParamDto, ExecuteTesterQueryDto, TesterDto} from './dto/testers.dto';
 import { Request } from 'express';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 
@@ -54,7 +54,7 @@ export class TesterController {
     console.log('query=', query);
     console.log('param=', param);
     console.log('body=', body);
-    console.log('req=', req);
+    console.log('req=', req.user);
     return this.testerService.createTester(param, query, body, req);
   }
 
@@ -67,7 +67,12 @@ export class TesterController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  executeTester(@Body() body, @Param() param: ExecuteTesterParamDto, @Query() query: ExecuteTesterQueryDto, @Req() req: IRequestExt) {
+  executeTester(
+    @Body() body: ExecuteTesterBodyDto,
+    @Param() param: ExecuteTesterParamDto,
+    @Query() query: ExecuteTesterQueryDto,
+    @Req() req: IRequestExt,
+  ) {
     console.log('query=', query);
     console.log('param= ', param);
     console.log('body=', body);

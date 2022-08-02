@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Customer, CustomerSchema } from 'src/modules/customers/customers.schema'; // check how it works
 import { ICustomer, IDate } from 'src/shared/interfaces/prop.interfaces';
 import { Product } from 'src/modules/products/products.schema';
+import { ETesterNum, ETesterSize} from '../../shared/enums/tester.enum';
 
 export type TesterDocument = Tester & Document;
 
@@ -28,6 +29,20 @@ export class Tester extends Document {
     enum: ['xxx', 'yyy', 'zzz'],
   })
   distinct: string;
+
+  @Prop({
+    type: Number,
+    default: ETesterNum.One,
+    enum: ETesterNum,
+  })
+  num: ETesterNum;
+
+  @Prop({
+    type: String,
+    default: ETesterSize.L,
+    enum: ETesterSize,
+  })
+  size: ETesterNum;
 
   @Prop({ type: Object, default: Date.now() })
   dateCreated: Date;

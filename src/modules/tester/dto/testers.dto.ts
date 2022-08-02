@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import {ETesterDistinct, ETesterSize, ETesterStatus} from 'src/shared/enums/tester.enum';
+import { ETesterDistinct, ETesterNum, ETesterSize, ETesterStatus} from 'src/shared/enums/tester.enum';
 
 export class TesterDto {
   @ApiPropertyOptional()
@@ -23,6 +23,14 @@ export class TesterDto {
   @IsString()
   readonly distinct: ETesterDistinct;
 
+  @ApiProperty({ enum: ['s', 'm', 'l', 'xl'] })
+  @IsIn(['s', 'm', 'l', 'xl'])
+  readonly size: ETesterSize;
+
+  @ApiProperty({ enum: [1, 2, 3] })
+  @IsIn([1, 2, 3])
+  readonly num: ETesterNum;
+
   // @ApiProperty({ enum: ['new', 'canceled', 'in progress', 'delivered', 'completed'] })
   // @IsString()
   // @IsIn(['new', 'canceled', 'in progress', 'delivered', 'completed'])
@@ -40,10 +48,10 @@ export class ExecuteTesterParamDto {
   @IsString()
   readonly testerId: string;
 
-  @ApiPropertyOptional()
-  @IsString()
+  @ApiPropertyOptional({ enum: ['a', 'b', 'c'] })
+  @IsIn(['a', 'b', 'c'])
   @IsOptional()
-  readonly qwe: string;
+  readonly qwe: ETesterStatus;
 }
 
 export class ExecuteTesterQueryDto {
@@ -52,13 +60,24 @@ export class ExecuteTesterQueryDto {
   @IsOptional()
   readonly g: string;
 
-  @ApiPropertyOptional()
-  @IsString()
+  @ApiPropertyOptional({ enum: ['a', 'b', 'c'] })
+  @IsIn(['a', 'b', 'c'])
   @IsOptional()
-  readonly h: string;
+  readonly h: ETesterStatus;
 
   @ApiPropertyOptional({ enum: ['s', 'm', 'l', 'xl'] })
   @IsIn(['s', 'm', 'l', 'xl'])
   @IsOptional()
   readonly s: ETesterSize;
+}
+
+export class ExecuteTesterBodyDto {
+  @ApiProperty({ enum: [1, 2, 3], example: 3 })
+  @IsIn([1, 2, 3])
+  readonly bodyF2: ETesterNum;
+
+  @ApiPropertyOptional({ enum: ['a', 'b', 'c'] })
+  @IsIn(['a', 'b', 'c'])
+  @IsOptional()
+  readonly bodyF1: ETesterStatus;
 }
