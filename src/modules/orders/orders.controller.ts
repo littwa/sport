@@ -7,7 +7,8 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post, Query,
+  Post,
+  Query,
   Req,
   UseGuards,
   UsePipes,
@@ -17,16 +18,15 @@ import { OrdersService } from './orders.service';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ChangeOrderStatusDto,
-  CreateOrderDto,
+  OrderDto,
   ExecuteProductInOrderDto,
   GetOrderDto,
   OrderIdDto,
   UpdateOrderDto,
-} from './dto/create-order.dto';
+} from './dto/order.dto';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
-import {ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {EOrderStatus} from "../../shared/enums/orders.enum";
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('orders')
 @Controller('orders')
@@ -42,7 +42,7 @@ export class OrdersController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.CREATED)
-  createOrders(@Body() body: CreateOrderDto, @Req() req) {
+  createOrders(@Body() body: OrderDto, @Req() req) {
     return this.ordersService.createOrder(body, req);
   }
 

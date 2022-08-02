@@ -3,7 +3,7 @@ import { IsArray, IsIn, IsInt, IsObject, IsOptional, IsString, Length } from 'cl
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { EOrderStatus } from '../../../shared/enums/orders.enum';
 
-export class CreateOrderDto {
+export class OrderDto {
   @ApiProperty()
   @IsArray()
   readonly productsList: string[];

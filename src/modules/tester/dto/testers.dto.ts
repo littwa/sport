@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsOptional, IsString } from 'class-validator';
-import { ETesterDistinct, ETesterStatus } from 'src/shared/enums/tester.enum';
+import {ETesterDistinct, ETesterSize, ETesterStatus} from 'src/shared/enums/tester.enum';
 
 export class TesterDto {
   @ApiPropertyOptional()
@@ -33,4 +33,32 @@ export class TesterDto {
   // @IsOptional()
   // @ApiPropertyOptional({ type: String, maxLength: 24, minLength: 24 })
   // readonly userId: string;
+}
+
+export class ExecuteTesterParamDto {
+  @ApiProperty()
+  @IsString()
+  readonly testerId: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly qwe: string;
+}
+
+export class ExecuteTesterQueryDto {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly g: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly h: string;
+
+  @ApiPropertyOptional({ enum: ['s', 'm', 'l', 'xl'] })
+  @IsIn(['s', 'm', 'l', 'xl'])
+  @IsOptional()
+  readonly s: ETesterSize;
 }

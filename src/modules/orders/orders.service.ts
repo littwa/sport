@@ -4,7 +4,7 @@ import { Model, Types, ObjectId } from 'mongoose';
 import { Product, ProductDocument } from 'src/modules/products/products.schema';
 import { EOrderStatus } from 'src/shared/enums/props.enum';
 import { Order, OrderDocument } from './orders.schema';
-import { CreateOrderDto, GetOrderDto, OrderIdDto, UpdateOrderDto } from './dto/create-order.dto';
+import { OrderDto, GetOrderDto, OrderIdDto, UpdateOrderDto } from './dto/order.dto';
 import * as mongoose from 'mongoose';
 import { User, UserDocument } from '../users/user.schema';
 
@@ -16,7 +16,7 @@ export class OrdersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
-  async createOrder(createOrderDto: CreateOrderDto, req) {
+  async createOrder(createOrderDto: OrderDto, req) {
     const newOrder = await this.orderModel.create({
       ...createOrderDto,
       userId: req.user._id,

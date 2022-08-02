@@ -19,7 +19,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
-import { TesterDto } from './dto/testers.dto';
+import {ExecuteTesterParamDto, ExecuteTesterQueryDto, TesterDto} from './dto/testers.dto';
 import { Request } from 'express';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 
@@ -62,13 +62,17 @@ export class TesterController {
   @ApiResponse({ status: 200, description: 'Return tester.' })
   @ApiResponse({ status: 404, description: 'Can not Execute.' })
   @ApiBearerAuth()
-  @Patch('edit/:testerId')
+  @Patch('execute/:testerId/:qwe?')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  executeTester(@Body() body, @Param() param: any, @Query() query: any, @Req() req: IRequestExt) {
-    console.log(100004, query);
-    return this.testerService.executeTester(param, query, body, req);
+  executeTester(@Body() body, @Param() param: ExecuteTesterParamDto, @Query() query: ExecuteTesterQueryDto, @Req() req: IRequestExt) {
+    console.log('query=', query);
+    console.log('param= ', param);
+    console.log('body=', body);
+    console.log('req.user=', req.user);
+    return { query, param, body };
+    // return this.testerService.executeTester(param, query, body, req);
   }
 }
