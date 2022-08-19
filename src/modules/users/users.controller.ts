@@ -109,7 +109,7 @@ export class UsersController {
     }, '');
 
     // return {
-    //   url: `${process.env.BASE_URL_FRONT_END}/?${qString}`,
+    //   url: `${process.env.BASE_URL_FRONT_END}?${qString}`,
     // };
 
     return res.redirect(`${process.env.BASE_URL_FRONT_END}?${qString}`);
