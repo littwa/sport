@@ -108,12 +108,11 @@ export class UsersController {
       return acc;
     }, '');
 
-    console.log(10000014);
-    return {
-      url: `${process.env.BASE_URL_FRONT_END}/?${qString}`,
-    };
+    // return {
+    //   url: `${process.env.BASE_URL_FRONT_END}/?${qString}`,
+    // };
 
-    // return res.redirect(`${process.env.BASE_URL_FRONT_END}/?${qString}`);
+    return res.redirect(`${process.env.BASE_URL_FRONT_END}?${qString}`);
   }
 
   @ApiOperation({ summary: 'Create User' })
