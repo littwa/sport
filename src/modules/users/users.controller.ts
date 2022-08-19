@@ -91,11 +91,11 @@ export class UsersController {
   }
 
   // Google-auth
-  // @Get('google-auth')
-  // @UseGuards(AuthGuard('google'))
-  // async googleAuth() {
-  //   console.log(1999999999);
-  // } // here will be redirect
+  @Get('google-auth')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {
+    console.log(1999999999);
+  } // here will be redirect
 
   @Get('google-auth/redirect')
   @UseGuards(AuthGuard('google'))
