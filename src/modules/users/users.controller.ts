@@ -110,8 +110,8 @@ export class UsersController {
 
     // return {
     //   url: `${process.env.BASE_URL_FRONT_END}?${qString}`,
-    // };
-
+    // }
+    console.log(7);
     return res.redirect(`${process.env.BASE_URL_FRONT_END}?${qString}`);
   }
 
