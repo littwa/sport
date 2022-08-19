@@ -1,23 +1,10 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString, Length } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ERole } from 'src/shared/enums/role.enum';
 
-export class UserCreateDto {
-  @ApiProperty({ enum: ['customer', 'admin'], enumName: 'ERole' })
-  @IsIn(['customer', 'admin'])
+export class UserUpdateDto {
+  @ApiPropertyOptional()
   @IsOptional()
-  readonly role: ERole;
-
-  @ApiProperty()
-  @IsString()
-  readonly email: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  readonly password: string;
-
-  @ApiProperty()
   @IsString()
   readonly username: string;
 
@@ -34,27 +21,12 @@ export class UserCreateDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  readonly verificationCode: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
   readonly dayOfBirth: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly yearOfBirth: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly avatarURL: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly status: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -81,6 +53,45 @@ export class UserCreateDto {
   // readonly accessToken?: string;
 }
 
+export class UserCreateDto extends UserUpdateDto {
+  @ApiProperty()
+  @IsString()
+  readonly username: string;
+
+  @ApiProperty({ enum: ['customer', 'admin'], enumName: 'ERole' })
+  @IsIn(['customer', 'admin'])
+  @IsOptional()
+  readonly role: ERole;
+
+  @ApiProperty()
+  @IsString()
+  readonly email: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  readonly password: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly verificationCode: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly avatarURL: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly status: string;
+
+  // readonly verificationToken?: string;
+  // readonly sessionToken?: string;
+  // readonly accessToken?: string;
+}
+
 export class UserCustomerCreateDto extends UserCreateDto {
   @ApiProperty({ enum: ['customer', 'admin'], enumName: 'ERole' })
   @IsIn(['customer', 'admin'])
@@ -97,6 +108,13 @@ export class CartProductUserParamDto {
 
   @IsString()
   readonly amount: string;
+}
+
+export class UserIdParamDto {
+  @ApiProperty()
+  @IsString()
+  @Length(24, 24)
+  readonly id: string;
 }
 
 // export class createUserCustomerDto extends createUserDto {

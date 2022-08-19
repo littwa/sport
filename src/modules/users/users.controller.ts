@@ -23,7 +23,9 @@ import {
   Inject,
   UseInterceptors,
   UploadedFile,
-  UploadedFiles, UsePipes, ValidationPipe,
+  UploadedFiles,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { NextFunction, Response } from 'express';
@@ -43,8 +45,9 @@ import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
-import {CartProductUserParamDto, UserCustomerCreateDto} from './dto/user.dto';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import {CartProductUserParamDto, UserCustomerCreateDto, UserUpdateDto} from './dto/user.dto';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ParamIdDto } from '../../shared/dto/common.dto';
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -131,17 +134,34 @@ export class UsersController {
     }
   }
 
+  @ApiOperation({ summary: 'Sign out' })
+  @ApiResponse({ status: 200, description: 'Sign out success.' })
+  @ApiResponse({ status: 404, description: 'Sign out error.' })
+  @ApiBearerAuth()
   @Get('sign-out')
   @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
   signOut(@Request() req) {
     return this.userService.signOutUser(req.user);
   }
 
-  @Post('up-date/:id')
+  @ApiOperation({ summary: 'Update user' })
+  @ApiResponse({ status: 200, description: 'Return updated user.' })
+  @ApiResponse({ status: 404, description: 'Can not update user.' })
+  @ApiBearerAuth()
+  @Patch('up-date/:id')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   @UseInterceptors(AnyFilesInterceptor()) // { storage }
   @HttpCode(HttpStatus.OK)
-  async updateUser(@Body() body, @Param() param, @Query() query, @UploadedFiles() files: Array<Express.Multer.File>) {
-    console.log(1000005, body, param, query);
+  async updateUser(
+    @Body() body: UserUpdateDto,
+    @Param() param: ParamIdDto,
+    @Query() query,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    console.log(100005, body, param, query);
     return await this.userService.updateUser(param, body, files);
   }
 
