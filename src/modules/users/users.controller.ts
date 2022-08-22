@@ -85,6 +85,10 @@ export class UsersController {
       // files: this.commonService.multerFactory(files),
       // req: req,
       BASE_URL_API: process.env.BASE_URL_API,
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      BASE_URL_API_FULL: process.env.BASE_URL_API_FULL,
+      BASE_URL_FRONT_END: process.env.BASE_URL_FRONT_END,
+      TOKEN_SECRET: process.env.TOKEN_SECRET,
       processCwd: process.cwd(),
       dirname__: __dirname,
     };
