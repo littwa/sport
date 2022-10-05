@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types, ObjectId } from 'mongoose';
 import { CreatePostsDto, LikePostDto, PostIdDto, UpdatePostDto } from './dto/posts.dto';
 import * as mongoose from 'mongoose';
-import { Post, PostDocument } from './posts.schema';
+import { Post, PostDocument, PostSchema } from './posts.schema';
 import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 import { User, UserDocument } from '../users/user.schema';
@@ -52,7 +52,7 @@ export class PostsService {
 
   async setLikePost(postId: string, like: LikePostDto) {
     const [keyUserId, valueLike] = Object.entries(like)[0];
-    const likedPost = this.commentModel.findByIdAndUpdate(
+    const likedPost = this.postModel.findByIdAndUpdate(
       postId,
       {
         $set: { [`likes.${keyUserId}`]: valueLike },
@@ -64,6 +64,24 @@ export class PostsService {
     );
 
     return likedPost;
+  }
+
+  async setOrDelLikePost(postId: string, like: LikePostDto) {
+    const [keyUserId, valueLike] = Object.entries(like)[0];
+
+    const post = await this.postModel.findById(postId).exec();
+    console.log(10009, post);
+    // post.likes[keyUserId] === valueLike ? delete post.likes[keyUserId] : (post.likes[keyUserId] = valueLike);
+    if (post.likes[keyUserId] === valueLike) {
+      // delete post.likes[keyUserId]; // Does not write down IN DB
+      post.likes = (({ [keyUserId]: boolean, ...rest }) => rest)(post.likes);
+    } else {
+      // post.likes[keyUserId] = valueLike; // Does not write down IN DB
+      post.likes = { ...post.likes, [keyUserId]: valueLike };
+    }
+    await post.save();
+
+    return post;
   }
 
   async addCommentToPost(postId: string, createCommentDto: CreateCommentDto) {
@@ -119,8 +137,10 @@ export class PostsService {
       all: {},
     };
     const query = (whoseCase => cases[whoseCase] || {})(whose);
-
-    const posts = await this.postModel.find(query);
+    // {path: 'userId', select: {}}
+    const posts = await this.postModel
+      .find(query)
+      .populate('userId', '_id email firstName lastName username avatarURL city country');
 
     if (!posts) throw new NotFoundException(`Can't posts`);
 

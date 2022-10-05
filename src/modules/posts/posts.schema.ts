@@ -9,7 +9,7 @@ import { CommentDocument } from '../comments/comments.schema';
 
 export type PostDocument = Post & Document;
 
-@Schema()
+@Schema({ minimize: false })
 export class Post extends Document {
   @Prop({ type: String, required: true })
   content: string;

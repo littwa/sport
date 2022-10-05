@@ -55,10 +55,11 @@ export class PostsController {
   @Patch('like/:postId')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
-  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
   setLikePost(@Param() param: PostIdDto, @Body() body: LikePostDto) {
-    return this.postsService.setLikePost(param.postId, body);
+    console.log(10000888, body);
+    return this.postsService.setOrDelLikePost(param.postId, body); // setLikePost
   }
 
   @Patch('add-comment/:postId')

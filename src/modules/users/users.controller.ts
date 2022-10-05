@@ -45,7 +45,7 @@ import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
-import {CartProductUserParamDto, UserCustomerCreateDto, UserUpdateDto} from './dto/user.dto';
+import { CartProductUserParamDto, UserCustomerCreateDto, UserUpdateDto } from './dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamIdDto } from '../../shared/dto/common.dto';
 // import { ConfigServiceTest } from '../app.module';
@@ -80,8 +80,9 @@ export class UsersController {
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
     // console.log(1000001, this.userService.test());
-    await this.userService.test();
+    const service = await this.userService.test();
     return {
+      service,
       // files: this.commonService.multerFactory(files),
       // req: req,
       BASE_URL_API: process.env.BASE_URL_API,

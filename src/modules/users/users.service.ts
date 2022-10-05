@@ -52,14 +52,17 @@ export class UsersService {
     // const f = await this.userModel.estimatedDocumentCount();
     const f = await this.userModel.find().sort({ _id: -1 }).limit(1);
     // const f = await this.userModel.find().sort({ $natural: -1 }).limit(1);
-    console.log(1100055, f);
-
+    const list = await this.commonService.getFileListing();
+    console.log(1100055, list);
     // let coll = db.collection('collection_name');
     // coll.count().then((count) => {
     //   console.log(count);
     // });
 
-    return this.userModel.find().count();
+    return {
+      // userModelFindCount: this.userModel.find().count(),
+      list,
+    };
   }
 
   // async createUserAdmin(createUserDto: createUserDto): Promise<object> {

@@ -1,4 +1,4 @@
-import { IsArray, IsIn, IsOptional, IsString, Length } from 'class-validator';
+import { IsArray, IsBoolean, IsBooleanString, IsIn, IsOptional, IsString, Length } from 'class-validator';
 import { EPostsGet } from '../../../shared/enums/posts.enum';
 
 export class CreatePostsDto {
@@ -50,5 +50,9 @@ export class PostGetParamDto {
 }
 
 export class LikePostDto {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  // eslint-disable-next-line prettier/prettier
+  @IsBoolean()
   readonly [userID: string]: boolean;
 }
