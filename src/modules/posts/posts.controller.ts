@@ -35,7 +35,7 @@ export class PostsController {
     return this.postsService.createPosts(body, req);
   }
 
-  @Get(':postId')
+  @Get('post/:postId')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
