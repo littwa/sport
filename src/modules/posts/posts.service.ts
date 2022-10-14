@@ -84,6 +84,15 @@ export class PostsService {
     return post;
   }
 
+  async getPostById(postId: string) {
+    const post = await this.postModel
+      .findById(postId)
+      .populate('userId', '_id email firstName lastName username avatarURL city country')
+      .exec();
+
+    return post;
+  }
+
   async addCommentToPost(postId: string, createCommentDto: CreateCommentDto) {
     const comment = await this.commentModel.create(createCommentDto);
     if (!comment) throw new NotFoundException(`Can't create comment`);

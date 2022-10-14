@@ -35,6 +35,15 @@ export class PostsController {
     return this.postsService.createPosts(body, req);
   }
 
+  @Get(':postId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  getPostById(@Param() param: PostIdDto) {
+    return this.postsService.getPostById(param.postId);
+  }
+
   @Patch('update/:postId')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
