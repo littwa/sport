@@ -8,6 +8,7 @@ import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 import { User, UserDocument } from '../users/user.schema';
 import { EPostsGet } from '../../shared/enums/posts.enum';
+import { GET_POSTS_BODY_DEFAULT, PAGINATION_POSTS_DEFAULT } from '../../shared/constants/posts.contstants';
 
 @Injectable()
 export class PostsService {
@@ -129,7 +130,8 @@ export class PostsService {
     return updatedPost;
   }
 
-  async getPostsAggregate(whose = EPostsGet.All, req) {
+  async getPostsAggregate(whose = EPostsGet.All, req, pagination = PAGINATION_POSTS_DEFAULT) {
+    console.log('pagination= ', pagination);
     const [{ followers, following }] =
       whose === 'following' || whose === 'followers'
         ? await this.userModel.aggregate([
@@ -147,13 +149,29 @@ export class PostsService {
     };
     const query = (whoseCase => cases[whoseCase] || {})(whose);
     // {path: 'userId', select: {}}
+    // console.log('this.postModel.count()= ', await this.postModel.count());
+
+    // sort: LAST_UPDATED_DESC,
+    //     size: this.paginationConfig.itemsPerPage,
+    //     page: 0
     const posts = await this.postModel
       .find(query)
+      .sort({ _id: -1 })
       .populate('userId', '_id email firstName lastName username avatarURL city country');
 
     if (!posts) throw new NotFoundException(`Can't posts`);
 
-    return posts;
+    console.log('posts size:::: ', Math.ceil(posts.length / pagination.size));
+    console.log('body.pagination.page:::: ', pagination.page);
+    console.log('body.pagination.size:::: ', pagination.size);
+
+    // console.log(
+    //   posts.slice(
+    //     body.pagination.page * body.pagination.size,
+    //     body.pagination.page * body.pagination.size + body.pagination.size,
+    //   ),
+    // );
+    return posts.slice(pagination.page * pagination.size, pagination.page * pagination.size + pagination.size);
   }
 
   async getPostsAggTest(whose = EPostsGet.All, req) {

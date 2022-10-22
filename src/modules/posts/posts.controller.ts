@@ -3,11 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   Param,
   Patch,
-  Post,
+  Post, Query,
   Req,
   UseGuards,
   UsePipes,
@@ -20,6 +21,8 @@ import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { IGetPostsBody } from '../../shared/interfaces/posts.interfaces';
+import { IPagination } from '../../shared/interfaces/common.interfaces';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -94,9 +97,25 @@ export class PostsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  getPostsAggregate(@Param() param: PostGetParamDto, @Req() req) {
-    return this.postsService.getPostsAggregate(param.whose, req);
+  @Header('Cache-Control1', JSON.stringify({ q: 'none1' }))
+  getPostsAggregate(@Query() query: IPagination, @Param() param: PostGetParamDto, @Req() req) {
+    console.log(query);
+    return this.postsService.getPostsAggregate(param.whose, req, !!Object.keys(query).length ? query : undefined);
   }
+
+  // export interface IPage<T> {
+  //   content: T;
+  //   empty: boolean;
+  //   first:	boolean;
+  //   last:	boolean;
+  //   number: number;
+  //   numberOfElements: number;
+  //   pageable: IPageable;
+  //   size: number;
+  //   sort: ISort;
+  //   totalElements: number;
+  //   totalPages: number;
+  // }
 
   @Get('test/:whose')
   @UseGuards(AuthGuard('jwt'))

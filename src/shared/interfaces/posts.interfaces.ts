@@ -1,4 +1,5 @@
-// export interface PostsGetInterfaces {
-//     ['me', 'followers', 'following', 'all']
-//     me
-// }
+import { IPagination } from './common.interfaces';
+
+export interface IGetPostsBody {
+  pagination: IPagination;
+}
