@@ -100,7 +100,7 @@ export class PostsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  @Header('Cache-Control1', JSON.stringify({ q: 'none16' }))
+  @Header('Access-Control-Expose-Headers', '*')
   async getPostsAggregate(
     @Response() res: ResponseExpress,
     @Query() query: IPagination,
