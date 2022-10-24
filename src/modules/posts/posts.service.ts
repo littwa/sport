@@ -1,14 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ObjectId } from 'mongoose';
-import { CreatePostsDto, LikePostDto, PostIdDto, UpdatePostDto } from './dto/posts.dto';
 import * as mongoose from 'mongoose';
-import { Post, PostDocument, PostSchema } from './posts.schema';
+import { Model } from 'mongoose';
+import { CreatePostsDto, LikePostDto, UpdatePostDto } from './dto/posts.dto';
+import { Post, PostDocument } from './posts.schema';
 import { Comment, CommentDocument } from 'src/modules/comments/comments.schema';
-import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
+import { CommentIdDto, CreateCommentDto } from '../comments/dto/comments.dto';
 import { User, UserDocument } from '../users/user.schema';
 import { EPostsGet } from '../../shared/enums/posts.enum';
-import { GET_POSTS_BODY_DEFAULT, PAGINATION_POSTS_DEFAULT } from '../../shared/constants/posts.contstants';
+import { PAGINATION_POSTS_DEFAULT } from '../../shared/constants/posts.contstants';
+import { ESortOrderBy } from '../../shared/enums/common.enum';
+import { IPreResponse } from '../../shared/interfaces/posts.interfaces';
 
 @Injectable()
 export class PostsService {
@@ -89,6 +91,7 @@ export class PostsService {
     const post = await this.postModel
       .findById(postId)
       .populate('userId', '_id email firstName lastName username avatarURL city country')
+      .populate('comments')
       .exec();
 
     return post;
@@ -130,8 +133,13 @@ export class PostsService {
     return updatedPost;
   }
 
-  async getPostsAggregate(whose = EPostsGet.All, req, pagination = PAGINATION_POSTS_DEFAULT) {
-    console.log('pagination= ', pagination);
+  async getPostsAggregate(whose = EPostsGet.All, req, pagination): Promise<IPreResponse> {
+    const {
+      page = PAGINATION_POSTS_DEFAULT.page,
+      size = PAGINATION_POSTS_DEFAULT.size,
+      sort = PAGINATION_POSTS_DEFAULT.sort,
+    } = pagination;
+
     const [{ followers, following }] =
       whose === 'following' || whose === 'followers'
         ? await this.userModel.aggregate([
@@ -147,31 +155,27 @@ export class PostsService {
       me: { userId: { $in: [req.user._id] } },
       all: {},
     };
-    const query = (whoseCase => cases[whoseCase] || {})(whose);
-    // {path: 'userId', select: {}}
-    // console.log('this.postModel.count()= ', await this.postModel.count());
 
-    // sort: LAST_UPDATED_DESC,
-    //     size: this.paginationConfig.itemsPerPage,
-    //     page: 0
+    const query = (whoseCase => cases[whoseCase] || {})(whose);
+
     const posts = await this.postModel
       .find(query)
-      .sort({ _id: -1 })
+      .sort({ _id: sort === ESortOrderBy.DESC ? -1 : 1 })
       .populate('userId', '_id email firstName lastName username avatarURL city country');
 
     if (!posts) throw new NotFoundException(`Can't posts`);
 
-    console.log('posts size:::: ', Math.ceil(posts.length / pagination.size));
-    console.log('body.pagination.page:::: ', pagination.page);
-    console.log('body.pagination.size:::: ', pagination.size);
-
-    // console.log(
-    //   posts.slice(
-    //     body.pagination.page * body.pagination.size,
-    //     body.pagination.page * body.pagination.size + body.pagination.size,
-    //   ),
-    // );
-    return posts.slice(pagination.page * pagination.size, pagination.page * pagination.size + pagination.size);
+    return {
+      data: posts.slice((page - 1) * size, page * size),
+      pagination: {
+        page,
+        size,
+        sort,
+        totalElements: posts.length,
+        totalPages: Math.ceil(posts.length / size),
+        lastPage: Number(page) === Math.ceil(posts.length / size),
+      },
+    };
   }
 
   async getPostsAggTest(whose = EPostsGet.All, req) {

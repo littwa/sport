@@ -8,8 +8,10 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post, Query,
+  Post,
+  Query,
   Req,
+  Response,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -23,6 +25,7 @@ import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/
 import { ApiTags } from '@nestjs/swagger';
 import { IGetPostsBody } from '../../shared/interfaces/posts.interfaces';
 import { IPagination } from '../../shared/interfaces/common.interfaces';
+import { Response as ResponseExpress } from 'express';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -97,10 +100,16 @@ export class PostsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  @Header('Cache-Control1', JSON.stringify({ q: 'none1' }))
-  getPostsAggregate(@Query() query: IPagination, @Param() param: PostGetParamDto, @Req() req) {
-    console.log(query);
-    return this.postsService.getPostsAggregate(param.whose, req, !!Object.keys(query).length ? query : undefined);
+  @Header('Cache-Control1', JSON.stringify({ q: 'none16' }))
+  async getPostsAggregate(
+    @Response() res: ResponseExpress,
+    @Query() query: IPagination,
+    @Param() param: PostGetParamDto,
+    @Req() req,
+  ) {
+    console.log('req==', req);
+    const { data, pagination } = await this.postsService.getPostsAggregate(param.whose, req, query);
+    return res.set(pagination).json(data);
   }
 
   // export interface IPage<T> {
