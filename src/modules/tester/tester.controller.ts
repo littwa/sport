@@ -80,4 +80,17 @@ export class TesterController {
     return { query, param, body };
     // return this.testerService.executeTester(param, query, body, req);
   }
+
+  @ApiOperation({ summary: 'Simple test endpoint' })
+  @ApiResponse({ status: 200, description: 'Success' })
+  @ApiResponse({ status: 404, description: 'Error' })
+  // @ApiBearerAuth()
+  @Get('simple-test')
+  // @UseGuards(AuthGuard('jwt'))
+  // @Roles([ERole.Admin, ERole.Customer])
+  // @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  simpleTest() {
+    return 'Success!';
+  }
 }
