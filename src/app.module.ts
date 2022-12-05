@@ -70,6 +70,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes('users/test-jwt');
     // throw new Error('Method not implemented.');
+    //
   }
 }
 
