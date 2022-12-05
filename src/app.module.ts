@@ -1,4 +1,5 @@
-import configuration from 'src/shared/configs/base.config';
+// @ts-ignore
+import configuration from 'src/shared/configs/base.config.ts';
 import { Global, Injectable, MiddlewareConsumer, Module, NestMiddleware, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
