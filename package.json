@@ -89,9 +89,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "setupFiles": [
-      "src/shared/configs/base.config.ts"
-    ]
+    "testEnvironment": "node"
   }
 }
