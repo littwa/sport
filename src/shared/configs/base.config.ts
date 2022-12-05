@@ -1,4 +1,4 @@
-export default () => ({
+export const configuration = () => ({
   nodemailerTransporterConfig: {
     transport: {
       host: 'smtp.gmail.com',

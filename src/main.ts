@@ -3,14 +3,14 @@ import { AppModule } from './app.module';
 import * as path from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import baseConfig from 'src/shared/configs/base.config';
+// import baseConfig from 'src/shared/configs/base.config';
 
 async function bootstrap() {
   console.log('process.env.NODE_ENV in bootstrap() =', process.env.NODE_ENV);
   const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'debug', 'verbose'] }); // 'log'
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
-  app.use(baseConfig);
+  // app.use(baseConfig);
 
   app.use((req, res, next) => {
     // console.log(333, req.rawHeaders);
