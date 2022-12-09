@@ -31,7 +31,7 @@ export class PostsService {
   }
 
   async updatePost(postId, updatePostDto: UpdatePostDto) {
-    console.log(10000444, updatePostDto);
+    console.log(100444, updatePostDto);
     const updatedPost = await this.postModel
       .findByIdAndUpdate(
         postId,
