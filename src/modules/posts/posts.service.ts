@@ -51,7 +51,7 @@ export class PostsService {
   async deletePost(postId: string) {
     const deletedPost = await this.postModel.findByIdAndDelete(postId);
     if (!deletedPost) throw new NotFoundException(`Can't del post`);
-    console.log(100005, deletedPost);
+    console.log(10005, deletedPost);
     // return `Post ById: ${postId} has been successfully deleted!`;
   }
 
