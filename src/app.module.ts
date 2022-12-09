@@ -22,6 +22,7 @@ import * as multer from 'multer';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { PostsModule } from './modules/posts/posts.module';
+import { AuxiliaryModule } from './modules/auxiliary/auxiliary.module';
 
 const storage2 = multer.diskStorage({
   destination: 'uploads',
@@ -61,6 +62,7 @@ const storage2 = multer.diskStorage({
     TesterModule,
     CommentsModule,
     PostsModule,
+    AuxiliaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

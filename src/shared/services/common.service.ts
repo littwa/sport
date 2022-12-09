@@ -71,4 +71,15 @@ export class CommonService {
     console.log('promise- ', promise$$$);
     return promise$$$ as Promise<Array<string>>;
   }
+
+  public async getFileListingPath(directory?: string): Promise<Array<string>> {
+    const promise = new Promise((resolve, rej) => {
+      fs.readdir(process.cwd() + '/uploads/static', (err, files) => {
+        const results = files.map(file => `${UPLOADS}/${STATIC}/${file}`);
+        resolve(results);
+      });
+    });
+
+    return promise as Promise<Array<string>>;
+  }
 }
