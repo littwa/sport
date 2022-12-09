@@ -32,15 +32,17 @@ export class PostsService {
 
   async updatePost(postId, updatePostDto: UpdatePostDto) {
     console.log(10000444, updatePostDto);
-    const updatedPost = await this.postModel.findByIdAndUpdate(
-      postId,
-      {
-        $set: {
-          ...updatePostDto,
+    const updatedPost = await this.postModel
+      .findByIdAndUpdate(
+        postId,
+        {
+          $set: {
+            ...updatePostDto,
+          },
         },
-      },
-      { new: true, useFindAndModify: false },
-    );
+        { new: true, useFindAndModify: false },
+      )
+      .populate('userId', '_id email firstName lastName username avatarURL city country');
 
     if (!updatedPost) throw new NotFoundException(`Can't updated post`);
     return updatedPost;
