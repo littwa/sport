@@ -93,7 +93,14 @@ export class PostsService {
     const post = await this.postModel
       .findById(postId)
       .populate('userId', '_id email firstName lastName username avatarURL city country')
-      .populate('comments')
+      .populate({
+        path: 'comments',
+        options: {
+          sort: {
+            _id: -1,
+          },
+        },
+      })
       .exec();
 
     return post;
@@ -116,7 +123,7 @@ export class PostsService {
 
     if (!commentedPost) throw new NotFoundException(`Can't commented Post`);
 
-    return commentedPost;
+    return comment;
   }
 
   async deleteCommentFromPost(postId: string, commentIdDto: CommentIdDto) {
@@ -132,7 +139,7 @@ export class PostsService {
       { new: true },
     );
 
-    return updatedPost;
+    return { ...commentIdDto, postId };
   }
 
   async getPostsAggregate(whose = EPostsGet.All, req, pagination): Promise<IPreResponse> {
