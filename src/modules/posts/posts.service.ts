@@ -31,7 +31,6 @@ export class PostsService {
   }
 
   async updatePost(postId, updatePostDto: UpdatePostDto) {
-    console.log(100444, updatePostDto);
     const updatedPost = await this.postModel
       .findByIdAndUpdate(
         postId,
@@ -75,7 +74,6 @@ export class PostsService {
     const [keyUserId, valueLike] = Object.entries(like)[0];
 
     const post = await this.postModel.findById(postId).exec();
-    console.log(10009, post);
     // post.likes[keyUserId] === valueLike ? delete post.likes[keyUserId] : (post.likes[keyUserId] = valueLike);
     if (post.likes[keyUserId] === valueLike) {
       // delete post.likes[keyUserId]; // Does not write down IN DB
@@ -95,19 +93,19 @@ export class PostsService {
       .populate('userId', '_id email firstName lastName username avatarURL city country')
       .populate({
         path: 'comments',
+        populate: { path: 'userId', select: '_id email firstName lastName username avatarURL city country' },
         options: {
           sort: {
             _id: -1,
           },
         },
-      })
-      .exec();
+      });
 
     return post;
   }
 
-  async addCommentToPost(postId: string, createCommentDto: CreateCommentDto) {
-    const comment = await this.commentModel.create(createCommentDto);
+  async addCommentToPost(postId: string, createCommentDto: CreateCommentDto, req) {
+    const comment = await this.commentModel.create({ ...createCommentDto, userId: req.user._id });
     if (!comment) throw new NotFoundException(`Can't create comment`);
     const commentedPost = await this.postModel.findByIdAndUpdate(
       postId,
@@ -123,7 +121,7 @@ export class PostsService {
 
     if (!commentedPost) throw new NotFoundException(`Can't commented Post`);
 
-    return comment;
+    return comment.populate('userId', '_id email firstName lastName username avatarURL city country');
   }
 
   async deleteCommentFromPost(postId: string, commentIdDto: CommentIdDto) {

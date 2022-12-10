@@ -82,8 +82,8 @@ export class PostsController {
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
-  addCommentToPost(@Body() body: CreateCommentDto, @Param() param: PostIdDto) {
-    return this.postsService.addCommentToPost(param.postId, body);
+  addCommentToPost(@Req() req, @Body() body: CreateCommentDto, @Param() param: PostIdDto) {
+    return this.postsService.addCommentToPost(param.postId, body, req);
   }
 
   @Patch('del-comment/:postId')
