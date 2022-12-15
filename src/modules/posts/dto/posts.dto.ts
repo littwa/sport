@@ -49,6 +49,12 @@ export class PostGetParamDto {
   readonly whose: EPostsGet;
 }
 
+export class UserPostsGetParamDto {
+  @IsString()
+  @Length(24, 24)
+  readonly userId: string;
+}
+
 export class LikePostDto {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore

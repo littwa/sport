@@ -18,7 +18,14 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CreatePostsDto, LikePostDto, PostGetParamDto, PostIdDto, UpdatePostDto } from './dto/posts.dto';
+import {
+  CreatePostsDto,
+  LikePostDto,
+  PostGetParamDto,
+  PostIdDto,
+  UpdatePostDto,
+  UserPostsGetParamDto
+} from './dto/posts.dto';
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto } from '../comments/dto/comments.dto';
@@ -73,8 +80,7 @@ export class PostsController {
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
   setLikePost(@Param() param: PostIdDto, @Body() body: LikePostDto) {
-    console.log(10000888, body);
-    return this.postsService.setOrDelLikePost(param.postId, body); // setLikePost
+    return this.postsService.setOrDelLikePost(param.postId, body);
   }
 
   @Patch('add-comment/:postId')
@@ -107,24 +113,18 @@ export class PostsController {
     @Param() param: PostGetParamDto,
     @Req() req,
   ) {
-    console.log('req==', req);
     const { data, pagination } = await this.postsService.getPostsAggregate(param.whose, req, query);
     return res.set(pagination).json(data);
   }
 
-  // export interface IPage<T> {
-  //   content: T;
-  //   empty: boolean;
-  //   first:	boolean;
-  //   last:	boolean;
-  //   number: number;
-  //   numberOfElements: number;
-  //   pageable: IPageable;
-  //   size: number;
-  //   sort: ISort;
-  //   totalElements: number;
-  //   totalPages: number;
-  // }
+  @Get('get-posts/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  getUserPosts(@Param() param: UserPostsGetParamDto, @Req() req) {
+    return this.postsService.getUserPosts(param.userId, req);
+  }
 
   @Get('test/:whose')
   @UseGuards(AuthGuard('jwt'))

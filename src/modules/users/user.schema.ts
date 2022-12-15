@@ -19,8 +19,8 @@ export class User extends Document {
   @Prop({ type: String, required: false, default: '' })
   lastName: string;
 
-  @Prop({ type: String, required: false, default: '' })
-  yearOfBirth: string;
+  // @Prop({ type: String, required: false, default: '' })
+  // yearOfBirth: string;
 
   @Prop({ type: String, required: false, default: '' })
   dayOfBirth: string;
@@ -91,7 +91,6 @@ export class User extends Document {
 
   // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
   // customer: CustomerDocument[];
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

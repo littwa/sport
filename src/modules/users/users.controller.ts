@@ -45,7 +45,13 @@ import * as path from 'path';
 import { storage } from 'src/config/config-entity';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
-import { CartProductUserParamDto, UserCustomerCreateDto, UserUpdateDto } from './dto/user.dto';
+import {
+  CartProductUserParamDto,
+  UserCustomerCreateDto,
+  UsersFindDto,
+  UsersFindDtoExtends,
+  UserUpdateDto
+} from './dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamIdDto } from '../../shared/dto/common.dto';
 // import { ConfigServiceTest } from '../app.module';
@@ -193,6 +199,32 @@ export class UsersController {
   getCurrentUserAggregate(@Request() req) {
     console.log('req.user-', req.user);
     return this.userService.getCurrentUserAggregate(req.user);
+  }
+
+  @ApiOperation({ summary: 'Get users' })
+  @ApiResponse({ status: 200, description: 'Return users.' })
+  @ApiResponse({ status: 404, description: 'Can not users.' })
+  @ApiBearerAuth()
+  @Get('get-users/:someName')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  async getUsers(@Param() param: any, @Query() query: UsersFindDto, @Req() req) {
+    return await this.userService.getUsers(param, query, req);
+  }
+
+  @ApiOperation({ summary: 'Get users extends' })
+  @ApiResponse({ status: 200, description: 'Return users extends.' })
+  @ApiResponse({ status: 404, description: 'Can not users extends.' })
+  @ApiBearerAuth()
+  @Get('get-users-ext')
+  @UseGuards(AuthGuard('jwt'))
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  async getUsersExtends(@Query() query: UsersFindDtoExtends, @Req() req) {
+    return await this.userService.getUsersExtends(query, req);
   }
 
   @Post('sign-in')

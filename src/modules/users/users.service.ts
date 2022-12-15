@@ -20,6 +20,8 @@ import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
+import { PAGINATION_USERS_DEFAULT } from '../../shared/constants/users.constants';
+import { ESortOrderBy } from '../../shared/enums/common.enum';
 
 @Injectable()
 export class UsersService {
@@ -64,39 +66,6 @@ export class UsersService {
       list,
     };
   }
-
-  // async createUserAdmin(createUserDto: createUserDto): Promise<object> {
-  //   let userAdmin = await this.userModel.findOne({
-  //     email: createUserDto.email,
-  //     role: ERole.Admin,
-  //   });
-  //
-  //   if (!userAdmin) {
-  //     userAdmin = await this.userModel.create({
-  //       ...createUserDto,
-  //     });
-  //   }
-  //
-  //   const code = (
-  //     Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
-  //   ).toString();
-  //
-  //   const updatedUserAdmin = await this.userModel.findByIdAndUpdate(
-  //     userAdmin._id,
-  //     { verificationCode: code, status: EStatus.NotVerified },
-  //     { new: true, useFindAndModify: false },
-  //   );
-  //
-  //   this.emailService.sendUserConfirmation(
-  //     updatedUserAdmin.email,
-  //     updatedUserAdmin.verificationCode,
-  //   );
-  //
-  //   const { password, verificationCode, __v, ...userAdminDtoReverse } =
-  //     updatedUserAdmin.toObject();
-  //
-  //   return userAdminDtoReverse;
-  // }
 
   async createUserCustomer(createUserCustomerDto: UserCustomerCreateDto): Promise<object> {
     let user = await this.userModel.findOne({
@@ -143,20 +112,17 @@ export class UsersService {
   }
 
   async signOutUser(parsedToken) {
-    console.log(10000088, parsedToken);
     const deletedSession = await this.sessionModel.findByIdAndDelete(parsedToken.sid);
-
     if (!deletedSession) {
       throw new BadRequestException('No current session');
     }
-
     return { req: 'logOutUser Success' };
   }
 
   async getInfoUserCustomer({ _id }) {
-    const infoCusomer = await this.userModel.findOne({ _id, role: ERole.Customer }).populate('customer');
-    if (!infoCusomer) throw new BadRequestException('Customer was not found');
-    const { password, verificationCode, __v, ...userDtoInfo } = infoCusomer.toObject();
+    const infoCustomer = await this.userModel.findOne({ _id, role: ERole.Customer }); //.populate('customer');
+    if (!infoCustomer) throw new BadRequestException('Customer was not found');
+    const { password, verificationCode, __v, ...userDtoInfo } = infoCustomer.toObject();
     return userDtoInfo;
   }
 
@@ -173,15 +139,81 @@ export class UsersService {
     return userDtoInfo;
   }
 
-  async getCurrentUserAggregate({ _id }) {
-    // const infoUser = await this.userModel
-    //     .findOne({
-    //       _id,
-    //       role: ERole.Customer,
-    //     })
-    //     .populate('followers')
-    //     .populate('following'); // .populate('customer');
+  async getUsers(param, query, req) {
+    const ARR_FIELDS = ['firstName', 'lastName', 'username'];
+    const { page = null, size = PAGINATION_USERS_DEFAULT.size, sort = PAGINATION_USERS_DEFAULT.sort } = query;
+    // const estimatedDocumentCount: number = await this.userModel.find().estimatedDocumentCount();
+    console.log(100005, param, query);
+    // const find = await this.userModel.find({});
 
+    const users = await this.userModel.aggregate([
+      {
+        $match: {
+          $or: ARR_FIELDS.map(field => ({ [field]: { $regex: param.someName, $options: 'i' } })),
+        },
+      },
+      {
+        $sort: {
+          _id: sort === ESortOrderBy.DESC ? -1 : 1,
+        },
+      },
+    ]);
+
+    console.log(users);
+    return {
+      data: users.slice(0, size),
+      pagination: {
+        page: null,
+        size,
+        sort,
+        totalElements: users.length,
+        totalPages: null,
+        lastPage: size >= users.length,
+      },
+    };
+
+    // const d = this.userModel
+    // console.log(users);
+    // return users;
+  }
+
+  async getUsersExtends(query, req) {
+    const { size = PAGINATION_USERS_DEFAULT.size, sort = PAGINATION_USERS_DEFAULT.sort, ...findQueries } = query;
+    console.log(
+      1005,
+      Object.entries(findQueries).map(([k, v]) => ({ [k]: '/^' + v + '/i' })),
+    );
+
+    const users = await this.userModel.aggregate([
+      {
+        $match: {
+          $and: Object.entries(findQueries).map(([k, v]) => ({
+            [k]: { $regex: new RegExp(['^', v, '$'].join(''), 'i') }, // exact value + insensitive register
+          })),
+        },
+      },
+      {
+        $sort: {
+          _id: sort === ESortOrderBy.DESC ? -1 : 1,
+        },
+      },
+    ]);
+
+    console.log(users);
+    return {
+      data: users.slice(0, size),
+      pagination: {
+        page: null,
+        size,
+        sort,
+        totalElements: users.length,
+        totalPages: null,
+        lastPage: size >= users.length,
+      },
+    };
+  }
+
+  async getCurrentUserAggregate({ _id }) {
     const agg = await this.userModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(_id) } },
       // ---------------------start aggregate cart-----------------------------------
@@ -287,38 +319,6 @@ export class UsersService {
     return agg;
   }
 
-  async signIn(signInDto) {
-    const { email, password } = signInDto;
-
-    const user = await this.userModel
-      .findOne({ email, role: ERole.Customer })
-      .populate('followers')
-      .populate('following');
-
-    if (!user) throw new BadRequestException('User was not found');
-    if (user.status !== 'Verified') throw new BadRequestException('User not verified');
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) throw new BadRequestException('Password wrong');
-
-    const userObjectId = user._id;
-
-    const createSession = await this.createSessionUtility(userObjectId);
-    const tokens = this.getPairTokensUtility(createSession, user);
-
-    return {
-      _id: user._id,
-      username: user.username,
-      email: user.email,
-      status: user.status,
-      role: user.role,
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      // tokens,
-    };
-  }
-
   async addFavoriteProduct(productId: string, req) {
     const user = await this.userModel.findByIdAndUpdate(
       req.user._id,
@@ -389,6 +389,38 @@ export class UsersService {
     );
 
     return user;
+  }
+
+  async signIn(signInDto) {
+    const { email, password } = signInDto;
+
+    const user = await this.userModel
+      .findOne({ email, role: ERole.Customer })
+      .populate('followers')
+      .populate('following');
+
+    if (!user) throw new BadRequestException('User was not found');
+    if (user.status !== 'Verified') throw new BadRequestException('User not verified');
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) throw new BadRequestException('Password wrong');
+
+    const userObjectId = user._id;
+
+    const createSession = await this.createSessionUtility(userObjectId);
+    const tokens = this.getPairTokensUtility(createSession, user);
+
+    return {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+      status: user.status,
+      role: user.role,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      // tokens,
+    };
   }
 
   async getRefreshToken(req) {

@@ -54,22 +54,6 @@ export class PostsService {
     // return `Post ById: ${postId} has been successfully deleted!`;
   }
 
-  async setLikePost(postId: string, like: LikePostDto) {
-    const [keyUserId, valueLike] = Object.entries(like)[0];
-    const likedPost = this.postModel.findByIdAndUpdate(
-      postId,
-      {
-        $set: { [`likes.${keyUserId}`]: valueLike },
-      },
-      {
-        new: true,
-        useFindAndModify: false,
-      },
-    );
-
-    return likedPost;
-  }
-
   async setOrDelLikePost(postId: string, like: LikePostDto) {
     const [keyUserId, valueLike] = Object.entries(like)[0];
 
@@ -183,6 +167,11 @@ export class PostsService {
         lastPage: Number(page) === Math.ceil(posts.length / size),
       },
     };
+  }
+
+  async getUserPosts(userId, req) {
+    const posts = await this.postModel.find({ userId });
+    return posts;
   }
 
   async getPostsAggTest(whose = EPostsGet.All, req) {

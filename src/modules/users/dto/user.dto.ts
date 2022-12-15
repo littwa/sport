@@ -23,10 +23,10 @@ export class UserUpdateDto {
   @IsString()
   readonly dayOfBirth: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly yearOfBirth: string;
+  // @ApiPropertyOptional()
+  // @IsOptional()
+  // @IsString()
+  // readonly yearOfBirth: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -117,8 +117,61 @@ export class UserIdParamDto {
   readonly id: string;
 }
 
-// export class createUserCustomerDto extends createUserDto {
-//     readonly password: string;
-//     readonly username: string;
-//     readonly age: string;
-// }
+export class UsersFindDto {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly someName: string;
+}
+
+export class UsersFindDtoExtends {
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly size: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly sort: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly firstName: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly lastName: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly username: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly dayOfBirth: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly country: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly hobby: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly occupation: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly city: string;
+}
