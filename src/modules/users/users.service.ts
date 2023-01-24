@@ -143,15 +143,19 @@ export class UsersService {
     const ARR_FIELDS = ['firstName', 'lastName', 'username'];
     const { page = null, size = PAGINATION_USERS_DEFAULT.size, sort = PAGINATION_USERS_DEFAULT.sort } = query;
     // const estimatedDocumentCount: number = await this.userModel.find().estimatedDocumentCount();
-    console.log(100005, param, query);
+    console.log(100005, param, param.someName, query);
     // const find = await this.userModel.find({});
 
     const users = await this.userModel.aggregate([
-      {
-        $match: {
-          $or: ARR_FIELDS.map(field => ({ [field]: { $regex: param.someName, $options: 'i' } })),
-        },
-      },
+      ...(param.someName
+        ? [
+            {
+              $match: {
+                $or: ARR_FIELDS.map(field => ({ [field]: { $regex: param.someName, $options: 'i' } })),
+              },
+            },
+          ]
+        : []),
       {
         $sort: {
           _id: sort === ESortOrderBy.DESC ? -1 : 1,
@@ -161,7 +165,7 @@ export class UsersService {
 
     console.log(users);
     return {
-      data: users.slice(0, size),
+      body: users.slice(0, size),
       pagination: {
         page: null,
         size,
@@ -177,21 +181,26 @@ export class UsersService {
     // return users;
   }
 
-  async getUsersExtends(query, req) {
+  async getUsersExtends(query) {
     const { size = PAGINATION_USERS_DEFAULT.size, sort = PAGINATION_USERS_DEFAULT.sort, ...findQueries } = query;
-    console.log(
-      1005,
-      Object.entries(findQueries).map(([k, v]) => ({ [k]: '/^' + v + '/i' })),
-    );
+    // console.log(
+    //   1005,
+    //   findQueries,
+    //   Object.entries(findQueries).map(([k, v]) => ({ [k]: '/^' + v + '/i' })),
+    // );
 
     const users = await this.userModel.aggregate([
-      {
-        $match: {
-          $and: Object.entries(findQueries).map(([k, v]) => ({
-            [k]: { $regex: new RegExp(['^', v, '$'].join(''), 'i') }, // exact value + insensitive register
-          })),
-        },
-      },
+      ...(Object.keys(findQueries).length
+        ? [
+            {
+              $match: {
+                $and: Object.entries(findQueries).map(([k, v]) => ({
+                  [k]: { $regex: new RegExp(['^', v, '$'].join(''), 'i') }, // exact value + insensitive register
+                })),
+              },
+            },
+          ]
+        : []),
       {
         $sort: {
           _id: sort === ESortOrderBy.DESC ? -1 : 1,
@@ -201,7 +210,7 @@ export class UsersService {
 
     console.log(users);
     return {
-      data: users.slice(0, size),
+      body: users.slice(0, size),
       pagination: {
         page: null,
         size,

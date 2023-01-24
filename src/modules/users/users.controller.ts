@@ -205,7 +205,7 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Return users.' })
   @ApiResponse({ status: 404, description: 'Can not users.' })
   @ApiBearerAuth()
-  @Get('get-users/:someName')
+  @Get('get-users/:someName?')
   @UseGuards(AuthGuard('jwt'))
   @Roles([ERole.Admin, ERole.Customer])
   @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -224,7 +224,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ whitelist: true }))
   @HttpCode(HttpStatus.OK)
   async getUsersExtends(@Query() query: UsersFindDtoExtends, @Req() req) {
-    return await this.userService.getUsersExtends(query, req);
+    return await this.userService.getUsersExtends(query);
   }
 
   @Post('sign-in')
