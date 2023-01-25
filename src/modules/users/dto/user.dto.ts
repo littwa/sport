@@ -122,6 +122,16 @@ export class UsersFindDto {
   @IsString()
   @IsOptional()
   readonly someName: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly size: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  readonly sort: string;
 }
 
 export class UsersFindDtoExtends {
