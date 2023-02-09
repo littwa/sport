@@ -369,19 +369,43 @@ export class UsersService {
   }
 
   async follow(req, body) {
-    const user = await this.userModel.findByIdAndUpdate(
-      req.user._id,
-      { $push: { following: body.followId } },
-      { new: true },
-    );
+    const user = await this.userModel.findById(req.user._id).exec();
+    if (!user.following.includes(body.followId)) {
+      user.following.push(body.followId);
+      await user.save();
 
-    const follower = await this.userModel.findByIdAndUpdate(
-      body.followId,
-      { $push: { followers: req.user._id } },
-      { new: true },
-    );
+      const follower = await this.userModel.findById(body.followId).exec();
+      if (!follower.followers.includes(req.user._id)) {
+        follower.followers.push(req.user._id);
+        await follower.save();
+      }
+    }
 
-    return user;
+    // const populatedFollowers = await user.populate('followers');
+    return (await user.populate('followers')).populate('following');
+
+    // user.following.reduce((acc, value, i, arr) => {
+    //   return acc;
+    // }, []);
+    // console.log(user.following.map(v => v));
+
+    // const user = await this.userModel.findByIdAndUpdate(
+    //   req.user._id,
+    //   {
+    //     $push: {
+    //       following: body.followId,
+    //     },
+    //   },
+    //   { new: true },
+    // );
+    //
+    // const follower = await this.userModel.findByIdAndUpdate(
+    //   body.followId,
+    //   { $push: { followers: req.user._id } },
+    //   { new: true },
+    // );
+    //
+    // return user;
   }
 
   async unfollow(req, body) {
@@ -397,7 +421,7 @@ export class UsersService {
       { new: true },
     );
 
-    return user;
+    return (await user.populate('followers')).populate('following');
   }
 
   async signIn(signInDto) {

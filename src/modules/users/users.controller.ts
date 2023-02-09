@@ -47,7 +47,7 @@ import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
 import {
   CartProductUserParamDto,
-  UserCustomerCreateDto,
+  UserCustomerCreateDto, UserFollowBodyDto,
   UsersFindDto,
   UsersFindDtoExtends,
   UserUpdateDto
@@ -234,15 +234,21 @@ export class UsersController {
 
   @Post('follow')
   @UseGuards(AuthGuard('jwt'))
-  // @Roles(ERole.Admin)
-  follow(@Request() req, @Body() body) {
+  @ApiBearerAuth()
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  follow(@Request() req, @Body() body: UserFollowBodyDto) {
     return this.userService.follow(req, body);
   }
 
   @Post('unfollow')
   @UseGuards(AuthGuard('jwt'))
-  // @Roles(ERole.Admin)
-  unfollow(@Request() req, @Body() body) {
+  @ApiBearerAuth()
+  @Roles([ERole.Admin, ERole.Customer])
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  @HttpCode(HttpStatus.OK)
+  unfollow(@Request() req, @Body() body: UserFollowBodyDto) {
     return this.userService.unfollow(req, body);
   }
 

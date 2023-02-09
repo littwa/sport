@@ -134,6 +134,12 @@ export class UsersFindDto {
   readonly sort: string;
 }
 
+export class UserFollowBodyDto {
+  @ApiProperty()
+  @IsString()
+  readonly followId: string;
+}
+
 export class UsersFindDtoExtends {
   @ApiPropertyOptional()
   @IsString()
