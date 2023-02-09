@@ -47,10 +47,11 @@ import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
 import {
   CartProductUserParamDto,
-  UserCustomerCreateDto, UserFollowBodyDto,
+  UserCustomerCreateDto,
+  UserFollowBodyDto,
   UsersFindDto,
   UsersFindDtoExtends,
-  UserUpdateDto
+  UserUpdateDto,
 } from './dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamIdDto } from '../../shared/dto/common.dto';
@@ -192,6 +193,13 @@ export class UsersController {
   getCurrentUser(@Request() req) {
     console.log('req.user-', req.user);
     return this.userService.getCurrentUser(req.user);
+  }
+
+  @Get('get/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  getUserById(@Request() req, @Param() param) {
+    console.log('req.user-', req.user);
+    return this.userService.getUserById(param.userId);
   }
 
   @Get('get-aggregate')

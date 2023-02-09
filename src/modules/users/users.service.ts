@@ -126,6 +126,10 @@ export class UsersService {
     return userDtoInfo;
   }
 
+  async getUserById(id) {
+    return this.userModel.findById(id).populate('followers').populate('following');
+  }
+
   async getCurrentUser({ _id }) {
     const infoUser = await this.userModel
       .findOne({
