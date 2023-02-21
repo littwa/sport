@@ -202,6 +202,18 @@ export class UsersController {
     return this.userService.getUserById(param.userId);
   }
 
+  @Get('get-followers/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  getUserFollowersById(@Request() req, @Param() param) {
+    return this.userService.getUserFollowersById(param.userId);
+  }
+
+  @Get('get-following/:userId')
+  @UseGuards(AuthGuard('jwt'))
+  getUserFollowingById(@Request() req, @Param() param) {
+    return this.userService.getUserFollowingById(param.userId);
+  }
+
   @Get('get-aggregate')
   @UseGuards(AuthGuard('jwt'))
   getCurrentUserAggregate(@Request() req) {

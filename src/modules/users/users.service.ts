@@ -121,21 +121,32 @@ export class UsersService {
 
   async getInfoUserCustomer({ _id }) {
     const infoCustomer = await this.userModel.findOne({ _id, role: ERole.Customer }); //.populate('customer');
-    if (!infoCustomer) throw new BadRequestException('Customer was not found');
+    if (!infoCustomer) throw new BadRequestException('Customer was not found.');
     const { password, verificationCode, __v, ...userDtoInfo } = infoCustomer.toObject();
     return userDtoInfo;
   }
 
   async getUserById(id) {
-    return this.userModel.findById(id).populate('followers').populate('following');
+    return this.userModel.findById(id, { status: 0, password: 0, cart: 0, orders: 0, watchedProducts: 0 });
+  }
+
+  async getUserFollowersById(id) {
+    return (await this.userModel.findById(id, { followers: 1 }).populate('followers')).followers;
+  }
+
+  async getUserFollowingById(id) {
+    return (await this.userModel.findById(id, { following: 1 }).populate('following')).following;
   }
 
   async getCurrentUser({ _id }) {
     const infoUser = await this.userModel
-      .findOne({
-        _id,
-        role: ERole.Customer,
-      })
+      .findOne(
+        {
+          _id,
+          role: ERole.Customer,
+        },
+        { password: 0 },
+      )
       .populate('followers')
       .populate('following'); // .populate('customer');
     if (!infoUser) throw new BadRequestException('User was not found');
