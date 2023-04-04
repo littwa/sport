@@ -9,30 +9,30 @@ export type DocDocument = Doc & Document;
 
 @Schema()
 export class Doc extends Document {
-  @Prop({ type: String, required: true })
-  docNo: string;
+    @Prop({ type: String, required: true })
+    docNo: string;
 
-  @Prop({ type: String, default: '' })
-  items: string;
+    @Prop({ type: String, default: '' })
+    items: string;
 
-  @Prop({ type: String, required: true })
-  notes: string;
+    @Prop({ type: String, required: true })
+    notes: string;
 
-  @Prop({
-    type: String,
-    default: 'new',
-    enum: ['new', 'verify', 'archive'],
-  })
-  status: string;
+    @Prop({
+        type: String,
+        default: 'new',
+        enum: ['new', 'verify', 'archive'],
+    })
+    status: string;
 
-  @Prop({ type: Object, required: true })
-  created: IDate;
+    @Prop({ type: Object, required: true })
+    created: IDate;
 
-  // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-  // productsList: Product[];
+    // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
+    // productsList: Product[];
 
-  // @Prop({ type: [CustomerSchema] })
-  // productsList: ICustomer[]; //  Сheck how it works  ?????????
+    // @Prop({ type: [CustomerSchema] })
+    // productsList: ICustomer[]; //  Сheck how it works  ?????????
 }
 
 export const DocSchema = SchemaFactory.createForClass(Doc);

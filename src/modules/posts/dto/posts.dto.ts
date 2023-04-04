@@ -1,5 +1,5 @@
 import { IsArray, IsBoolean, IsBooleanString, IsIn, IsOptional, IsString, Length } from 'class-validator';
-import { EPostsGet } from '../../../shared/enums/posts.enum';
+import { EPostsGet } from 'src/shared/enums/posts.enum';
 
 export class CreatePostsDto {
   @IsString()

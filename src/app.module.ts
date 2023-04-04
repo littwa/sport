@@ -25,60 +25,60 @@ import { PostsModule } from './modules/posts/posts.module';
 import { AuxiliaryModule } from './modules/auxiliary/auxiliary.module';
 
 const storage2 = multer.diskStorage({
-  destination: 'uploads',
-  // destination: function (req, file, cb) {
-  //   cb(null, 'uploads');
-  // },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now();
-    const ext = path.parse(file.originalname).ext;
-    cb(null, uniqueSuffix + ext);
-  },
+    destination: 'uploads',
+    // destination: function (req, file, cb) {
+    //   cb(null, 'uploads');
+    // },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now();
+        const ext = path.parse(file.originalname).ext;
+        cb(null, uniqueSuffix + ext);
+    },
 });
 
 // @Global()
 @Module({
-  imports: [
-    PassportModule,
-    ConfigModule.forRoot({
-      load: [configuration],
-      isGlobal: true,
-      envFilePath: ['.env'], // not necessary
-    }),
-    MongooseModule.forRoot(process.env.MONGO_URL),
-    // MulterModule.registerAsync({ useFactory: () => ({ storage: storage2 }) }),
-    // MulterModule.register({ storage }),
-    ServeStaticModule.forRoot({
-      rootPath: path.join(__dirname, '..', 'uploads'),
-      serveRoot: '/uploads',
-    }),
-    UsersModule,
-    CustomersModule,
-    OrdersModule,
-    ProductsModule,
-    DocsModule,
-    ReviewsModule,
-    FavoritesModule,
-    TesterModule,
-    CommentsModule,
-    PostsModule,
-    AuxiliaryModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-  exports: [], // ConfigModule, ProductsModule,
+    imports: [
+        PassportModule,
+        ConfigModule.forRoot({
+            load: [configuration],
+            isGlobal: true,
+            envFilePath: ['.env'], // not necessary
+        }),
+        MongooseModule.forRoot(process.env.MONGO_URL),
+        // MulterModule.registerAsync({ useFactory: () => ({ storage: storage2 }) }),
+        // MulterModule.register({ storage }),
+        ServeStaticModule.forRoot({
+            rootPath: path.join(__dirname, '..', 'uploads'),
+            serveRoot: '/uploads',
+        }),
+        UsersModule,
+        CustomersModule,
+        OrdersModule,
+        ProductsModule,
+        DocsModule,
+        ReviewsModule,
+        FavoritesModule,
+        TesterModule,
+        CommentsModule,
+        PostsModule,
+        AuxiliaryModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
+    exports: [], // ConfigModule, ProductsModule,
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('users/test-jwt');
-    // throw new Error('Method not implemented.');
-  }
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).forRoutes('users/test-jwt');
+        // throw new Error('Method not implemented.');
+    }
 }
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  use(req: Request, res: Response, next: NextFunction) {
-    console.log('LoggerMiddleware...users/test-jwt');
-    next();
-  }
+    use(req: Request, res: Response, next: NextFunction) {
+        console.log('LoggerMiddleware...users/test-jwt');
+        next();
+    }
 }

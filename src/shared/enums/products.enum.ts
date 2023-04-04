@@ -1,0 +1,33 @@
+export enum ProductsCategoryEnum {
+    Other = 'Other',
+    NotebooksAndPC = 'NotebooksAndPC',
+    Gaming = 'Gaming',
+    TV = 'TV',
+    Phone = 'Phone',
+    HouseholdAppliances = 'HouseholdAppliances',
+    Instrument = 'Instrument',
+    Accessories = 'Accessories',
+}
+
+export enum ProductsSubCategoryEnum {
+    OTHER = 'Other',
+    MONITORS = 'Monitors',
+    NOTEBOOKS = 'Notebooks',
+    PC = 'PC',
+    TABLETS = 'Tablets',
+    SMARTPHONES = 'Smartphones',
+    SCANNERS = 'Scanners',
+    PRINTERS = 'Printers-mfu',
+    CONSOLES = 'Consoles',
+    GAMES = 'Games',
+    MOUSES = 'Mouses',
+    KEYBOARDS = 'Keyboards',
+    TV = 'TV',
+    VIDEOS = 'Videos',
+    REFRIGERATORS = 'Refrigerators',
+    WASHING_MACHINES = 'Washing-machines',
+    COOKERS = 'Cookers',
+    DRILLS = 'Drills',
+    SAWS = 'Saws',
+    HEADPHONES = 'Headphones',
+}

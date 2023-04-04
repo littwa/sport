@@ -11,29 +11,29 @@ export type PostDocument = Post & Document;
 
 @Schema({ minimize: false })
 export class Post extends Document {
-  @Prop({ type: String, required: true })
-  content: string;
+    @Prop({ type: String, required: true })
+    content: string;
 
-  @Prop({ type: String, default: '' })
-  title: string;
+    @Prop({ type: String, default: '' })
+    title: string;
 
-  @Prop({ type: String, default: 'other', enum: ['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'] })
-  theme: string;
+    @Prop({ type: String, default: 'other', enum: ['war', 'sport', 'politics', 'economics', 'tech', 'music', 'other'] })
+    theme: string;
 
-  @Prop({ type: String, default: new Date().toISOString() })
-  created: string;
+    @Prop({ type: String, default: new Date().toISOString() })
+    created: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: UserDocument;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    userId: UserDocument;
 
-  @Prop({ type: Array, default: [], required: false })
-  photoURLs: string[];
+    @Prop({ type: Array, default: [], required: false })
+    photoURLs: string[];
 
-  @Prop({ type: Object, default: {} })
-  likes: { [userId: string]: boolean };
+    @Prop({ type: Object, default: {} })
+    likes: { [userId: string]: boolean };
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
-  comments: CommentDocument[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
+    comments: CommentDocument[];
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

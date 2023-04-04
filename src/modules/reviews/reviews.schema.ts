@@ -10,32 +10,32 @@ export type ReviewDocument = Review & Document;
 
 @Schema()
 export class Review extends Document {
-  @Prop({ type: String, required: true })
-  review: string;
+    @Prop({ type: String, required: true })
+    review: string;
 
-  @Prop({ type: String, default: Date.now() })
-  dateCreated: Date;
+    @Prop({ type: String, default: Date.now() })
+    dateCreated: Date;
 
-  @Prop({ type: Array, default: [] })
-  tags: string[];
+    @Prop({ type: Array, default: [] })
+    tags: string[];
 
-  @Prop({ type: Object, default: {} })
-  likes: { [userId: string]: boolean };
+    @Prop({ type: Object, default: {} })
+    likes: { [userId: string]: boolean };
 
-  @Prop({ type: String, required: false })
-  userAvatarURL: string;
+    @Prop({ type: String, required: false })
+    userAvatarURL: string;
 
-  @Prop({ type: String, default: new Date().toISOString() })
-  created: string;
+    @Prop({ type: String, default: new Date().toISOString() })
+    created: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
-  product: Product;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Product' })
+    product: Product;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  user: User;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    user: User;
 
-  //@Prop({ type: [CustomerSchema] })
-  // productsList: ICustomer[]; //  Сheck how it works  ?????????
+    //@Prop({ type: [CustomerSchema] })
+    // productsList: ICustomer[]; //  Сheck how it works  ?????????
 }
 
 export const ReviewSchema = SchemaFactory.createForClass(Review);

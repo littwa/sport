@@ -1,10 +1,10 @@
 import { IPagination } from './common.interfaces';
 
 export interface IGetPostsBody {
-  pagination: IPagination;
+    pagination: IPagination;
 }
 
 export interface IPreResponse {
-  data: any;
-  pagination: any;
+    data: any;
+    pagination: any;
 }

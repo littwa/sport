@@ -9,16 +9,16 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('docs')
 @Controller('docs')
 export class DocsController {
-  constructor(private docsService: DocsService) {}
+    constructor(private docsService: DocsService) {}
 
-  // @ApiResponse({ status: 200, description: 'Return all jobs.' })
-  // @ApiResponse({ status: 404, description: 'Not found.' })
-  @Get()
-  @UseGuards(AuthGuard('jwt'))
-  @Roles([ERole.Admin, ERole.Customer])
-  @UsePipes(new ValidationPipe({ whitelist: true }))
-  @HttpCode(HttpStatus.OK)
-  getPostsAggregate(@Param() param, @Req() req) {
-    return this.docsService.getDocs(param, req);
-  }
+    // @ApiResponse({ status: 200, description: 'Return all jobs.' })
+    // @ApiResponse({ status: 404, description: 'Not found.' })
+    @Get()
+    @UseGuards(AuthGuard('jwt'))
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @HttpCode(HttpStatus.OK)
+    getPostsAggregate(@Param() param, @Req() req) {
+        return this.docsService.getDocs(param, req);
+    }
 }

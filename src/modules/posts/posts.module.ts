@@ -8,9 +8,9 @@ import { PostsService } from './posts.service';
 import { CommentsModule } from '../comments/comments.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]), CommentsModule],
-  controllers: [PostsController],
-  providers: [PostsService],
-  exports: [PostsService],
+    imports: [MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]), CommentsModule],
+    controllers: [PostsController],
+    providers: [PostsService],
+    exports: [PostsService],
 })
 export class PostsModule {}

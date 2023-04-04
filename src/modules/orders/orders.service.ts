@@ -10,133 +10,133 @@ import { User, UserDocument } from '../users/user.schema';
 
 @Injectable()
 export class OrdersService {
-  constructor(
-    @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
-    @InjectModel(Product.name) private productModel: Model<ProductDocument>,
-    @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+    constructor(
+        @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
+        @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+        @InjectModel(User.name) private userModel: Model<UserDocument>,
+    ) {}
 
-  async createOrder(createOrderDto: OrderDto, req) {
-    const newOrder = await this.orderModel.create({
-      ...createOrderDto,
-      userId: req.user._id,
-    });
+    async createOrder(createOrderDto: OrderDto, req) {
+        const newOrder = await this.orderModel.create({
+            ...createOrderDto,
+            userId: req.user._id,
+        });
 
-    if (!newOrder) throw new NotFoundException(`Can't create order`);
+        if (!newOrder) throw new NotFoundException(`Can't create order`);
 
-    const addOrderIdToUser = await this.userModel.findByIdAndUpdate(
-      req.user._id,
-      {
-        $push: { orders: newOrder._id },
-      },
-      {
-        new: true,
-        useFindAndModify: false,
-      },
-    );
-    return newOrder;
-  }
+        const addOrderIdToUser = await this.userModel.findByIdAndUpdate(
+            req.user._id,
+            {
+                $push: { orders: newOrder._id },
+            },
+            {
+                new: true,
+                useFindAndModify: false,
+            },
+        );
+        return newOrder;
+    }
 
-  async getOrdersWithProducts(param: GetOrderDto) {
-    const aggregate = await this.orderModel
-      .find(param.userId ? { userId: param.userId } : {})
-      .populate('userId')
-      .populate('productsList');
-    if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
-    return aggregate;
-  }
+    async getOrdersWithProducts(param: GetOrderDto) {
+        const aggregate = await this.orderModel
+            .find(param.userId ? { userId: param.userId } : {})
+            .populate('userId')
+            .populate('productsList');
+        if (!aggregate) throw new NotFoundException(`Can't aggregate orders`);
+        return aggregate;
+    }
 
-  // async getOrders() {
-  //   const allOrders = await this.orderModel.find();
-  //   if (!allOrders) throw new NotFoundException(`Can't allOrders`);
-  //   return allOrders;
-  // }
+    // async getOrders() {
+    //   const allOrders = await this.orderModel.find();
+    //   if (!allOrders) throw new NotFoundException(`Can't allOrders`);
+    //   return allOrders;
+    // }
 
-  async changeOrderStatus(orderId, status) {
-    const updatedOrder: any = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      {
-        $set: { status },
-      },
-      {
-        new: true,
-        useFindAndModify: false,
-      },
-    );
+    async changeOrderStatus(orderId, status) {
+        const updatedOrder: any = await this.orderModel.findByIdAndUpdate(
+            orderId,
+            {
+                $set: { status },
+            },
+            {
+                new: true,
+                useFindAndModify: false,
+            },
+        );
 
-    if (!updatedOrder) throw new NotFoundException(`Can't change status order id:${orderId}`);
-    return updatedOrder;
-  }
+        if (!updatedOrder) throw new NotFoundException(`Can't change status order id:${orderId}`);
+        return updatedOrder;
+    }
 
-  async updateOrder(orderId, updatedOrderDto: UpdateOrderDto) {
-    console.log(10000444, updatedOrderDto);
-    const updatedOrder = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      {
-        $set: {
-          ...updatedOrderDto,
-          // customerId: Types.ObjectId(updatedOrderDto.customerId),
-          // productsList: updatedOrderDto.productsList.map((id: string) => Types.ObjectId(id))
-        },
-      },
-      { new: true, useFindAndModify: false },
-    );
+    async updateOrder(orderId, updatedOrderDto: UpdateOrderDto) {
+        console.log(10000444, updatedOrderDto);
+        const updatedOrder = await this.orderModel.findByIdAndUpdate(
+            orderId,
+            {
+                $set: {
+                    ...updatedOrderDto,
+                    // customerId: Types.ObjectId(updatedOrderDto.customerId),
+                    // productsList: updatedOrderDto.productsList.map((id: string) => Types.ObjectId(id))
+                },
+            },
+            { new: true, useFindAndModify: false },
+        );
 
-    if (!updatedOrder) throw new NotFoundException(`Can't updated order`);
-    return updatedOrder;
-  }
+        if (!updatedOrder) throw new NotFoundException(`Can't updated order`);
+        return updatedOrder;
+    }
 
-  async deleteOrder(orderId: string) {
-    const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
+    async deleteOrder(orderId: string) {
+        const deletedOrder = await this.orderModel.findByIdAndDelete(orderId);
 
-    if (!deletedOrder) throw new NotFoundException(`Can't del customer`);
+        if (!deletedOrder) throw new NotFoundException(`Can't del customer`);
 
-    const delOrderIdToUser = await this.userModel.findByIdAndUpdate(
-      deletedOrder.userId,
-      {
-        $pull: { orders: orderId },
-      },
-      {
-        new: true,
-        useFindAndModify: false,
-      },
-    );
-    // return `Customer ById: ${orderId} has been successfully deleted!`;
-  }
+        const delOrderIdToUser = await this.userModel.findByIdAndUpdate(
+            deletedOrder.userId,
+            {
+                $pull: { orders: orderId },
+            },
+            {
+                new: true,
+                useFindAndModify: false,
+            },
+        );
+        // return `Customer ById: ${orderId} has been successfully deleted!`;
+    }
 
-  async addProductsToOrder(body, orderId) {
-    const product = await this.productModel.findById(body.productId);
-    console.log(product);
-    if (!product) throw new NotFoundException(`Can't find products for in this order`);
+    async addProductsToOrder(body, orderId) {
+        const product = await this.productModel.findById(body.productId);
+        console.log(product);
+        if (!product) throw new NotFoundException(`Can't find products for in this order`);
 
-    const updatedOder = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      {
-        $push: { productsList: body.productId },
-      },
-      { new: true },
-    );
+        const updatedOder = await this.orderModel.findByIdAndUpdate(
+            orderId,
+            {
+                $push: { productsList: body.productId },
+            },
+            { new: true },
+        );
 
-    console.log(product);
+        console.log(product);
 
-    if (!updatedOder) throw new NotFoundException(`Can't add products in this order`);
+        if (!updatedOder) throw new NotFoundException(`Can't add products in this order`);
 
-    return updatedOder;
-  }
+        return updatedOder;
+    }
 
-  async removeProductsFromOrder(body, orderId) {
-    const product = await this.productModel.findById(body.productId);
-    console.log(product);
-    if (!product) throw new NotFoundException(`Can't find products for for in this order`);
+    async removeProductsFromOrder(body, orderId) {
+        const product = await this.productModel.findById(body.productId);
+        console.log(product);
+        if (!product) throw new NotFoundException(`Can't find products for for in this order`);
 
-    const updatedOder = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      {
-        $pull: { productsList: body.productId },
-      },
-      { new: true },
-    );
+        const updatedOder = await this.orderModel.findByIdAndUpdate(
+            orderId,
+            {
+                $pull: { productsList: body.productId },
+            },
+            { new: true },
+        );
 
-    return updatedOder;
-  }
+        return updatedOder;
+    }
 }

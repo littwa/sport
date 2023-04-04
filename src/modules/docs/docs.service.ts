@@ -5,16 +5,16 @@ import { Model } from 'mongoose';
 
 @Injectable()
 export class DocsService {
-  constructor(@InjectModel(Doc.name) private docsModel: Model<DocDocument>) {}
+    constructor(@InjectModel(Doc.name) private docsModel: Model<DocDocument>) {}
 
-  async getDocs(param, req) {
-    const docs = await this.docsModel.find({});
-    console.log('docs=', docs);
-    return docs;
-    // return await this.docsModel.find({});
-  }
+    async getDocs(param, req) {
+        const docs = await this.docsModel.find({});
+        console.log('docs=', docs);
+        return docs;
+        // return await this.docsModel.find({});
+    }
 
-  async addDocs(body) {
-    await this.docsModel.create(body);
-  }
+    async addDocs(body) {
+        await this.docsModel.create(body);
+    }
 }

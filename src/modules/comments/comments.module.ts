@@ -5,9 +5,9 @@ import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])],
-  controllers: [CommentsController],
-  providers: [CommentsService],
-  exports: [CommentsService, MongooseModule],
+    imports: [MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])],
+    controllers: [CommentsController],
+    providers: [CommentsService],
+    exports: [CommentsService, MongooseModule],
 })
 export class CommentsModule {}

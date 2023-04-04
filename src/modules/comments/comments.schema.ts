@@ -7,20 +7,20 @@ export type CommentDocument = Comment & Document;
 
 @Schema()
 export class Comment extends Document {
-  @Prop({ type: String, required: true })
-  text: string;
+    @Prop({ type: String, required: true })
+    text: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', required: false })
-  answerTo: CommentDocument;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Comment', required: false })
+    answerTo: CommentDocument;
 
-  @Prop({ type: String, default: new Date().toISOString() })
-  created: string;
+    @Prop({ type: String, default: new Date().toISOString() })
+    created: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: UserDocument;
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+    userId: UserDocument;
 
-  @Prop({ type: Object, default: {} })
-  likes: { [userId: string]: boolean };
+    @Prop({ type: Object, default: {} })
+    likes: { [userId: string]: boolean };
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

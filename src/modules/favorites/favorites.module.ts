@@ -9,12 +9,12 @@ import { Favorite, FavoritesSchema } from './favorites.schema';
 // import { OrdersModule } from 'src/orders/orders.module';
 
 @Module({
-  imports: [
-    // ProductsModule,
-    MongooseModule.forFeature([{ name: Favorite.name, schema: FavoritesSchema }]),
-  ],
-  providers: [FavoritesService],
-  controllers: [FavoritesController],
-  exports: [FavoritesService],
+    imports: [
+        // ProductsModule,
+        MongooseModule.forFeature([{ name: Favorite.name, schema: FavoritesSchema }]),
+    ],
+    providers: [FavoritesService],
+    controllers: [FavoritesController],
+    exports: [FavoritesService],
 })
 export class FavoritesModule {}

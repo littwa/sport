@@ -5,29 +5,29 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('customers')
 @Controller('customers')
 export class CustomersController {
-  constructor(private customersService: CustomersService) {}
+    constructor(private customersService: CustomersService) {}
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  getAllCustomers() {
-    return this.customersService.getCustomers();
-  }
+    @Get()
+    @HttpCode(HttpStatus.OK)
+    getAllCustomers() {
+        return this.customersService.getCustomers();
+    }
 
-  @Post('add')
-  @HttpCode(HttpStatus.CREATED)
-  addCustomer(@Body() body) {
-    return this.customersService.createCustomer(body);
-  }
+    @Post('add')
+    @HttpCode(HttpStatus.CREATED)
+    addCustomer(@Body() body) {
+        return this.customersService.createCustomer(body);
+    }
 
-  @Patch('update/:customerId')
-  @HttpCode(HttpStatus.OK)
-  updateCustomer(@Body() body, @Param() param) {
-    return this.customersService.updateCustomer(body, param.customerId);
-  }
+    @Patch('update/:customerId')
+    @HttpCode(HttpStatus.OK)
+    updateCustomer(@Body() body, @Param() param) {
+        return this.customersService.updateCustomer(body, param.customerId);
+    }
 
-  @Delete('del/:customerId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  delCustomer(@Param() param) {
-    return this.customersService.deleteCustomer(param.customerId);
-  }
+    @Delete('del/:customerId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    delCustomer(@Param() param) {
+        return this.customersService.deleteCustomer(param.customerId);
+    }
 }

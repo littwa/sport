@@ -6,16 +6,16 @@ import { Product, ProductSchema } from './products.schema';
 
 @Global()
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])],
-  providers: [
-    // ProductsService
-    { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
-  ],
-  controllers: [ProductsController],
-  exports: [
-    // ProductsService,
-    { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
-    MongooseModule,
-  ],
+    imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])],
+    providers: [
+        // ProductsService
+        { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
+    ],
+    controllers: [ProductsController],
+    exports: [
+        // ProductsService,
+        { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
+        MongooseModule,
+    ],
 })
 export class ProductsModule {}
