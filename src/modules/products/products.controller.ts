@@ -10,6 +10,9 @@ import {
     Patch,
     Post,
     Put,
+    Query,
+    Req,
+    Response,
     UseGuards,
     UsePipes,
     ValidationPipe,
@@ -19,16 +22,25 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../authorization/roles.decorator';
 import { ERole } from '../../shared/enums/role.enum';
+import { IPagination } from '../../shared/interfaces/common.interfaces';
+import { PostGetParamDto } from '../posts/dto/posts.dto';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
     constructor(@Inject('ProductsServiceToken') private productsService: ProductsService) {}
 
-    @Get()
+    @ApiOperation({ summary: 'Get products' })
+    @ApiResponse({ status: 200, description: 'Return products.' })
+    @ApiResponse({ status: 404, description: 'Can not get products.' })
+    @ApiBearerAuth()
+    @Get(':category?')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(AuthGuard('jwt'))
     @HttpCode(HttpStatus.OK)
-    getProducts() {
-        return this.productsService.getProducts();
+    getProducts(@Query() query: any, @Param() param: any, @Req() req: any) {
+        return this.productsService.getProducts(query, param, req);
     }
 
     @Get(':productId')

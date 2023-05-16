@@ -41,7 +41,7 @@ const storage2 = multer.diskStorage({
     imports: [
         PassportModule,
         ConfigModule.forRoot({
-            load: [configuration],
+            load: [configuration, () => ({ q: 1 })],
             isGlobal: true,
             envFilePath: ['.env'], // not necessary
         }),

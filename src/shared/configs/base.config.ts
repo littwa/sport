@@ -31,4 +31,5 @@ export default () => ({
             expIncrement: 3600000,
         },
     },
+    test1: 'testConf',
 });

@@ -5,14 +5,21 @@ import { Product, ProductDocument } from './products.schema';
 import { addLeadingZeros, filterObject } from 'src/utility/utilities';
 import { CreateProductDto, RateDto, UpdateProductDto } from './dto/product.dto';
 import { PRODUCT_UPDATE_KEYS } from 'src/shared/constants/product.constants';
-import { productsSubCategoryValidators } from '../../validators/products.validators';
-import { ProductsCategoryEnum } from '../../shared/enums/products.enum';
+import { productsSubCategoryValidators } from 'src/validators/products.validators';
+import { ProductsCategoryEnum } from 'src/shared/enums/products.enum';
+import { AuxiliaryModule } from '../auxiliary/auxiliary.module';
+import { Auxiliary, AuxiliaryDocument } from '../auxiliary/auxiliary.schema';
+import { AuxiliaryService } from '../auxiliary/auxiliary.service';
 
 @Injectable()
 export class ProductsService {
-    constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
+    constructor(
+        @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+        @InjectModel(Auxiliary.name) private auxiliaryModel: Model<AuxiliaryDocument>,
+        private auxiliaryService: AuxiliaryService,
+    ) {}
 
-    async getProducts() {
+    async getProducts(query, param, req) {
         const allProducts = await this.productModel.find();
         console.log(34543);
         if (!allProducts) throw new NotFoundException(`Can't get Products`);
@@ -34,6 +41,8 @@ export class ProductsService {
             ) {
                 throw new NotFoundException(`Invalid Products Sub Category`);
             }
+
+            console.log(90000, await this.auxiliaryService.getConfigFromDB());
 
             const lastProduct = await this.productModel.find().sort({ _id: -1 }).limit(1);
             const code = this.generateCodeUtility(lastProduct[0]);

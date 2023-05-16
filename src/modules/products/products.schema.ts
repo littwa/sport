@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, ObjectId } from 'mongoose';
-import { ICharacteristic } from 'src/shared/interfaces/prop.interfaces';
+import { ICharacteristics } from 'src/shared/interfaces/prop.interfaces';
 import * as mongoose from 'mongoose';
 import { ReviewDocument } from 'src/modules/reviews/reviews.schema';
 import { ProductsCategoryEnum, ProductsSubCategoryEnum } from 'src/shared/enums/products.enum';
+// import { Characteristics } from './dto/product.dto';
 
 export type ProductDocument = Product & Document;
 
@@ -14,6 +15,9 @@ export class Product extends Document {
 
     @Prop({ type: String, required: true })
     name: string;
+
+    @Prop({ type: String, required: true })
+    brand: string;
 
     @Prop({ type: String, default: 'Other', enum: ProductsCategoryEnum })
     category: string;
@@ -48,8 +52,8 @@ export class Product extends Document {
     @Prop({ type: String, default: Date.now() })
     dateCreated: Date;
 
-    @Prop({ type: Object, default: {} })
-    characteristic: ICharacteristic;
+    @Prop({ type: Object, required: true })
+    characteristics: ICharacteristics;
 
     @Prop({ type: Object, default: {} })
     rating: { [userId: string]: 1 | 2 | 3 | 4 | 5 };
