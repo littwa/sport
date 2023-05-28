@@ -1,6 +1,7 @@
 import { BaseCharacteristics, CATEGORY_PRODUCTS } from '../shared/constants/product.constants';
 import { ProductsCategoryEnum, ProductsSubCategoryEnum } from '../shared/enums/products.enum';
 import { CreateProductDto } from '../modules/products/dto/product.dto';
+import { SPECIFY_ORDER_MAP } from '../shared/constants/common.constants';
 
 export function productsSubCategoryValidators(category: ProductsCategoryEnum, sub_category): boolean {
     if ((category && !sub_category) || (sub_category && !category)) {
@@ -22,7 +23,4 @@ export function characteristicsValidators(dto: CreateProductDto): [boolean, stri
     console.log(10001, sub_category.filter, isInvalid);
     // Object.keys(dto.characteristics).every(k => sub_category.filter.includes(k));
     return [isInvalid, sub_category.filter];
-    // if (dto.sub_category === ProductsSubCategoryEnum.OTHER) {
-    //     return Object.keys(dto.characteristics).every(k => Object.values(filter).includes(k));
-    // }
 }

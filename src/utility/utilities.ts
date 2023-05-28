@@ -6,6 +6,8 @@ import {
     ProductsCategoryEnum,
     ProductsSubCategoryEnum,
 } from '../shared/enums/products.enum';
+import { SPECIFY_ORDER_MAP } from '../shared/constants/common.constants';
+import { TQueryOrderSpecify } from '../shared/types/common.types';
 
 export function addLeadingZeros(num: number, totalLength: number): string {
     return String(num).padStart(totalLength, '0');
@@ -35,7 +37,8 @@ export function prepareQueryFilter(query): any {
         } else if (Object.values(EBooleanTypesFilter).includes(k)) {
             arr = [...arr, { [`${inc(k)}${k}`]: { $eq: /true/i.test(v) } }];
         } else {
-            const values = v.split(';');
+            const values = v.split(';').map(v => new RegExp(v, 'i'));
+            // const regex = new RegExp(filter.name, 'i');
             arr = [...arr, { [`${inc(k)}${k}`]: { $in: values } }];
         }
     });
@@ -44,4 +47,14 @@ export function prepareQueryFilter(query): any {
 
 export function inc(key): string {
     return Object.values(ECharacteristics).includes(key) ? 'characteristics.' : '';
+}
+
+export function sortUtilityValidator(sort: string): any[] {
+    const [sortField, specify] = sort ? sort.split('_') : [];
+
+    if (!(specify === 'asc' || specify === 'desc')) {
+        return [];
+    }
+
+    return sortField ? [{ $sort: { [sortField]: SPECIFY_ORDER_MAP[specify] } }] : [];
 }

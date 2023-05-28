@@ -2,15 +2,23 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Product, ProductDocument } from './products.schema';
-import { addLeadingZeros, defineCategory, filterObject, prepareQueryFilter } from 'src/utility/utilities';
+import {
+    addLeadingZeros,
+    defineCategory,
+    filterObject,
+    prepareQueryFilter,
+    sortUtilityValidator,
+} from 'src/utility/utilities';
 import { CreateProductDto, RateDto, UpdateProductDto } from './dto/product.dto';
 // import { PRODUCT_UPDATE_KEYS } from 'src/shared/constants/product.constants';
 import { characteristicsValidators, productsSubCategoryValidators } from 'src/validators/products.validators';
 import { ProductsCategoryEnum, ProductsSubCategoryEnum } from 'src/shared/enums/products.enum';
 import { AuxiliaryModule } from '../auxiliary/auxiliary.module';
-import { Auxiliary, AuxiliaryDocument } from '../auxiliary/auxiliary.schema';
-import { AuxiliaryService } from '../auxiliary/auxiliary.service';
-import { IGetProdParam } from '../../shared/interfaces/products.interfaces';
+import { Auxiliary, AuxiliaryDocument } from 'src/modules/auxiliary/auxiliary.schema';
+import { AuxiliaryService } from 'src/modules/auxiliary/auxiliary.service';
+import { IGetProdParam } from 'src/shared/interfaces/products.interfaces';
+import { SPECIFY_ORDER_MAP } from 'src/shared/constants/common.constants';
+import { TQueryOrderSpecify } from '../../shared/types/common.types';
 
 @Injectable()
 export class ProductsService {
@@ -22,40 +30,35 @@ export class ProductsService {
 
     async getProducts(req, query: any, param: IGetProdParam) {
         console.log(req.user._id, query, param);
-        // const filter = { name: 'PS3' };
-        // const filter2 = { ...(param.category && { subCategory: param.category }) };
         // const regex = new RegExp(filter.name, 'i');
-        const { page_size, current_page, sort, ...filtrate } = query;
-        // const pageSize = 3; //  +req.query.page_size;
-        // const currentPage = 1; // +req.query.current_page;
+        const { page_size = 50, current_page = 1, sort, ...filtrate } = query;
         const skip = current_page * page_size - page_size;
-        console.log(10001, skip, page_size, current_page, sort);
 
         const queryCategory = defineCategory(param);
+
         let match: any = {};
         if (queryCategory) {
             match = { $and: [queryCategory] };
         }
 
-        if (queryCategory.sub_category) {
+        if (queryCategory?.sub_category) {
             const filter = prepareQueryFilter(filtrate);
-
             match.$and.push(...filter);
-            console.log(10007, match);
         }
 
-        console.log(100009, { $sort: { [sort]: 1 } })
+        const sortContainerQuery = sortUtilityValidator(sort);
+
+        console.log(skip, page_size);
         const result = await this.productModel.aggregate([
             {
                 // $match: { $or: [{ name: { $regex: regex } }, { description: { $regex: regex } }] },
                 // $match: { $or: [{ 'characteristics.typeConsole': { $regex: regex } }] },
                 $match: match,
             },
-            { $sort: { [sort]: 1 } },
             {
                 $facet: {
                     result: [
-                        { $sort: { [sort]: 1 } },
+                        ...sortContainerQuery,
                         {
                             $skip: skip,
                         },
@@ -89,7 +92,6 @@ export class ProductsService {
                         //     value: 1,
                         // },
                     },
-                    // qw: { $setField: { field: 'test', input: '$$ROOT', value: 5 } },
                 },
             },
             {
@@ -102,11 +104,6 @@ export class ProductsService {
         ]);
 
         return result;
-
-        // const allProducts = await this.productModel.find();
-        // const allProducts = await this.productModel.find();
-        // if (!allProducts) throw new NotFoundException(`Can't get Products`);
-        // return allProducts;
     }
 
     async getProductById(productId) {
