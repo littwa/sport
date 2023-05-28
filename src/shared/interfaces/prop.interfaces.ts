@@ -31,14 +31,6 @@ export interface IPrice {
     box?: string;
 }
 
-export interface ICharacteristics {
-    [key: string]: any;
-    // weight?: string;
-    // color?: string;
-    // material?: string;
-    // size?: string;
-}
-
 export interface IAddress {
     country?: string;
     region?: string;
