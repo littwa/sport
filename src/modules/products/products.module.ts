@@ -5,12 +5,15 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from './products.schema';
 import { AuxiliaryModule } from '../auxiliary/auxiliary.module';
 import { AuxiliaryService } from '../auxiliary/auxiliary.service';
+import { CommentsService } from '../comments/comments.service';
+import { CommentsModule } from '../comments/comments.module';
 
 @Global()
 @Module({
-    imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }])],
+    imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]), CommentsModule],
     providers: [
         AuxiliaryService,
+        CommentsService,
         // ProductsService
         { provide: 'ProductsServiceToken', useClass: ProductsService }, // For Example approach
     ],

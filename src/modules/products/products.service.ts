@@ -16,9 +16,9 @@ import { ProductsCategoryEnum, ProductsSubCategoryEnum } from 'src/shared/enums/
 import { AuxiliaryModule } from '../auxiliary/auxiliary.module';
 import { Auxiliary, AuxiliaryDocument } from 'src/modules/auxiliary/auxiliary.schema';
 import { AuxiliaryService } from 'src/modules/auxiliary/auxiliary.service';
-import { IGetProdParam } from 'src/shared/interfaces/products.interfaces';
-import { SPECIFY_ORDER_MAP } from 'src/shared/constants/common.constants';
-import { TQueryOrderSpecify } from '../../shared/types/common.types';
+import { IDelReviewParams, IGetProdParam } from 'src/shared/interfaces/products.interfaces';
+import { CommentsService } from '../comments/comments.service';
+import { CommentIdDto, CreateCommentDto } from '../comments/dto/comments.dto';
 
 @Injectable()
 export class ProductsService {
@@ -26,6 +26,7 @@ export class ProductsService {
         @InjectModel(Product.name) private productModel: Model<ProductDocument>,
         @InjectModel(Auxiliary.name) private auxiliaryModel: Model<AuxiliaryDocument>,
         private auxiliaryService: AuxiliaryService,
+        private commentsService: CommentsService,
     ) {}
 
     async getProducts(req, query: any, param: IGetProdParam) {
@@ -195,6 +196,45 @@ export class ProductsService {
         //console.log(1000011, ratedProduct);
 
         return ratedProduct;
+    }
+
+    async addReviewProduct(createCommentDto: CreateCommentDto, productId: string, req) {
+        const comment = await this.commentsService.createComment(createCommentDto, req);
+        if (!comment) throw new NotFoundException(`Can't create comment`);
+        const commentedProduct = await this.productModel.findByIdAndUpdate(
+            productId,
+            {
+                $push: { reviews: comment._id },
+            },
+            {
+                new: true,
+            },
+        );
+
+        console.log(commentedProduct);
+
+        if (!commentedProduct) throw new NotFoundException(`Can't reviewed Post`);
+
+        return comment.populate('userId', '_id email firstName lastName username avatarURL city country');
+    }
+
+    async delReviewProduct(params: IDelReviewParams) {
+        try {
+            await this.commentsService.deleteComment(params.commentId);
+
+            const updatedProduct = await this.productModel.findByIdAndUpdate(
+                params.productId,
+                {
+                    $pull: { reviews: params.commentId },
+                },
+                { new: true },
+            );
+
+            console.log(updatedProduct);
+            if (!updatedProduct) throw new NotFoundException(`Can't del review from Product`);
+        } catch (err) {
+            throw new NotFoundException(`Can't remove comment from this product ${err}`);
+        }
     }
 
     generateCodeUtility(lastProduct): string {

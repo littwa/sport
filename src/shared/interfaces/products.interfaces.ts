@@ -3,3 +3,8 @@ import { ECharacteristics, ProductsCategoryEnum, ProductsSubCategoryEnum } from 
 export interface IGetProdParam {
     category: ProductsSubCategoryEnum & ProductsCategoryEnum & undefined;
 }
+
+export interface IDelReviewParams {
+    productId: string;
+    commentId: string;
+}

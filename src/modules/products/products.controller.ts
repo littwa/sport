@@ -23,7 +23,8 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@ne
 import { Roles } from '../../authorization/roles.decorator';
 import { ERole } from '../../shared/enums/role.enum';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
-import { IGetProdParam } from '../../shared/interfaces/products.interfaces';
+import { IDelReviewParams, IGetProdParam } from '../../shared/interfaces/products.interfaces';
+import { CreateCommentDto } from '../comments/dto/comments.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -107,6 +108,33 @@ export class ProductsController {
     @HttpCode(HttpStatus.OK)
     rateProduct(@Body() body, @Param() param) {
         return this.productsService.giveRatingProduct(body, param.productId);
+    }
+
+    @ApiOperation({ summary: 'Add review(comment) to product ' })
+    @ApiResponse({ status: 200, description: 'Return review(comment).' })
+    @ApiResponse({ status: 404, description: 'Can not add review(comment) to product.' })
+    @ApiBearerAuth()
+    @Patch('add-review/:productId')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.OK)
+    addReviewProduct(@Body() body: CreateCommentDto, @Param() param, @Req() req) {
+        return this.productsService.addReviewProduct(body, param.productId, req);
+    }
+
+    @ApiOperation({ summary: 'Delete review(comment) to product ' })
+    @ApiResponse({ status: 204, description: 'review was Delete.' })
+    @ApiResponse({ status: 404, description: 'Can not del review(comment) to product.' })
+    @ApiBearerAuth()
+    @Delete('del-review/:productId/:commentId')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(AuthGuard('jwt'))
+    @HttpCode(HttpStatus.NO_CONTENT)
+    delReviewProduct(@Param() params: IDelReviewParams, @Req() req) {
+        console.log(100009, params);
+        return this.productsService.delReviewProduct(params);
     }
 
     @Get('test')
