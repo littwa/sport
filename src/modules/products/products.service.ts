@@ -58,7 +58,7 @@ export class ProductsService {
             },
             {
                 $facet: {
-                    result: [
+                    body: [
                         ...sortContainerQuery,
                         {
                             $skip: skip,
@@ -74,7 +74,7 @@ export class ProductsService {
                             },
                         },
                     ],
-                    count: [
+                    pagination: [
                         {
                             $count: 'count',
                         },
@@ -86,7 +86,7 @@ export class ProductsService {
                     body: 1,
                     pagination: {
                         // $set: { $asa: 1 },
-                        $arrayElemAt: ['$count', 0],
+                        $arrayElemAt: ['$pagination', 0],
                         // $setField: {
                         //     field: '$tst',
                         //     // input: <Object>,
@@ -97,9 +97,9 @@ export class ProductsService {
             },
             {
                 $addFields: {
-                    'count.page_size': +page_size,
-                    'count.current_page': +current_page,
-                    'count.sort': sort,
+                    'pagination.page_size': +page_size,
+                    'pagination.current_page': +current_page,
+                    'pagination.sort': sort,
                 },
             },
         ]);
