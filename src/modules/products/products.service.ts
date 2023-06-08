@@ -104,7 +104,7 @@ export class ProductsService {
             },
         ]);
 
-        return result;
+        return result[0];
     }
 
     async getProductById(productId) {
