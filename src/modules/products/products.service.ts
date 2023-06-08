@@ -83,8 +83,8 @@ export class ProductsService {
             },
             {
                 $project: {
-                    result: 1,
-                    count: {
+                    body: 1,
+                    pagination: {
                         // $set: { $asa: 1 },
                         $arrayElemAt: ['$count', 0],
                         // $setField: {
