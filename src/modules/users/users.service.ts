@@ -443,7 +443,7 @@ export class UsersService {
         const { email, password } = signInDto;
 
         const user = await this.userModel
-            .findOne({ email, role: ERole.Customer })
+            .findOne({ email }) // , role: ERole.Customer
             .populate('followers')
             .populate('following');
 
