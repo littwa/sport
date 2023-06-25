@@ -120,7 +120,7 @@ export class UsersService {
     }
 
     async getInfoUserCustomer({ _id }) {
-        const infoCustomer = await this.userModel.findOne({ _id, role: ERole.Customer }); //.populate('customer');
+        const infoCustomer = await this.userModel.findOne({ _id }); //.populate('customer'); // role: ERole.Customer
         if (!infoCustomer) throw new BadRequestException('Customer was not found.');
         const { password, verificationCode, __v, ...userDtoInfo } = infoCustomer.toObject();
         return userDtoInfo;
@@ -143,7 +143,7 @@ export class UsersService {
             .findOne(
                 {
                     _id,
-                    role: ERole.Customer,
+                    // role: ERole.Customer,
                 },
                 { password: 0 },
             )
@@ -540,7 +540,7 @@ export class UsersService {
         let user = await this.userModel
             .findOne({
                 email: req.user.email,
-                role: ERole.Customer,
+                // role: ERole.Customer,
                 socialAuth: req.user.profile.provider,
             })
             .populate('followers')
