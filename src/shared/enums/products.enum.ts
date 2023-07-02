@@ -4,7 +4,7 @@ export enum ProductsCategoryEnum {
     Gaming = 'gaming',
     TVs = 'tvs',
     Phone = 'phone',
-    HouseholdAppliances = 'Household_appliances',
+    HouseholdAppliances = 'household_appliances',
     Instrument = 'instrument',
     Accessories = 'accessories',
 }

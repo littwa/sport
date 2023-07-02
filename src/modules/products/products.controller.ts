@@ -48,7 +48,7 @@ export class ProductsController {
     @ApiResponse({ status: 200, description: 'Return product by Id.' })
     @ApiResponse({ status: 404, description: 'Can not product by Id.' })
     @ApiBearerAuth()
-    @Get(':productId')
+    @Get('detail/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(AuthGuard('jwt'))
