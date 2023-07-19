@@ -93,7 +93,6 @@ export const CharacteristicsSchema = SchemaFactory.createForClass(Characteristic
 
 export type ProductDocument = Product & Document;
 
-
 @Schema()
 export class Product extends Document {
     @Prop({ type: String, required: true })

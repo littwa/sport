@@ -10,6 +10,9 @@ export class Auxiliary extends Document {
 
     @Prop({ type: Array, required: true })
     brands: any;
+
+    @Prop({ type: Array, required: true })
+    witLists: any;
 }
 
 export const AuxiliarySchema = SchemaFactory.createForClass(Auxiliary);
