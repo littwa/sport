@@ -14,7 +14,7 @@ export class Phrase extends Document {
     @Prop({ type: String, required: true })
     translate: string;
 
-    @Prop({ type: String, required: 'sentiment_satisfied' })
+    @Prop({ type: String, default: 'sentiment_satisfied' })
     label: string; // mat-icon font ligature
 
     @Prop({ type: String, default: EPhraseType.Phrase, enum: EPhraseType })

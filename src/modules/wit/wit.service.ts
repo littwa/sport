@@ -100,7 +100,7 @@ export class WitService {
     async getListAggregate(listId: string, req): Promise<any> {
         const listAgg = await this.witModel.find({ _id: listId }).populate('list');
         if (!listAgg) throw new NotFoundException(`Can't find list`);
-        return listAgg;
+        return listAgg[0];
     }
 
     async executeAux1(body: any): Promise<any> {
