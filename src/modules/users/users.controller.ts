@@ -55,6 +55,7 @@ import {
 } from './dto/user.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ParamIdDto } from '../../shared/dto/common.dto';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 // import { ConfigServiceTest } from '../app.module';
 
 // const storage = multer.diskStorage({
@@ -150,7 +151,7 @@ export class UsersController {
     @ApiResponse({ status: 404, description: 'Sign out error.' })
     @ApiBearerAuth()
     @Get('sign-out')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     signOut(@Request() req) {
         return this.userService.signOutUser(req.user);
@@ -161,7 +162,7 @@ export class UsersController {
     @ApiResponse({ status: 404, description: 'Can not update user.' })
     @ApiBearerAuth()
     @Patch('up-date/:id')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseInterceptors(AnyFilesInterceptor()) // { storage }
@@ -189,33 +190,33 @@ export class UsersController {
     // }
 
     @Get('get')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getCurrentUser(@Request() req) {
         console.log('req.user-', req.user);
         return this.userService.getCurrentUser(req.user);
     }
 
     @Get('get/:userId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getUserById(@Request() req, @Param() param) {
         console.log('req.user-', req.user);
         return this.userService.getUserById(param.userId);
     }
 
     @Get('get-followers/:userId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getUserFollowersById(@Request() req, @Param() param) {
         return this.userService.getUserFollowersById(param.userId);
     }
 
     @Get('get-following/:userId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getUserFollowingById(@Request() req, @Param() param) {
         return this.userService.getUserFollowingById(param.userId);
     }
 
     @Get('get-aggregate')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getCurrentUserAggregate(@Request() req) {
         console.log('req.user-', req.user);
         return this.userService.getCurrentUserAggregate(req.user);
@@ -226,7 +227,7 @@ export class UsersController {
     @ApiResponse({ status: 404, description: 'Can not users.' })
     @ApiBearerAuth()
     @Get('get-users/:someName?')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -239,7 +240,7 @@ export class UsersController {
     @ApiResponse({ status: 404, description: 'Can not users extends.' })
     @ApiBearerAuth()
     @Get('get-users-ext')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -253,7 +254,7 @@ export class UsersController {
     }
 
     @Post('follow')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -263,7 +264,7 @@ export class UsersController {
     }
 
     @Post('unfollow')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -273,28 +274,28 @@ export class UsersController {
     }
 
     @Patch('add-favorite-product/:productId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     // @Roles(ERole.Admin)
     addFavoriteProduct(@Request() req, @Param() param) {
         return this.userService.addFavoriteProduct(param.productId, req);
     }
 
     @Patch('del-favorite-product/:productId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     // @Roles(ERole.Admin)
     delFavoriteProduct(@Request() req, @Param() param) {
         return this.userService.delFavoriteProduct(param.productId, req);
     }
 
     @Patch('add-cart-product/:productId/:amount')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     // @Roles(ERole.Admin)
     addCartProduct(@Request() req, @Param() param: CartProductUserParamDto) {
         return this.userService.addCartProduct(param, req);
     }
 
     @Patch('del-cart-product/:productId/:amount')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     // @Roles(ERole.Admin)
     delCartProduct(@Request() req, @Param() param: CartProductUserParamDto) {
         return this.userService.delCartProduct(param, req);
@@ -307,20 +308,20 @@ export class UsersController {
     }
 
     @Get('get/user-customer-info')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     // @Roles(ERole.Admin)
     getCustomer(@Request() req) {
         return this.userService.getInfoUserCustomer(req.user);
     }
 
     @Get('refresh')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getRefreshToken(@Req() req) {
         return this.userService.getRefreshToken(req);
     }
 
     @Get('test-jwt')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     getCurrentUserTest(
         @Headers() headers,
         @Request() request,
@@ -329,6 +330,7 @@ export class UsersController {
         @Body() body,
         // @Res() res,
     ) {
+        console.log(400001, req, param, body)
         // console.log(this.tc.v);
         console.log('this.userService.configFactory.v = ', this.userService.configFactory.v);
         console.log('this.userService.useClassTest.v = ', this.userService.useClassTest.v);

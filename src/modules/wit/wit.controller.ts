@@ -31,6 +31,7 @@ import {
     ParamIdWitDto,
     UpdatePhraseDto,
 } from './dto/wit.dto';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('wit')
 @Controller('wit')
@@ -44,7 +45,7 @@ export class WitController {
     @Post('add-list')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     addList(@Body() body: CreateWitItemDto, @Req() req) {
         console.log(body);
@@ -58,7 +59,7 @@ export class WitController {
     @Post('add-phrase-list/:listId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     addPhraseToList(@Body() body: CreatePhraseDto, @Param() param: ParamIdWitDto, @Req() req) {
         console.log(body);
@@ -72,7 +73,7 @@ export class WitController {
     @Delete('del-phrase-list/:listId/:phraseId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     delPhraseFromList(@Param() param: ParamIdWitDelDto, @Req() req) {
         return this.witService.delPhraseFromList(param.phraseId, param.listId);
@@ -85,7 +86,7 @@ export class WitController {
     @Delete('del-phrase-permanently/:listId/:phraseId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     delPhrasePermanently(@Param() param: ParamIdWitDelDto, @Req() req) {
         this.witService.delPhrasePermanently(param.phraseId, param.listId);
@@ -98,7 +99,7 @@ export class WitController {
     @Delete('del-list-permanently/:listId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     delListPermanently(@Param() param: ParamIdWitDto, @Req() req) {
         this.witService.delListPermanently(param.listId);
@@ -111,7 +112,7 @@ export class WitController {
     @Patch('update-phrase/:phraseId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     updatePhrase(@Body() body: UpdatePhraseDto, @Param() param: ParamIdPhraseDto, @Req() req) {
         return this.witService.updatePhrase(param.phraseId, body);
@@ -124,7 +125,7 @@ export class WitController {
     @Get('get-lists')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     getLists(@Req() req) {
         return this.witService.getLists(req);
@@ -137,7 +138,7 @@ export class WitController {
     @Get('get-list/:listId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     getListAggregate(@Req() req, @Param() param: ParamIdWitDto) {
         return this.witService.getListAggregate(param.listId, req);
@@ -150,7 +151,7 @@ export class WitController {
     @Post('test')
     // @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    // @UseGuards(AuthGuard('jwt'))
+    // @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     test(@Body() body: any) {
         // CreateWitItemDto

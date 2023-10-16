@@ -19,6 +19,7 @@ import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { CommentIdDto, CreateCommentDto, LikeCommentDto, UpdateCommentDto } from './dto/comments.dto';
 import { ApiTags } from '@nestjs/swagger';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('comments')
 @Controller('comments')
@@ -26,7 +27,7 @@ export class CommentsController {
     constructor(private commentsService: CommentsService) {}
 
     @Post('add')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.CREATED)
@@ -35,7 +36,7 @@ export class CommentsController {
     }
 
     @Patch('update/:commentId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.OK)
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -44,7 +45,7 @@ export class CommentsController {
     }
 
     @Delete('delete/:commentId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.NO_CONTENT)
     deleteComment(@Param() param: CommentIdDto) {
@@ -52,7 +53,7 @@ export class CommentsController {
     }
 
     @Patch('like/:commentId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -61,7 +62,7 @@ export class CommentsController {
     }
 
     // @Get()
-    // @UseGuards(AuthGuard('jwt'))
+    // @UseGuards(JwtAuthGuard)
     // @Roles([ERole.Admin, ERole.Customer])
     // @UsePipes(new ValidationPipe({ whitelist: true }))
     // @HttpCode(HttpStatus.OK)

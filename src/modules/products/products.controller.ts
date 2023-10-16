@@ -25,6 +25,7 @@ import { ERole } from '../../shared/enums/role.enum';
 import { CreateProductDto, UpdateProductDto } from './dto/product.dto';
 import { IDelReviewParams, IGetProdParam } from '../../shared/interfaces/products.interfaces';
 import { CreateCommentDto } from '../comments/dto/comments.dto';
+import { JwtAuthGuard } from "../../guards/jwt-auth.guard";
 
 @ApiTags('products')
 @Controller('products')
@@ -38,7 +39,7 @@ export class ProductsController {
     @Get(':category?')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     getProducts(@Req() req: any, @Query() query: any, @Param() param: IGetProdParam) {
         return this.productsService.getProducts(req, query, param);
@@ -51,7 +52,7 @@ export class ProductsController {
     @Get('detail/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     getProductById(@Param() param) {
         return this.productsService.getProductById(param.productId);
@@ -64,7 +65,7 @@ export class ProductsController {
     @Post('add')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     addProduct(@Body() body: CreateProductDto) {
         console.log(body);
@@ -78,7 +79,7 @@ export class ProductsController {
     @Patch('update/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     updateProduct(@Body() body: UpdateProductDto, @Param() param) {
         return this.productsService.updateProduct(body, param.productId);
@@ -91,7 +92,7 @@ export class ProductsController {
     @Delete('del/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     delProduct(@Param() param) {
         return this.productsService.deleteProduct(param.productId);
@@ -104,7 +105,7 @@ export class ProductsController {
     @Patch('rate/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     rateProduct(@Body() body, @Param() param) {
         return this.productsService.giveRatingProduct(body, param.productId);
@@ -117,7 +118,7 @@ export class ProductsController {
     @Patch('add-review/:productId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     addReviewProduct(@Body() body: CreateCommentDto, @Param() param, @Req() req) {
         return this.productsService.addReviewProduct(body, param.productId, req);
@@ -130,7 +131,7 @@ export class ProductsController {
     @Delete('del-review/:productId/:commentId')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     delReviewProduct(@Param() params: IDelReviewParams, @Req() req) {
         console.log(100009, params);

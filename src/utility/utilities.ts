@@ -29,7 +29,7 @@ export function defineCategory(param: IGetProdParam): any {
 
 export function prepareQueryFilter(query): any {
     let arr = [];
-    Object.entries(query).forEach(([k, v]: [string, string]) => {
+    Object.entries(query).forEach(([k, v]: [any, string]) => {
         console.log(k, v);
         if (Object.values(ENumberTypesFilter).includes(k)) {
             const [from, to] = v.split('_');

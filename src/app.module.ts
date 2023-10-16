@@ -24,6 +24,7 @@ import { CommentsModule } from './modules/comments/comments.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { AuxiliaryModule } from './modules/auxiliary/auxiliary.module';
 import { WitModule } from './modules/wit/wit.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 const storage2 = multer.diskStorage({
     destination: 'uploads',
@@ -65,22 +66,24 @@ const storage2 = multer.diskStorage({
         PostsModule,
         AuxiliaryModule,
         WitModule,
+        ChatModule,
     ],
     controllers: [AppController],
     providers: [AppService],
     exports: [], // ConfigModule, ProductsModule,
 })
-export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes('users/test-jwt');
-        // throw new Error('Method not implemented.');
-    }
+export class AppModule {
+    // implements NestModule
+    // configure(consumer: MiddlewareConsumer) {
+    //     consumer.apply(LoggerMiddleware).forRoutes('users/test-jwt');
+    //     // throw new Error('Method not implemented.');
+    // }
 }
 
-@Injectable()
-export class LoggerMiddleware implements NestMiddleware {
-    use(req: Request, res: Response, next: NextFunction) {
-        console.log('LoggerMiddleware...users/test-jwt');
-        next();
-    }
-}
+// @Injectable()
+// export class LoggerMiddleware implements NestMiddleware {
+//     use(req: Request, res: Response, next: NextFunction) {
+//         console.log('LoggerMiddleware...users/test-jwt');
+//         next();
+//     }
+// }

@@ -5,6 +5,7 @@ import { ERole } from '../../shared/enums/role.enum';
 import { PostGetParamDto } from '../posts/dto/posts.dto';
 import { DocsService } from './docs.service';
 import { ApiTags } from '@nestjs/swagger';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('docs')
 @Controller('docs')
@@ -14,7 +15,7 @@ export class DocsController {
     // @ApiResponse({ status: 200, description: 'Return all jobs.' })
     // @ApiResponse({ status: 404, description: 'Not found.' })
     @Get()
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)

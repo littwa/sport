@@ -27,6 +27,7 @@ import {
 import { Roles } from 'src/authorization/roles.decorator';
 import { ERole } from 'src/shared/enums/role.enum';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('orders')
 @Controller('orders')
@@ -38,7 +39,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not create order.' })
     @ApiBearerAuth()
     @Post('add')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.CREATED)
@@ -51,7 +52,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not get orders.' })
     @ApiBearerAuth()
     @Get('/:userId?')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -65,7 +66,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not update order.' })
     @ApiBearerAuth()
     @Patch('update/:orderId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.OK)
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -78,7 +79,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not delete order.' })
     @ApiBearerAuth()
     @Delete('delete/:orderId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.NO_CONTENT)
     deleteOrder(@Param() param: OrderIdDto) {
@@ -90,7 +91,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not changed status order.' })
     @ApiBearerAuth()
     @Patch('change-status/:orderId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -104,7 +105,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not update order.' })
     @ApiBearerAuth()
     @Patch('add-product/:orderId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -117,7 +118,7 @@ export class OrdersController {
     @ApiResponse({ status: 404, description: 'Can not update order.' })
     @ApiBearerAuth()
     @Patch('del-product/:orderId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)

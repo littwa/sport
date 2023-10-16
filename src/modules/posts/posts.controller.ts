@@ -33,6 +33,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { IGetPostsBody } from '../../shared/interfaces/posts.interfaces';
 import { IPagination } from '../../shared/interfaces/common.interfaces';
 import { Response as ResponseExpress } from 'express';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('posts')
 @Controller('posts')
@@ -40,7 +41,7 @@ export class PostsController {
     constructor(private postsService: PostsService) {}
 
     @Post('add')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.CREATED)
@@ -49,7 +50,7 @@ export class PostsController {
     }
 
     @Get('post/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -58,7 +59,7 @@ export class PostsController {
     }
 
     @Patch('update/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.OK)
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -67,7 +68,7 @@ export class PostsController {
     }
 
     @Delete('delete/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @HttpCode(HttpStatus.NO_CONTENT)
     deletePost(@Param() param: PostIdDto) {
@@ -75,7 +76,7 @@ export class PostsController {
     }
 
     @Patch('like/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe())
     @HttpCode(HttpStatus.OK)
@@ -84,7 +85,7 @@ export class PostsController {
     }
 
     @Patch('add-comment/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -93,7 +94,7 @@ export class PostsController {
     }
 
     @Patch('del-comment/:postId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -102,7 +103,7 @@ export class PostsController {
     }
 
     @Get(':whose')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -118,7 +119,7 @@ export class PostsController {
     }
 
     @Get('get-posts/:userId')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -127,7 +128,7 @@ export class PostsController {
     }
 
     @Get('test/:whose')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)

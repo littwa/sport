@@ -22,6 +22,7 @@ import { ERole } from 'src/shared/enums/role.enum';
 import { ExecuteTesterBodyDto, ExecuteTesterParamDto, ExecuteTesterQueryDto, TesterDto } from './dto/testers.dto';
 import { Request } from 'express';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
+import {JwtAuthGuard} from "../../guards/jwt-auth.guard";
 
 @ApiTags('tester')
 @Controller('tester')
@@ -33,7 +34,7 @@ export class TesterController {
     @ApiResponse({ status: 404, description: 'Can not Testers' })
     @ApiBearerAuth()
     @Get()
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -46,7 +47,7 @@ export class TesterController {
     @ApiResponse({ status: 404, description: 'Can not ...' })
     @ApiBearerAuth()
     @Post('add')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -63,7 +64,7 @@ export class TesterController {
     @ApiResponse({ status: 404, description: 'Can not Execute.' })
     @ApiBearerAuth()
     @Patch('execute/:testerId/:qwe?')
-    @UseGuards(AuthGuard('jwt'))
+    @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
@@ -86,7 +87,7 @@ export class TesterController {
     @ApiResponse({ status: 404, description: 'Error' })
     // @ApiBearerAuth()
     @Get('simple-test')
-    // @UseGuards(AuthGuard('jwt'))
+    // @UseGuards(JwtAuthGuard)
     // @Roles([ERole.Admin, ERole.Customer])
     // @UsePipes(new ValidationPipe({ whitelist: true }))
     @HttpCode(HttpStatus.OK)
