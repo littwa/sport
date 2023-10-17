@@ -64,7 +64,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         this.server.emit('test1', { data, id: sender.id, users: this.users });
     }
 
-    async afterInit() {
+    async afterInit(data: Socket) {
         console.log('init ws');
     }
 

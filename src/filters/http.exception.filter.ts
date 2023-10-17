@@ -7,12 +7,15 @@ export class HttpExceptionFilter extends BaseExceptionFilter {
 
     catch(exception: any, host: ArgumentsHost) {
         let { message, stack, name } = exception;
-        // console.log('HttpExceptionFilter==============exception name:: ', name, stack, stack)
+        console.log('HttpExceptionFilter==============exception name:: ', name, message, exception)
+        console.log('exception--', exception)
         if(name === 'TokenExpiredError'){
             const ctx = host.switchToHttp();
             const response = ctx.getResponse<Response>();
             const request = ctx.getRequest<Request>();
             const status = 401;
+
+            // console.log('request', request)
 
             response
                 .status(status)

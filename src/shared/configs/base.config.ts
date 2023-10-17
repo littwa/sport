@@ -18,6 +18,10 @@ export default () => ({
             exp: '30d',
             expIncrement: 2592000000,
         },
+        _30Seconds: {
+            exp: '30s',
+            expIncrement: 30000,
+        },
         _60Seconds: {
             exp: '60s',
             expIncrement: 60000,
