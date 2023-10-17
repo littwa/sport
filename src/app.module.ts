@@ -66,7 +66,7 @@ const storage2 = multer.diskStorage({
         PostsModule,
         AuxiliaryModule,
         WitModule,
-        ChatModule,
+        // ChatModule,
     ],
     controllers: [AppController],
     providers: [AppService],
