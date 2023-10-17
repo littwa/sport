@@ -9,9 +9,9 @@ import {
     WsResponse,
     OnGatewayInit,
 } from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
 import { from, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Server, Socket } from 'socket.io';
 import { Bind, UseGuards } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { Logger } from '@nestjs/common';
