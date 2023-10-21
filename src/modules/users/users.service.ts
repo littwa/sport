@@ -1,3 +1,10 @@
+import * as mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
+import * as fs from "fs";
+import * as axios from 'axios';
+import * as path from 'path';
+import * as sharp from 'sharp';
+import * as cloudinary from 'cloudinary';
 import {
     BadRequestException,
     HttpException,
@@ -7,21 +14,19 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
 import { Model, Types, ObjectId, Schema, Document } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { ERole, EStatus } from 'src/shared/enums/role.enum';
 import { EmailService } from 'src/email/email.service';
 import { JwtService } from '@nestjs/jwt';
 import { CartProductUserParamDto, UserCustomerCreateDto } from './dto/user.dto';
-import * as bcrypt from 'bcrypt';
 import { Session, SessionDocument } from './session.schema';
 import { ConfigService } from '@nestjs/config';
-import * as path from 'path';
-import * as sharp from 'sharp';
 import { CommonService } from '../../shared/services/common.service';
 import { PAGINATION_USERS_DEFAULT } from '../../shared/constants/users.constants';
 import { ESortOrderBy } from '../../shared/enums/common.enum';
+import * as buffer from "buffer";
+import { IMGBB_UPLOAD_URL } from "../../shared/constants/url.constants";
 
 @Injectable()
 export class UsersService {
@@ -46,24 +51,70 @@ export class UsersService {
         private commonService: CommonService,
     ) {}
 
-    async test(): Promise<any> {
+    async test(body, param, query, file): Promise<any> {
         // console.log(1100033, this.userModel.estimatedDocumentCount());
         //console.log(1100044, this.userModel.count({ role: 'customer' }));
         // const f = await this.userModel.count();
         // const f = await this.userModel.countDocuments();
         // const f = await this.userModel.estimatedDocumentCount();
-        const f = await this.userModel.find().sort({ _id: -1 }).limit(1);
+        // const avatarURL = files && this.commonService.multerFactory(files)[0];
+        // console.log('body::: ', body);
+        // console.log('param::: ', param);
+        // console.log('query::: ', query);
+        // console.log('file::: ', files[0]);
+        // console.log('bbb::::  ', files[0].buffer.toString('base64'))
+
+        cloudinary.v2.config({
+            cloud_name: 'dweey9w3n',
+            api_key: '581476537898735',
+            api_secret: '5E00uGGPdOMvucu8o3rtRB8oBMY',
+            secure: true,
+        });
+
+        const form: FormData = new FormData();
+        form.append('file', file); // .buffer.toString('base64')
+
+        // cloudinary.v2.uploader.upload(files[0]).then(res=>console.log(11111111, res));
+
+        console.log('file::: ', file);
+        let response;
+
+        try {
+            // response = await cloudinary.v2.uploader.upload('data:image/png;base64,' + file.buffer.toString('base64'))
+
+        //     // @ts-ignore
+        //     response = await axios({
+        //         method: "POST",
+        //         url: IMGBB_UPLOAD_URL,
+        //         data: form,
+        //         headers: { "Content-Type": "multipart/form-data" },
+        //     })
+        //
+        //     console.log('imgbb_axios===================== ', response.data);
+        //
+        //
+        } catch (err){
+           console.log(1111111, err);
+        }
+
+        console.log('response::: ', response);
+
+
+
+        // const f = await this.userModel.find().sort({ _id: -1 }).limit(1);
         // const f = await this.userModel.find().sort({ $natural: -1 }).limit(1);
-        const list = await this.commonService.getFileListing();
-        console.log(1100055, list);
+        // const list = await this.commonService.getFileListing();
         // let coll = db.collection('collection_name');
         // coll.count().then((count) => {
         //   console.log(count);
         // });
 
         return {
+            response
+            // body,
+            // res: response.data
             // userModelFindCount: this.userModel.find().count(),
-            list,
+            // list,
         };
     }
 

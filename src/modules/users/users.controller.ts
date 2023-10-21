@@ -79,27 +79,28 @@ export class UsersController {
         @Inject('ProductsServiceToken') private productsService: ProductsService, // private readonly uf: // private tc: ConfigServiceTest,
     ) {}
 
-    @Get('get-test')
+    @Post('post-test')
     @UseInterceptors(AnyFilesInterceptor())
     async getTest(
-        @Request() request,
-        @Headers() headers,
-        @Request() req,
+        @Body() body: UserUpdateDto,
+        @Param() param,
+        @Query() query,
         @UploadedFiles() files: Array<Express.Multer.File>,
     ) {
-        // console.log(1000001, this.userService.test());
-        const service = await this.userService.test();
+        // const service = await this.userService.test(body, param, query, files[0])
+        // const service = await this.commonService.imgbbHost(files[0]);
+        const service = await this.commonService.cloudinaryHost(files[0]);
         return {
             service,
             // files: this.commonService.multerFactory(files),
             // req: req,
-            BASE_URL_API: process.env.BASE_URL_API,
-            GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-            BASE_URL_API_FULL: process.env.BASE_URL_API_FULL,
-            BASE_URL_FRONT_END: process.env.BASE_URL_FRONT_END,
-            TOKEN_SECRET: process.env.TOKEN_SECRET,
-            processCwd: process.cwd(),
-            dirname__: __dirname,
+            // BASE_URL_API: process.env.BASE_URL_API,
+            // GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+            // BASE_URL_API_FULL: process.env.BASE_URL_API_FULL,
+            // BASE_URL_FRONT_END: process.env.BASE_URL_FRONT_END,
+            // TOKEN_SECRET: process.env.TOKEN_SECRET,
+            // processCwd: process.cwd(),
+            // dirname__: __dirname,
         };
     }
 

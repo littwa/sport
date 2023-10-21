@@ -2,8 +2,18 @@ import { Injectable } from '@nestjs/common';
 import * as path from 'path';
 import { Observable, of } from 'rxjs';
 import * as sharp from 'sharp';
-import { STATIC, UPLOADS, UPLOADS_STATIC } from '../constants/url.constants';
+import {
+    CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET,
+    CLOUDINARY_CLOUD_NAME,
+    IMGBB_UPLOAD_URL,
+    STATIC,
+    UPLOADS,
+    UPLOADS_STATIC
+} from 'src/shared/constants/url.constants';
 import * as fs from 'fs';
+import * as axios from 'axios';
+import * as cloudinary from 'cloudinary';
+import {IResponseUploadCloudinary} from "../interfaces/common.interfaces";
 
 @Injectable()
 export class CommonService {
@@ -83,5 +93,49 @@ export class CommonService {
         });
 
         return promise as Promise<Array<string>>;
+    }
+
+    public async imgbbHost(file: Express.Multer.File) {
+        const form: FormData = new FormData();
+        form.append('image', file.buffer.toString('base64'));
+
+        // console.log('form::: ', form);
+        let response;
+
+        try {
+            // @ts-ignore
+            response = await axios({
+                method: 'POST',
+                url: IMGBB_UPLOAD_URL,
+                data: form,
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+        } catch (err) {
+            console.log(err);
+        }
+
+        return response.data;
+    }
+
+    public async cloudinaryHost(file: Express.Multer.File) {
+        cloudinary.v2.config({
+            cloud_name: CLOUDINARY_CLOUD_NAME,
+            api_key: CLOUDINARY_API_KEY,
+            api_secret: CLOUDINARY_API_SECRET,
+            secure: true,
+        });
+
+        let response: cloudinary.UploadApiResponse;
+
+        try {
+            const path: string = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+            response = await cloudinary.v2.uploader.upload(path);
+        } catch (err) {
+            console.log(err);
+        }
+
+        console.log('response::: ', response);
+
+        return response;
     }
 }
