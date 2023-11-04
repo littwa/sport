@@ -27,6 +27,7 @@ import { PAGINATION_USERS_DEFAULT } from '../../shared/constants/users.constants
 import { ESortOrderBy } from '../../shared/enums/common.enum';
 import * as buffer from "buffer";
 import { IMGBB_UPLOAD_URL } from "../../shared/constants/url.constants";
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class UsersService {
@@ -37,7 +38,7 @@ export class UsersService {
     //   Date.now() + this.configService.get('jwtExpires._30days').expIncrement;
 
     public refreshTokenPath = 'jwtExpires._30days'; // 'jwtExpires._100Seconds';  // 'jwtExpires._30days';
-    public accessTokenPath = 'jwtExpires._1hour'; // 'jwtExpires._1hour'; // 'jwtExpires._60Seconds'; // 'jwtExpires._1hour'; //
+    public accessTokenPath = 'jwtExpires._30Seconds'; // 'jwtExpires._30Seconds'; // 'jwtExpires._60Seconds'; // 'jwtExpires._1hour'; //
 
     constructor(
         // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
@@ -523,7 +524,6 @@ export class UsersService {
     }
 
     async getRefreshToken(req) {
-        console.log(req.get('Authorization'), 888888881);
 
         if (!req.get('Authorization')) {
             throw new UnauthorizedException('Not authorized Token');
@@ -633,6 +633,32 @@ export class UsersService {
             // isNew,
             // tokens,
         };
+    }
+
+    async verifyToken(authorization: string): Promise<{[key: string ]: any}> {
+
+        if (!authorization) {
+            throw new UnauthorizedException('Not authorized Token');
+        }
+
+        const token = authorization.slice(7);
+
+        return await this.jwtService.verify(token, {
+            secret: process.env.TOKEN_SECRET,
+        });
+
+    }
+
+    decodeAnyToken(authorization: string): any {
+
+        if (!authorization) {
+            throw new BadRequestException('No authorization token to parse');
+        }
+
+        const token = authorization.slice(7);
+
+
+        return this.jwtService.decode(token, { complete: true });
     }
 
     //=========================verifycation======================================

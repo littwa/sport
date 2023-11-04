@@ -16,7 +16,7 @@ export class RolesGuard implements CanActivate {
             context.getClass(),
         ]);
 
-        console.log('requiredRoles: ', requiredRoles);
+        // console.log('requiredRoles: ', requiredRoles);
 
         if (!requiredRoles) return true;
 
@@ -26,7 +26,7 @@ export class RolesGuard implements CanActivate {
         const fn = ExtractJwt.fromAuthHeaderAsBearerToken();
         const userCrutch = this.jwtService.verify(fn(context.switchToHttp().getRequest()));
 
-        console.log('userCrutch: ', userCrutch);
+        // console.log('userCrutch: ', userCrutch);
 
         if (!requiredRoles.includes(userCrutch.role)) throw new ForbiddenException();
 

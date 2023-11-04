@@ -25,6 +25,8 @@ import { PostsModule } from './modules/posts/posts.module';
 import { AuxiliaryModule } from './modules/auxiliary/auxiliary.module';
 import { WitModule } from './modules/wit/wit.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import {WsAuthInterceptor} from "./interceptors/ws-auth.interceptor";
 
 const storage2 = multer.diskStorage({
     destination: 'uploads',
@@ -69,7 +71,13 @@ const storage2 = multer.diskStorage({
         ChatModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: WsAuthInterceptor,
+        },
+    ],
     exports: [], // ConfigModule, ProductsModule,
 })
 export class AppModule {

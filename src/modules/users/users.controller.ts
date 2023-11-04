@@ -89,7 +89,8 @@ export class UsersController {
     ) {
         // const service = await this.userService.test(body, param, query, files[0])
         // const service = await this.commonService.imgbbHost(files[0]);
-        const service = await this.commonService.cloudinaryHost(files[0]);
+        // const service = await this.commonService.cloudinaryHost(files[0]);
+        const service = this.userService.decodeAnyToken('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaWQiOiI2NTM1MTkwZjgwNDFmYjk5MWJhNmE0YWUiLCJ1aWQiOiI2MmRlYzg4NWNjMWE1YTgwMjc4MzYzMzAiLCJzZWNyZXQiOiJzd29yZGZpc2giLCJlbWFpbCI6ImRldmFjY0BtZXRhLnVhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNjk3OTc4NjM5LCJleHAiOjE2OTc5ODIyMzl9.ujVhZbemDNOLE3h9PF8RwUjYZHMCttNU6Vn_lMcgidA');
         return {
             service,
             // files: this.commonService.multerFactory(files),
@@ -193,14 +194,14 @@ export class UsersController {
     @Get('get')
     @UseGuards(JwtAuthGuard)
     getCurrentUser(@Request() req) {
-        console.log('req.user-', req.user);
+        // console.log('req.user-', req.user);
         return this.userService.getCurrentUser(req.user);
     }
 
     @Get('get/:userId')
     @UseGuards(JwtAuthGuard)
     getUserById(@Request() req, @Param() param) {
-        console.log('req.user-', req.user);
+        // console.log('req.user-', req.user);
         return this.userService.getUserById(param.userId);
     }
 
@@ -219,7 +220,7 @@ export class UsersController {
     @Get('get-aggregate')
     @UseGuards(JwtAuthGuard)
     getCurrentUserAggregate(@Request() req) {
-        console.log('req.user-', req.user);
+        // console.log('req.user-', req.user);
         return this.userService.getCurrentUserAggregate(req.user);
     }
 
