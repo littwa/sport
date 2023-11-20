@@ -32,27 +32,6 @@ export class Phrase extends Document {
     @Prop({ type: String, default: Date.now() })
     created: Date;
 
-    // @Prop({ type: String, default: '' })
-    // items: string;
-    //
-    // @Prop({ type: String, required: true })
-    // notes: string;
-    //
-    // @Prop({
-    //     type: String,
-    //     default: 'new',
-    //     enum: ['new', 'verify', 'archive'],
-    // })
-    // status: string;
-    //
-    // @Prop({ type: Object, required: true })
-    // created: IDate;
-
-    // @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }] })
-    // productsList: Product[];
-
-    // @Prop({ type: [CustomerSchema] })
-    // productsList: ICustomer[]; //  Сheck how it works  ?????????
 }
 
 export const PhraseSchema = SchemaFactory.createForClass(Phrase);

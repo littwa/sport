@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import * as path from 'path';
-import { Observable, of } from 'rxjs';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import * as sharp from 'sharp';
 import {
-    CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
     CLOUDINARY_CLOUD_NAME,
     IMGBB_UPLOAD_URL,
     STATIC,
-    UPLOADS,
-    UPLOADS_STATIC
+    UPLOADS
 } from 'src/shared/constants/url.constants';
 import * as fs from 'fs';
 import * as axios from 'axios';
 import * as cloudinary from 'cloudinary';
-import {IResponseUploadCloudinary} from "../interfaces/common.interfaces";
+import {EComposeType, EMediaType} from "../enums/compose.enum";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CommonService {
@@ -24,7 +23,7 @@ export class CommonService {
     //     Date.now() + this.configService.get('jwtExpires30days').expIncrement;
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    constructor() {} // @Inject('UseClassTest') public useClassTest: any, // @Inject('UseFactoryTest') public configFactory: any, // public configService: ConfigService, // private jwtService: JwtService, // private emailService: EmailService, // @InjectModel(User.name) public userModel: Model<UserDocument>, // @InjectModel(Session.name) public sessionModel: Model<SessionDocument>, // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
+    constructor(public configService: ConfigService) {} // @Inject('UseClassTest') public useClassTest: any, // @Inject('UseFactoryTest') public configFactory: any, // public configService: ConfigService, // private jwtService: JwtService, // private emailService: EmailService, // @InjectModel(User.name) public userModel: Model<UserDocument>, // @InjectModel(Session.name) public sessionModel: Model<SessionDocument>, // @InjectModel(Order.name) private productModel: Model<OrderDocument>,
 
     // getPairTokensUtilit = async (session, user) => {
     //     const accessToken = await this.jwtService.sign(
@@ -118,24 +117,38 @@ export class CommonService {
     }
 
     public async cloudinaryHost(file: Express.Multer.File) {
-        cloudinary.v2.config({
-            cloud_name: CLOUDINARY_CLOUD_NAME,
-            api_key: CLOUDINARY_API_KEY,
-            api_secret: CLOUDINARY_API_SECRET,
-            secure: true,
-        });
+        cloudinary.v2.config(this.configService.get('cloudinary'));
 
         let response: cloudinary.UploadApiResponse;
 
         try {
+            if (!Object.values(EComposeType).includes(file.mimetype.split('/')[0] as EComposeType))
+                new NotFoundException(`Wrong media type (mimetype)`);
+
+            const resource_type =
+                file.mimetype.split('/')[0] === EComposeType.Image ? EComposeType.Image : EComposeType.Video;
+            // audio type assigned as video in cloudinary;///
+
             const path: string = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
-            response = await cloudinary.v2.uploader.upload(path);
+            response = await cloudinary.v2.uploader.upload(path, {
+                folder: resource_type + 'compose',
+                resource_type,
+            });
         } catch (err) {
             console.log(err);
+            throw new NotFoundException(err);
         }
 
-        console.log('response::: ', response);
+        console.log('response::-: ', response);
 
         return response;
+    }
+
+    public async deleteFromCloudinary(public_id: string, type: EComposeType) {
+        cloudinary.v2.config(this.configService.get('cloudinary'));
+        return await cloudinary.v2.api.delete_resources([public_id], {
+            type: 'upload',
+            resource_type: type === EComposeType.Image ? EComposeType.Image : EComposeType.Video,
+        });
     }
 }
