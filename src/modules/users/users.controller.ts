@@ -173,10 +173,9 @@ export class UsersController {
         @Body() body: UserUpdateDto,
         @Param() param: ParamIdDto,
         @Query() query,
-        @UploadedFiles() files: Array<Express.Multer.File>,
+        @UploadedFiles() files: Array<Express.Multer.File> = [],
     ) {
-        console.log(100005, body, param, query);
-        return await this.userService.updateUser(param, body, files);
+        return await this.userService.updateUser(param, body, files[0]);
     }
 
     // @Get('admin/verify/:verificationCode')

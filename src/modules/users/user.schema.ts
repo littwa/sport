@@ -55,6 +55,9 @@ export class User extends Document {
     avatarURL: string;
 
     @Prop({ type: String, default: '', required: false })
+    public_id: string;
+
+    @Prop({ type: String, default: '', required: false })
     socialAuth: string;
 
     @Prop({ type: String, default: '', required: false })

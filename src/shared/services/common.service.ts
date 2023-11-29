@@ -1,5 +1,4 @@
 import {Injectable, NotFoundException} from '@nestjs/common';
-import * as sharp from 'sharp';
 import {
     CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET,
@@ -11,6 +10,8 @@ import {
 import * as fs from 'fs';
 import * as axios from 'axios';
 import * as cloudinary from 'cloudinary';
+import * as path from 'path';
+import * as sharp from 'sharp';
 import {EComposeType, EMediaType} from "../enums/compose.enum";
 import { ConfigService } from '@nestjs/config';
 
@@ -67,6 +68,19 @@ export class CommonService {
         });
     }
 
+    public async sharpImgOptimize(image: Express.Multer.File) {
+        // const originalName = path.parse(image.originalname).name;
+        // const filename = Date.now() + '-' + originalName + '.webp';
+
+       const sharpResponse = await sharp(image.buffer)
+            .resize(600)
+            .webp({ effort: 3 })
+           .toBuffer(); // .toFile(path.join('uploads', filename));
+
+        image.buffer = sharpResponse;
+        return image;
+    }
+
     public async getFileListing(directory?: string): Promise<Array<string>> {
         const promise$$$ = new Promise((resolve, rej) => {
             fs.readdir(process.cwd() + '/uploads/static', (err, files) => {
@@ -116,7 +130,9 @@ export class CommonService {
         return response.data;
     }
 
-    public async cloudinaryHost(file: Express.Multer.File) {
+    public async cloudinaryHost(file: Express.Multer.File, prefix = 'sport') {
+        if(!file) return;
+
         cloudinary.v2.config(this.configService.get('cloudinary'));
 
         let response: cloudinary.UploadApiResponse;
@@ -125,13 +141,21 @@ export class CommonService {
             if (!Object.values(EComposeType).includes(file.mimetype.split('/')[0] as EComposeType))
                 new NotFoundException(`Wrong media type (mimetype)`);
 
-            const resource_type =
-                file.mimetype.split('/')[0] === EComposeType.Image ? EComposeType.Image : EComposeType.Video;
-            // audio type assigned as video in cloudinary;///
+            let resource_type: 'image' | 'video' | 'raw' | 'auto';
+                // file.mimetype.split('/')[0] === EComposeType.Image ? EComposeType.Image : EComposeType.Video;
+
+
+            if (file.mimetype.split('/')[0] === EComposeType.Image){
+                resource_type = EComposeType.Image;
+                file = await this.sharpImgOptimize(file);
+            } else {
+                // audio type assigned as video in cloudinary;
+                resource_type = EComposeType.Video;
+            }
 
             const path: string = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
             response = await cloudinary.v2.uploader.upload(path, {
-                folder: resource_type + 'compose',
+                folder: resource_type + prefix,
                 resource_type,
             });
         } catch (err) {
@@ -139,7 +163,7 @@ export class CommonService {
             throw new NotFoundException(err);
         }
 
-        console.log('response::-: ', response);
+        console.log('response::: ', response);
 
         return response;
     }

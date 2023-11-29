@@ -9,6 +9,7 @@ import { TesterAService } from './tester.a.service';
 import { TesterBService } from './tester.b.service';
 import { AuxiliaryService } from '../auxiliary/auxiliary.service';
 import { AuxiliaryModule } from '../auxiliary/auxiliary.module';
+import {CommonService} from "../../shared/services/common.service";
 
 //=============================================================
 @Injectable()
@@ -66,6 +67,7 @@ const useFactoryTest = {
         useFactoryTest,
         useClassTest,
         AuxiliaryService,
+        CommonService,
     ],
     exports: [TesterService, useFactoryTest, useClassTest],
 })

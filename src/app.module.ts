@@ -28,6 +28,7 @@ import { ChatModule } from './modules/chat/chat.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import {WsAuthInterceptor} from "./interceptors/ws-auth.interceptor";
 import {ComposeModule} from "./modules/compose/compose.module";
+import { memoryStorage } from 'multer';
 
 const storage2 = multer.diskStorage({
     destination: 'uploads',

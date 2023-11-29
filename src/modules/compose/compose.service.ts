@@ -26,7 +26,7 @@ export class ComposeService {
     }
 
     async createComposeAndAddToList(file: Express.Multer.File, body: CreateComposeDto, listId: string) {
-        const img = await this.commonService.cloudinaryHost(file);
+        const img = await this.commonService.cloudinaryHost(file, 'compose');
         const compose = await this.composeModel.create({ ...body, url: img.secure_url, public_id: img.public_id });
         const list = await this.composeListModel
             .findByIdAndUpdate(
@@ -67,7 +67,7 @@ export class ComposeService {
         let cloudinaryResponse: any;
         try {
             if (file && body.public_id) {
-                img = await this.commonService.cloudinaryHost(file);
+                img = await this.commonService.cloudinaryHost(file, 'compose');
                 cloudinaryResponse = await this.commonService.deleteFromCloudinary(
                     body.public_id,
                     body.old_file_type === EComposeType.Image ? EComposeType.Image : EComposeType.Video,

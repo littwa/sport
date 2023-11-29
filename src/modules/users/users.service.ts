@@ -1,33 +1,20 @@
 import * as mongoose from 'mongoose';
+import {Model} from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import * as fs from "fs";
-import * as axios from 'axios';
-import * as path from 'path';
-import * as sharp from 'sharp';
 import * as cloudinary from 'cloudinary';
-import {
-    BadRequestException,
-    HttpException,
-    HttpStatus,
-    Inject,
-    Injectable,
-    UnauthorizedException,
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, ObjectId, Schema, Document } from 'mongoose';
-import { User, UserDocument } from './user.schema';
-import { ERole, EStatus } from 'src/shared/enums/role.enum';
-import { EmailService } from 'src/email/email.service';
-import { JwtService } from '@nestjs/jwt';
-import { CartProductUserParamDto, UserCustomerCreateDto } from './dto/user.dto';
-import { Session, SessionDocument } from './session.schema';
-import { ConfigService } from '@nestjs/config';
-import { CommonService } from '../../shared/services/common.service';
-import { PAGINATION_USERS_DEFAULT } from '../../shared/constants/users.constants';
-import { ESortOrderBy } from '../../shared/enums/common.enum';
-import * as buffer from "buffer";
-import { IMGBB_UPLOAD_URL } from "../../shared/constants/url.constants";
-import { WsException } from '@nestjs/websockets';
+import {BadRequestException, Inject, Injectable, UnauthorizedException,} from '@nestjs/common';
+import {InjectModel} from '@nestjs/mongoose';
+import {User, UserDocument} from './user.schema';
+import {ERole, EStatus} from 'src/shared/enums/role.enum';
+import {EmailService} from 'src/email/email.service';
+import {JwtService} from '@nestjs/jwt';
+import {CartProductUserParamDto, UserCustomerCreateDto} from './dto/user.dto';
+import {Session, SessionDocument} from './session.schema';
+import {ConfigService} from '@nestjs/config';
+import {CommonService} from '../../shared/services/common.service';
+import {PAGINATION_USERS_DEFAULT} from '../../shared/constants/users.constants';
+import {ESortOrderBy} from '../../shared/enums/common.enum';
+import {EComposeType} from "../../shared/enums/compose.enum";
 
 @Injectable()
 export class UsersService {
@@ -151,16 +138,27 @@ export class UsersService {
         return userDtoReverse;
     }
 
-    async updateUser(param, body, files: Array<Express.Multer.File>) {
-        console.log(10066, param, body, files);
-        const avatarURL = files && this.commonService.multerFactory(files)[0];
-        const updatedUserCustomer = await this.userModel.findByIdAndUpdate(
-            param.id,
-            { ...body, ...(avatarURL && { avatarURL }) }, /// $set: dto
-            { new: true },
-        );
-        const { password, verificationCode, __v, ...userDtoReverse } = updatedUserCustomer?.toObject();
-        return userDtoReverse;
+    async updateUser(param, body, file: Express.Multer.File) {
+        if(file && file.mimetype.split('/')[0] !== EComposeType.Image){
+            throw new BadRequestException('Wrong uploaded type file');
+        }
+
+        const user = await this.userModel.findById(param.id).exec();
+        const image = await this.commonService.cloudinaryHost(file);
+        if (image && user.public_id) {
+            await this.commonService.deleteFromCloudinary(user.public_id, EComposeType.Image);
+        }
+
+        for (let key in body) {
+            user[key] = body[key];
+        }
+
+        image?.secure_url && (user.avatarURL = image?.secure_url);
+        image?.public_id && (user.public_id = image?.public_id);
+
+        user.save();
+
+        return user;
     }
 
     async signOutUser(parsedToken) {
