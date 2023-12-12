@@ -29,6 +29,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import {WsAuthInterceptor} from "./interceptors/ws-auth.interceptor";
 import {ComposeModule} from "./modules/compose/compose.module";
 import { memoryStorage } from 'multer';
+import { JournalModule } from './modules/journal/journal.module';
 
 const storage2 = multer.diskStorage({
     destination: 'uploads',
@@ -72,6 +73,7 @@ const storage2 = multer.diskStorage({
         WitModule,
         ChatModule,
         ComposeModule,
+        JournalModule,
     ],
     controllers: [AppController],
     providers: [
