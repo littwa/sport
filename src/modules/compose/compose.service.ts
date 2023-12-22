@@ -27,7 +27,11 @@ export class ComposeService {
 
     async createComposeAndAddToList(file: Express.Multer.File, body: CreateComposeDto, listId: string) {
         const img = await this.commonService.cloudinaryHost(file, 'compose');
-        const compose = await this.composeModel.create({ ...body, url: img.secure_url, public_id: img.public_id });
+        const compose = await this.composeModel.create({
+            ...body,
+            url: img?.secure_url || '',
+            public_id: img?.public_id || '',
+        });
         const list = await this.composeListModel
             .findByIdAndUpdate(
                 listId,
@@ -59,7 +63,6 @@ export class ComposeService {
         if (!compose) throw new NotFoundException(`Can't del compose`);
 
         const cloudinaryResponse = await this.commonService.deleteFromCloudinary(compose.public_id, compose.type);
-
     }
 
     async updateCompose(id: string, file: Express.Multer.File, body: UpdateComposeDto): Promise<any> {

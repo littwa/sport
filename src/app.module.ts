@@ -30,6 +30,7 @@ import {WsAuthInterceptor} from "./interceptors/ws-auth.interceptor";
 import {ComposeModule} from "./modules/compose/compose.module";
 import { memoryStorage } from 'multer';
 import { JournalModule } from './modules/journal/journal.module';
+import { CodeModule } from './modules/code/code.module';
 
 const storage2 = multer.diskStorage({
     destination: 'uploads',
@@ -74,6 +75,7 @@ const storage2 = multer.diskStorage({
         ChatModule,
         ComposeModule,
         JournalModule,
+        CodeModule,
     ],
     controllers: [AppController],
     providers: [

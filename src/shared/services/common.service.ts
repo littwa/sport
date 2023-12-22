@@ -168,7 +168,8 @@ export class CommonService {
         return response;
     }
 
-    public async deleteFromCloudinary(public_id: string, type: EComposeType) {
+    public async deleteFromCloudinary(public_id: string, type: EComposeType | 'image') {
+        if (!public_id) return;
         cloudinary.v2.config(this.configService.get('cloudinary'));
         return await cloudinary.v2.api.delete_resources([public_id], {
             type: 'upload',
