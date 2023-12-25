@@ -24,6 +24,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 import { CodeService } from 'src/modules/code/code.service';
 import {CreateCodeDto} from "./dto/code.dto";
+import {ICodeGetQuery} from "../../shared/interfaces/code.interfaces";
 
 @Controller('code')
 export class CodeController {
@@ -80,7 +81,7 @@ export class CodeController {
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    get(@Query() query: any) {
-        // return this.composeService.getComposeListAggregate(param.id);
+    get(@Req() req: IRequestExt, @Query() query: ICodeGetQuery) {
+        return this.codeService.getCodes(query, req);
     }
 }

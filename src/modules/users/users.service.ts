@@ -25,7 +25,7 @@ export class UsersService {
     //   Date.now() + this.configService.get('jwtExpires._30days').expIncrement;
 
     public refreshTokenPath = 'jwtExpires._30days'; // 'jwtExpires._100Seconds';  // 'jwtExpires._30days';
-    public accessTokenPath = 'jwtExpires._30Seconds'; // 'jwtExpires._30Seconds'; // 'jwtExpires._60Seconds'; // 'jwtExpires._1hour'; //
+    public accessTokenPath = 'jwtExpires._1hour'; // 'jwtExpires._30Seconds'; // 'jwtExpires._60Seconds'; // 'jwtExpires._1hour'; //
 
     constructor(
         // @InjectModel(Order.name) private productModel: Model<OrderDocument>,

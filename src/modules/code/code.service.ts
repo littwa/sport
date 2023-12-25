@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Code, CodeDocument } from './code.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import mongoose, { Model, ObjectId, Types } from 'mongoose';
 import { CommonService } from 'src/shared/services/common.service';
 import { CodeTag, CodeTagDocument } from 'src/modules/code/code-tag.schema';
 import { CodeType, CodeTypeDocument } from 'src/modules/code/code-type.schema';
-import { CreateCodeDto, UpdateCodeDto } from './dto/code.dto';
+import { CreateCodeDto, UpdateCodeDto } from 'src/modules/code/dto/code.dto';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
-import { EComposeType } from '../../shared/enums/compose.enum';
 import { UploadApiResponse } from 'cloudinary';
+import { ICodeGetQuery } from 'src/shared/interfaces/code.interfaces';
 
 @Injectable()
 export class CodeService {
@@ -136,8 +136,8 @@ export class CodeService {
             throw new BadRequestException(err);
         }
 
-        file && (code.url = img.secure_url);
-        file && (code.public_id = img.public_id);
+        img && (code.url = img.secure_url);
+        img && (code.public_id = img.public_id);
         type && (code.type = type);
         tags?.length && (code.tags = tags);
         body.description && (code.description = body.description);
@@ -147,6 +147,102 @@ export class CodeService {
 
         if (!code) throw new BadRequestException(`Can't updated code`);
         return code;
+    }
+
+    async getCodes(query: ICodeGetQuery, req: IRequestExt) {
+        const { page_size = 10, current_page = 1, ...filtrate } = query;
+        const skip = current_page * page_size - page_size;
+        query.tags = typeof query.tags === 'string' ? [query.tags] : query.tags;
+        const result = await this.codeModel.aggregate([
+            {
+                $lookup: {
+                    from: 'codetags',
+                    localField: 'tags',
+                    foreignField: '_id',
+                    as: 'tags',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$tags',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'codetypes',
+                    localField: 'type',
+                    foreignField: '_id',
+                    as: 'type',
+                },
+            },
+            {
+                $addFields: {
+                    tags: '$tags.name',
+                    type: '$type.name',
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    author: { $first: '$author' },
+                    url: { $first: '$url' },
+                    public_id: { $first: '$public_id' },
+                    created: { $first: '$created' },
+                    data: { $first: '$data' },
+                    description: { $first: '$description' },
+                    type: { $first: { $arrayElemAt: ['$type', 0] } },
+                    tags: { $push: '$tags' },
+                },
+            },
+            {
+                $match: {
+                    $and: [
+                        { author: new mongoose.Types.ObjectId(req.user._id) },
+                        ...(query.description ? [{ description: new RegExp(query.description, 'i')  }] : []),
+                        ...(query.type ? [{ type: query.type }] : []),
+                        ...(query.tags ? [{ tags: { $all: query.tags } }] : []),
+                    ],
+                },
+            },
+            {
+                $facet: {
+                    body: [
+                        {
+                            $skip: skip,
+                        },
+                        {
+                            $limit: +page_size,
+                        },
+                        {
+                            $project: {
+                                __v: 0,
+                            },
+                        },
+                    ],
+                    pagination: [
+                        {
+                            $count: 'count',
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    body: 1,
+                    pagination: {
+                        $arrayElemAt: ['$pagination', 0],
+                    },
+                },
+            },
+            {
+                $addFields: {
+                    'pagination.page_size': +page_size,
+                    'pagination.current_page': +current_page,
+                },
+            },
+        ]);
+
+        return result[0];
     }
 
     async bodyPrepare(body: CreateCodeDto): Promise<CreateCodeDto> {
