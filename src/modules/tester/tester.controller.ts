@@ -105,7 +105,7 @@ export class TesterController {
         return 'ok';
     }
 
-    @ApiOperation({ summary: 'Base test endpoint.' })
+    @ApiOperation({ summary: 'Base test endpoint get' })
     @ApiResponse({ status: 200, description: 'Success' })
     @ApiResponse({ status: 404, description: 'Error' })
     @Get('base')
