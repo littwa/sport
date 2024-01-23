@@ -73,8 +73,8 @@ export class CommonService {
         // const filename = Date.now() + '-' + originalName + '.webp';
 
        const sharpResponse = await sharp(image.buffer)
-            .resize(600)
-            .webp({ effort: 3 })
+            .resize({ width: 960, withoutEnlargement: true })
+            .webp({ lossless: true }) // { effort: 0 }
            .toBuffer(); // .toFile(path.join('uploads', filename));
 
         image.buffer = sharpResponse;
@@ -132,7 +132,6 @@ export class CommonService {
 
     public async cloudinaryHost(file: Express.Multer.File, prefix = 'sport') {
         if(!file) return;
-
         cloudinary.v2.config(this.configService.get('cloudinary'));
 
         let response: cloudinary.UploadApiResponse;
@@ -154,6 +153,7 @@ export class CommonService {
             }
 
             const path: string = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+
             response = await cloudinary.v2.uploader.upload(path, {
                 folder: resource_type + prefix,
                 resource_type,

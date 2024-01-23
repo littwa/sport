@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Code, CodeDocument } from './code.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, ObjectId, Types } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CommonService } from 'src/shared/services/common.service';
 import { CodeTag, CodeTagDocument } from 'src/modules/code/code-tag.schema';
 import { CodeType, CodeTypeDocument } from 'src/modules/code/code-type.schema';
 import { CreateCodeDto, UpdateCodeDto } from 'src/modules/code/dto/code.dto';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 import { UploadApiResponse } from 'cloudinary';
-import { ICodeGetQuery } from 'src/shared/interfaces/code.interfaces';
+import { ICodeGetQuery, IGetCodeTagsParams, IGetCodeTypeParams } from 'src/shared/interfaces/code.interfaces';
 
 @Injectable()
 export class CodeService {
@@ -27,6 +27,7 @@ export class CodeService {
         const code = await this.codeModel.create({
             ...preparedBody,
             author: req.user._id,
+            created: Date.now(),
             ...(file && { url: file.secure_url }),
             ...(file && { public_id: file.public_id }),
         });
@@ -146,13 +147,28 @@ export class CodeService {
         await code.save();
 
         if (!code) throw new BadRequestException(`Can't updated code`);
-        return code;
+
+        await code.populate(['tags', 'type', 'author']);
+
+        return {
+            tags: code.tags.map(v => v.name),
+            type: code.type.name,
+            author: code.author._id,
+            _id: code._id,
+            description: code.description,
+            url: code.url,
+            public_id: code.public_id,
+            created: code.created,
+            data: code.data,
+        };
     }
 
     async getCodes(query: ICodeGetQuery, req: IRequestExt) {
         const { page_size = 10, current_page = 1, ...filtrate } = query;
         const skip = current_page * page_size - page_size;
-        query.tags = typeof query.tags === 'string' ? [query.tags] : query.tags;
+
+        typeof query.tags === 'string' && (query.tags = [query.tags]);
+        console.log('query: ', query);
         const result = await this.codeModel.aggregate([
             {
                 $lookup: {
@@ -165,6 +181,7 @@ export class CodeService {
             {
                 $unwind: {
                     path: '$tags',
+                    preserveNullAndEmptyArrays: true,
                 },
             },
             {
@@ -198,7 +215,7 @@ export class CodeService {
                 $match: {
                     $and: [
                         { author: new mongoose.Types.ObjectId(req.user._id) },
-                        ...(query.description ? [{ description: new RegExp(query.description, 'i')  }] : []),
+                        ...(query.description ? [{ description: new RegExp(query.description, 'i') }] : []),
                         ...(query.type ? [{ type: query.type }] : []),
                         ...(query.tags ? [{ tags: { $all: query.tags } }] : []),
                     ],
@@ -207,6 +224,11 @@ export class CodeService {
             {
                 $facet: {
                     body: [
+                        {
+                            $sort: {
+                                _id: -1,
+                            },
+                        },
                         {
                             $skip: skip,
                         },
@@ -267,10 +289,23 @@ export class CodeService {
     }
 
     async addType(type: string) {
+        if (!type) throw new BadRequestException(`No field type`);
         const hasType = await this.codeTypeModel.findOne({ name: type });
         if (hasType) return hasType._id;
         const newType = await this.codeTypeModel.create({ name: type });
-
         return newType._id;
+    }
+
+    async findCodeTypes({ name }: IGetCodeTypeParams, req: IRequestExt) {
+        const res = await this.codeTypeModel.find({ ...(name && { name: { $regex: name, $options: 'i' } }) }).limit(5);
+        return res;
+    }
+
+    async findCodeTags({ name }: IGetCodeTagsParams, req: IRequestExt) {
+        return await this.codeTagModel.find({ ...(name && { name: { $regex: name, $options: 'i' } }) }).limit(5);
+    }
+
+    async getAllCodeTags() {
+        return await this.codeTagModel.find({});
     }
 }

@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsObject, IsOptional, IsString } from 'class-validator';
-import { EFileType } from 'src/shared/enums/common.enum';
+import {IsArray, IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class UpdateCodeDto {
     @ApiProperty()
@@ -24,7 +23,7 @@ export class UpdateCodeDto {
     readonly type?: string;
 
     @ApiProperty()
-    // @IsString()
+    @IsArray()
     @IsOptional()
     readonly tags?: string[];
 
@@ -37,9 +36,11 @@ export class UpdateCodeDto {
 export class CreateCodeDto extends UpdateCodeDto {
     @ApiProperty()
     @IsString()
-    readonly description: string;
+    @IsNotEmpty()
+    description: string;
 
     @ApiProperty()
     @IsString()
+    @IsNotEmpty()
     readonly type: string;
 }

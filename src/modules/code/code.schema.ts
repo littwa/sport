@@ -21,7 +21,7 @@ export class Code extends Document {
     @Prop({ type: String, default: '' }) // for del files from cloudinary;
     public_id: string;
 
-    @Prop({ type: String, default: Date.now() })
+    @Prop({ type: String, required: true })
     created: Date;
 
     @Prop({ type: Object, default: {} })

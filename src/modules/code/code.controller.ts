@@ -23,8 +23,8 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { IRequestExt } from 'src/shared/interfaces/auth.interfaces';
 import { CodeService } from 'src/modules/code/code.service';
-import {CreateCodeDto} from "./dto/code.dto";
-import {ICodeGetQuery} from "../../shared/interfaces/code.interfaces";
+import { CreateCodeDto } from './dto/code.dto';
+import { ICodeGetQuery, IGetCodeTagsParams, IGetCodeTypeParams } from '../../shared/interfaces/code.interfaces';
 
 @Controller('code')
 export class CodeController {
@@ -40,8 +40,11 @@ export class CodeController {
     @UseInterceptors(AnyFilesInterceptor())
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
-    async create(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateCodeDto, @Req() req: IRequestExt) {
-        console.log(11111, body, files);
+    async create(
+        @UploadedFiles() files: Array<Express.Multer.File>,
+        @Body() body: CreateCodeDto,
+        @Req() req: IRequestExt,
+    ) {
         return await this.codeService.createCode(files, body, req);
     }
 
@@ -68,7 +71,7 @@ export class CodeController {
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(AnyFilesInterceptor())
     @HttpCode(HttpStatus.CREATED)
-    update(@Body() body: any, @UploadedFiles() files: Array<Express.Multer.File>, @Param() param: any) {
+    async update(@Body() body: any, @UploadedFiles() files: Array<Express.Multer.File>, @Param() param: any) {
         return this.codeService.updateCode(param.id, files[0], body);
     }
 
@@ -81,7 +84,47 @@ export class CodeController {
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    get(@Req() req: IRequestExt, @Query() query: ICodeGetQuery) {
+    async get(@Req() req: IRequestExt, @Query() query: ICodeGetQuery) {
+        console.log(query);
         return this.codeService.getCodes(query, req);
+    }
+
+    @ApiOperation({ summary: 'Get types' })
+    @ApiResponse({ status: 200, description: 'Return types' })
+    @ApiResponse({ status: 404, description: 'Can not types' })
+    @ApiBearerAuth()
+    @Get('types/:name?')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    async findTypes(@Req() req: IRequestExt, @Param() params: IGetCodeTypeParams) {
+        return this.codeService.findCodeTypes(params, req);
+    }
+
+    @ApiOperation({ summary: 'Get tags' })
+    @ApiResponse({ status: 200, description: 'Return tags' })
+    @ApiResponse({ status: 404, description: 'Can not tags' })
+    @ApiBearerAuth()
+    @Get('tags/:name?')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    async findTags(@Req() req: IRequestExt, @Param() params: IGetCodeTagsParams) {
+        return this.codeService.findCodeTags(params, req);
+    }
+
+    @ApiOperation({ summary: 'Get all tags' })
+    @ApiResponse({ status: 200, description: 'Return all tags' })
+    @ApiResponse({ status: 404, description: 'Can not all tags' })
+    @ApiBearerAuth()
+    @Get('tags-all')
+    @Roles([ERole.Admin, ERole.Customer])
+    @UsePipes(new ValidationPipe({ whitelist: true }))
+    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
+    async getAllTags() {
+        return this.codeService.getAllCodeTags();
     }
 }

@@ -70,7 +70,7 @@ export class ComposeController {
     @UseInterceptors(AnyFilesInterceptor())
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
-    createComposeAndAddToList(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateComposeDto, @Param() param: ParamIdComposeDto) {
+    async createComposeAndAddToList(@UploadedFiles() files: Array<Express.Multer.File>, @Body() body: CreateComposeDto, @Param() param: ParamIdComposeDto) {
         return this.composeService.createComposeAndAddToList(files[0], body, param.id);
     }
 
@@ -97,7 +97,7 @@ export class ComposeController {
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(AnyFilesInterceptor())
     @HttpCode(HttpStatus.CREATED)
-    updateCompose(@Body() body: UpdateComposeDto,@UploadedFiles() files: Array<Express.Multer.File>, @Param() param: ParamIdComposeDto) {
+    async updateCompose(@Body() body: UpdateComposeDto,@UploadedFiles() files: Array<Express.Multer.File>, @Param() param: ParamIdComposeDto) {
         return this.composeService.updateCompose(param.id, files[0], body);
     }
 
@@ -110,7 +110,7 @@ export class ComposeController {
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    getComposeLists(@Req() req: any) {
+    async getComposeLists(@Req() req: any) {
         return this.composeService.getComposeLists(req);
     }
 
@@ -123,7 +123,7 @@ export class ComposeController {
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    getListAggregate(@Param() param: ParamIdComposeDto) {
+    async getListAggregate(@Param() param: ParamIdComposeDto) {
         return this.composeService.getComposeListAggregate(param.id);
     }
 }
