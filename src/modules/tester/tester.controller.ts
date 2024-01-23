@@ -111,6 +111,6 @@ export class TesterController {
     @Get('base')
     @HttpCode(HttpStatus.OK)
     baseTest() {
-        return 'Success base';
+        return 'Success GET tester/base';
     }
 }
