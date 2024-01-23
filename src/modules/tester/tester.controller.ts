@@ -104,4 +104,13 @@ export class TesterController {
         console.log(files[0]);
         return 'ok';
     }
+
+    @ApiOperation({ summary: 'Base test endpoint' })
+    @ApiResponse({ status: 200, description: 'Success' })
+    @ApiResponse({ status: 404, description: 'Error' })
+    @Get('base')
+    @HttpCode(HttpStatus.OK)
+    baseTest() {
+        return 'Success base';
+    }
 }
