@@ -4,11 +4,12 @@ import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { Roles } from '../../authorization/roles.decorator';
 import { ERole } from '../../shared/enums/role.enum';
 import { ChatService } from './chat.service';
+import {SocketService} from "../../shared/services/socket.service";
 
 @ApiTags('chat')
 @Controller('chat')
 export class ChatController {
-    constructor(private chatService: ChatService) {}
+    constructor(private socketService: SocketService) {}
 
     // Not to used, instead applies access token
     @ApiOperation({ summary: 'Get WS Ticket' })
@@ -23,6 +24,6 @@ export class ChatController {
     getWsTicket(@Request() req) {
         //  @Body() body
         // console.log('req.user-', req.user);
-        return this.chatService.createWsTicket(req.user);
+        return this.socketService.createWsTicket(req.user);
     }
 }

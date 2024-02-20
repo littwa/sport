@@ -6,6 +6,7 @@ import { ChatService } from './chat.service';
 import { Message, MessageSchema } from './message.schema';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ChatController } from './chat.controller';
+import { SocketService } from 'src/shared/services/socket.service';
 
 @Module({
     imports: [
@@ -14,11 +15,11 @@ import { ChatController } from './chat.controller';
             { name: Message.name, schema: MessageSchema },
         ]),
         JwtModule.registerAsync({
-            useFactory: () => ({ secret: process.env.TOKEN_SECRET,}),
+            useFactory: () => ({ secret: process.env.TOKEN_SECRET }),
         }),
         // SharedModule,
     ],
-    providers: [ChatService, ChatGateway ],
+    providers: [ChatService, SocketService, ChatGateway],
     controllers: [ChatController],
 })
 export class ChatModule {}

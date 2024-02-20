@@ -23,6 +23,7 @@ import { UsersService } from "../users/users.service";
 import { WebsocketExceptionsFilter} from "../../filters/ws.exception.filter";
 import {CreateChatDto} from "./dto/chat.dto";
 import {WsAuthInterceptor} from "../../interceptors/ws-auth.interceptor";
+import {SocketService} from "../../shared/services/socket.service";
 
 @WebSocketGateway({
     cors: {
@@ -36,7 +37,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     server: Server;
     users = [];
 
-    constructor(private chatService: ChatService, private usersService: UsersService) {}
+    constructor(private chatService: ChatService, private usersService: UsersService, private socketService: SocketService) {}
 
     @Bind(MessageBody(), ConnectedSocket())
     @SubscribeMessage('add-chat')
@@ -98,7 +99,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
 
     async handleConnection(socket: Socket) {
-       const result = await this.chatService.checkUserFromSocket(socket);
+       const result = await this.socketService.checkUserFromSocket(socket);
        // console.log('result:::::::: ', result);
        if(result.uid){
            this.users.push(result.uid);
