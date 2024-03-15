@@ -17,6 +17,9 @@ export class Battleships extends Document {
     client: UserDocument;
 
     @Prop({ type: String, required: true })
+    room: string;
+
+    @Prop({ type: String, required: true })
     created: string;
 
     @Prop({ type: Object, default: { info: 'no info' } })
@@ -28,7 +31,7 @@ export class Battleships extends Document {
     @Prop({ type: String, enum: EBattleshipsType, required: true })
     type: string;
 
-    @Prop({ type: String, default: null })
+    @Prop({ type: Object, default: null })
     state: IBattleshipsState;
 
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }] })

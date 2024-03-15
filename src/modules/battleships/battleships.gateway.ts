@@ -16,7 +16,7 @@ import { WebsocketExceptionsFilter } from 'src/filters/ws.exception.filter';
 import { Bind, UseFilters, UseInterceptors } from '@nestjs/common';
 import { BattleshipsService } from './battleships.service';
 import { UsersService } from '../users/users.service';
-import { IBattleshipsGame } from '../../shared/interfaces/battleships.interfaces';
+import {IBattleshipsGame, IBattleshipsStep} from '../../shared/interfaces/battleships.interfaces';
 
 @WebSocketGateway({
     namespace: 'battleships',
@@ -135,18 +135,35 @@ export class BattleshipsGateway implements OnGatewayConnection, OnGatewayDisconn
     }
 
     @Bind(MessageBody(), ConnectedSocket())
-    @SubscribeMessage('games')
-    async handleGame(data: any, socket: Socket) {
-        // @ts-ignore
-        // return of(data) as Observable;
-        // return from([1, 2, 3]).pipe(map(item => ({ event: 'events', data: item })));
-        // console.log(111, data, socket)
-        // return from([data]).pipe(map(item => ({ event: 'events', data: item })));
-        const games = { q: 2 };
-        // const chats = await this.chatService.getAllChats();
-        // console.log(chats)
-        // this.server.emit('events', { data, id: socket.id });
-        return { event: 'get-games', data: this.games };
+    @SubscribeMessage('start-game')
+    async handleGame(data: IBattleshipsGame, socket: Socket) {
+
+        const game = await this.battleshipsService.createGame(data, socket);
+
+        this.server.to(data.roomName).emit('start-game', game);
+        // this.server.to(data.roomName).emit('step-game', game);
+
+        this.games = this.games.filter(data => data.serverSocketId !== socket.id);
+
+        // return { event: 'start-game', data: game };
+    }
+
+    @Bind(MessageBody(), ConnectedSocket())
+    @SubscribeMessage('step-game')
+    async stepGame(data: IBattleshipsStep, socket: Socket) {
+        const game = await this.battleshipsService.execute(data, socket);
+
+        const list = await this.server.in(game.room).fetchSockets();
+        console.log('sockets id:: ', list.map(v => v.id));
+
+        if(!list.map(v => v.id).includes(socket.id)) {
+            socket.join(game.room);
+            // this.server.in(socket.id).socketsJoin(value.roomName); // the same^
+        }
+
+        this.server.to(game.room).emit('step-game', game);
+
+        // return { event: 'step-game', data: game };
     }
 
     async afterInit(data: Socket) {

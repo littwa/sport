@@ -9,6 +9,7 @@ export interface IBattleshipsState {
     server: any;
     client: any;
     stage: EBattleshipsStage;
+    isServerStep: boolean
 }
 
 export interface IBattleshipsGame {
@@ -19,4 +20,9 @@ export interface IBattleshipsGame {
     timestamp: any,
     roomName: string,
     params: any,
+}
+
+export interface IBattleshipsStep {
+    id: string;
+    step: IBattleshipsState
 }
