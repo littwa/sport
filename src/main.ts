@@ -4,6 +4,7 @@ import * as path from 'path';
 import { BadRequestException, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpExceptionFilter } from "./filters/http.exception.filter";
+import axios from 'axios';
 // import baseConfig from 'src/shared/configs/base.config';
 
 async function bootstrap() {
@@ -37,3 +38,18 @@ async function bootstrap() {
     await app.listen(process.env.PORT || 3000);
 }
 bootstrap().then(() => console.log(' App was started port:', process.env.PORT || 3000));
+
+const url = `https://sport-o5a7.onrender.com/`;
+const interval = 60000; // Interval in milliseconds (60 seconds)
+
+function reloadWebsite() {
+    axios.get(url)
+        .then(response => {
+            console.log(`Reloaded at ${new Date().toISOString()}: Status Code ${response.status}`);
+        })
+        .catch(error => {
+            console.error(`Error reloading at ${new Date().toISOString()}:`, error.message);
+        });
+}
+
+setInterval(reloadWebsite, interval);
