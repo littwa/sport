@@ -20,8 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs-modules/mailer": "^2.0.2",
-    "@nestjs/axios": "^4.0.0",
+    "@nestjs/cli": "^11.0.7",
     "@nestjs/common": "11.1.0",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "11.1.0",
@@ -33,6 +32,8 @@
     "@nestjs/serve-static": "^5.0.3",
     "@nestjs/swagger": "^11.1.6",
     "@nestjs/websockets": "^11.1.0",
+    "@nestjs/axios": "^4.0.0",
+    "@nestjs-modules/mailer": "^2.0.2",
     "axios": "1.9.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
@@ -52,7 +53,6 @@
     "sharp": "^0.34.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.7",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.1.0",
     "@types/express": "^5.0.1",
