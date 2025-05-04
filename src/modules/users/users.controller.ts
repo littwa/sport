@@ -227,7 +227,7 @@ export class UsersController {
     @ApiResponse({ status: 200, description: 'Return users.' })
     @ApiResponse({ status: 404, description: 'Can not users.' })
     @ApiBearerAuth()
-    @Get('get-users/:someName?')
+    @Get('get-users{/:someName}')
     @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))

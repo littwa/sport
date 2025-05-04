@@ -527,7 +527,7 @@ export class UsersService {
             throw new UnauthorizedException('Not authorized Token');
         }
 
-        const token = req.get('Authorization' || '').slice(7);
+        const token = req.get('Authorization').slice(7);
 
         const parsedToken = await this.jwtService.verify(token, {
             secret: process.env.TOKEN_SECRET,

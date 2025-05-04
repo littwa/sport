@@ -68,7 +68,7 @@ export class TesterController {
     @ApiResponse({ status: 200, description: 'Return tester.' })
     @ApiResponse({ status: 404, description: 'Can not Execute.' })
     @ApiBearerAuth()
-    @Patch('execute/:testerId/:qwe?')
+    @Patch('execute/:testerId{/:qwe}')
     @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -82,7 +82,7 @@ export class TesterController {
         console.log('query=', query);
         console.log('param= ', param);
         console.log('body=', body);
-        console.log('req.user=', req.user);
+        console.log('req.user=+', req.user);
         return { query, param, body };
         // return this.testerService.executeTester(param, query, body, req);
     }

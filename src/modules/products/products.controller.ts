@@ -36,7 +36,7 @@ export class ProductsController {
     @ApiResponse({ status: 200, description: 'Return products.' })
     @ApiResponse({ status: 404, description: 'Can not get products.' })
     @ApiBearerAuth()
-    @Get(':category?')
+    @Get('{:category}')
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
     @UseGuards(JwtAuthGuard)

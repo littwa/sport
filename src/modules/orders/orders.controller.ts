@@ -51,7 +51,7 @@ export class OrdersController {
     @ApiResponse({ status: 200, description: 'Return orders.' })
     @ApiResponse({ status: 404, description: 'Can not get orders.' })
     @ApiBearerAuth()
-    @Get('/:userId?')
+    @Get('{/:userId}')
     @UseGuards(JwtAuthGuard)
     @Roles([ERole.Admin, ERole.Customer])
     @UsePipes(new ValidationPipe({ whitelist: true }))
