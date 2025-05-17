@@ -40,7 +40,7 @@ async function bootstrap() {
 bootstrap().then(() => console.log(' App was started port:', process.env.PORT || 3000));
 
 const url = `https://sport-o5a7.onrender.com/`;
-const interval = 555000; // Interval in milliseconds (>9m.)
+const interval = 855000; // Interval in milliseconds (>9m.)
 
 function reloadWebsite() {
     axios.get(url)
